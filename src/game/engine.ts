@@ -90,7 +90,7 @@ export function generateEvent(state, forceNewScene = false) {
   let scene
 
   if (needNewScene) {
-    scene = selectScene(state)
+    scene = selectScene(state, forceNewScene)
     state.currentScene = scene.id
     state.sceneActionCount = 0
     if (!state.scenesVisited.includes(scene.id)) {
@@ -143,15 +143,19 @@ export function generateEvent(state, forceNewScene = false) {
   return { scene, situation, modifiers: state.currentModifiers, options, text: eventText }
 }
 
-function selectScene(state) {
+function selectScene(state, forceNewScene = false) {
   if (state._pendingScene) {
     const pending = state._pendingScene
     state._pendingScene = null
     if (scenes[pending]) return scenes[pending]
   }
 
-  const sceneList = Object.values(scenes)
-  const weights = sceneList.map(s => {
+  let candidates = Object.values(scenes)
+  // 转移阵地时排除当前场景，确保真的换地方
+  if (forceNewScene && state.currentScene) {
+    candidates = candidates.filter(s => s.id !== state.currentScene)
+  }
+  const weights = candidates.map(s => {
     let w = 10 - s.danger
     if (state._targetScene && s.id === state._targetScene) w += 20
     if (!state.scenesVisited || !state.scenesVisited.includes(s.id)) w += 8
@@ -843,7 +847,7 @@ export function autoResolveCombat(state) {
   if (ok) {
     combat.result = 'victory'; state.inCombat = false; state.kills += combat.enemy.count
     const d = randInt(3,8)*rounds; state.hp = clamp(state.hp-d,0,state.maxHp)
-    addJournalEntry(state, `⚡ 自动战斗！使用${weapon.name} ${rounds}回合击败${combat.enemy.count}只${combat.enemy.name}，损失${d}HP。`, 'combat')
+    addJournalEntry(state, `✽ 自动战斗！使用${weapon.name} ${rounds}回合击败${combat.enemy.count}只${combat.enemy.name}，损失${d}HP。`, 'combat')
     if (chance(combat.enemy.lootChance)) {
       const li = getRandomItem()
       if (addToInventory(state, li)) addJournalEntry(state, `👜 获得：${li.name}`, 'action')

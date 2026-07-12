@@ -75,7 +75,7 @@ function formatTimeOfDay(dayCount) {
     <!-- PC 端：完整显示 -->
     <div class="hidden sm:flex flex-wrap gap-x-4 gap-y-1">
       <div
-        v-for="bar in bars"
+        v-for="bar in bars.slice(0, 3)"
         :key="bar.label"
         class="flex items-center gap-1.5 min-w-0"
         style="flex: 1 1 100px;"
@@ -105,6 +105,32 @@ function formatTimeOfDay(dayCount) {
         <span v-if="(gameState.hoursAwake || 0) >= 12" class="text-[10px]" :style="{ color: (gameState.hoursAwake || 0) >= 20 ? '#c4746e' : '#E6C37C' }">
           😪 {{ Math.floor(gameState.hoursAwake || 0) }}h
         </span>
+      </div>
+    </div>
+    <!-- 第二行：理智 + 感染 -->
+    <div class="hidden sm:flex flex-wrap gap-x-4 gap-y-1 mt-1">
+      <div
+        v-for="bar in bars.slice(3)"
+        :key="bar.label"
+        class="flex items-center gap-1.5 min-w-0"
+        style="flex: 1 1 100px;"
+      >
+        <span class="text-xs whitespace-nowrap" style="color: #5a6a7a;">
+          {{ bar.icon }} {{ bar.label }}
+        </span>
+        <span class="text-xs font-bold min-w-[2rem] tabular-nums"
+              :style="{ color: barColor(bar.value, bar.color) }">
+          {{ bar.value }}
+        </span>
+        <div class="flex-1 h-1.5 min-w-[30px]" style="background: #1e2a2a;">
+          <div
+            class="h-full transition-all duration-300"
+            :style="{
+              width: barWidth(bar.value, bar.max),
+              background: barColor(bar.value, bar.color),
+            }"
+          ></div>
+        </div>
       </div>
     </div>
 
