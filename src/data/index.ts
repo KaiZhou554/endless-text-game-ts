@@ -25,3 +25,6 @@ export { npcDB } from './npcs/index.js'
 
 // 结局配置
 export { endingChecks } from './endings.js'
+
+// 机遇配置
+export { opportunities } from './opportunities.js'

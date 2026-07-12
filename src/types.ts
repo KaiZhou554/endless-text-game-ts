@@ -2,7 +2,30 @@
  * 游戏核心类型定义
  */
 
-// ==================== 物品 ====================
+// ==================== 机遇 ====================
+export type OpportunityType = 'dice' | 'narrative' | 'narrative_result'
+
+export interface DiceRange {
+  min: number
+  max: number
+  text: string  // 结果描述
+  effects?: Record<string, number>  // hp/hunger/thirst/sanity/infection
+  lootItem?: string  // 给予物品 id
+  loseItem?: boolean  // 随机丢失物品
+  combat?: boolean  // 触发战斗
+  nothing?: boolean  // 无事发生
+}
+
+export interface Opportunity {
+  id: string
+  baseText: string  // 描述文字（打字机显示）
+  type: OpportunityType
+  sceneTags?: string[]  // 场景标签匹配（空=通用）
+  diceRanges?: DiceRange[]
+  resultEffects?: Record<string, number>
+  resultItem?: string
+  delay: number  // 显示后延时(秒)
+}
 export type ItemType = 'weapon' | 'armor' | 'food' | 'drink' | 'medical' | 'tool' | 'key' | 'misc'
 
 export interface Item {

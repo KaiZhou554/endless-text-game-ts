@@ -8,6 +8,7 @@ import { getLootPool, getRandomItem } from './item-utils.js'
 import { getTimeModifier, getRandomWeather, getPlayerStatusModifiers } from './world-utils.js'
 import { getNPCDialogue, getDialogueNode } from './npc-utils.js'
 import { checkEndings } from './ending-utils.js'
+import { opportunities } from '../data/opportunities.js'
 import {
   randInt, randFloat, chance, randomPick, randomSample,
   weightedPick, rollSuccess, calcDamage, clamp,
@@ -934,6 +935,21 @@ export function equipArmor(state, itemId) {
   state.equippedArmor = item
   addJournalEntry(state, `🛡️ 装备了 ${item.name}。`, 'action')
   return true
+}
+
+export function getOpportunities(state) {
+  const scene = scenes[state.currentScene]
+  if (!scene) return []
+
+  // 通用机遇（无 sceneTags）
+  const generic = opportunities.filter(o => !o.sceneTags || o.sceneTags.length === 0)
+  // 场景匹配机遇
+  const matched = opportunities.filter(o => o.sceneTags && o.sceneTags.some(t => scene.tags.includes(t)))
+
+  let pool = [...generic, ...matched]
+  // 最多 3 个，从池中随机取
+  const shuffled = pool.sort(() => Math.random() - 0.5)
+  return shuffled.slice(0, Math.min(3, Math.floor(Math.random() * 4)))
 }
 
 export function unequipItem(state, slot) {

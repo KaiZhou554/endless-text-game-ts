@@ -5,10 +5,11 @@ import { createGameState, resetGameState, addToInventory, removeFromInventory,
          useItem, modifyStat, addJournalEntry } from './game/state.js'
 import { generateEvent, resolveOption, applySurvivalDecay, exploreNewArea,
          generateCombat, resolveCombatRound, fleeCombat, rebuildCurrentOptions,
-         getCombatStrategies, autoResolveCombat,
+         getCombatStrategies, autoResolveCombat, getOpportunities,
          startDialogue as engineStartDialogue, equipWeapon, equipArmor, unequipItem } from './game/engine.js'
 import { scenes, itemDB } from './data/index.js'
 import { checkEndings } from './game/ending-utils.js'
+import type { Opportunity } from './types'
 
 import StartScreen from './components/StartScreen.vue'
 import StatusBar from './components/StatusBar.vue'
@@ -37,6 +38,12 @@ const showCombatScrollBtn = ref(false)
 const rollingRound = ref<number | null>(null)  // 正在骰子动画的回合索引
 const rollingText = ref('')  // 动画期间的显示文本
 const pendingCombatResult = ref<string | null>(null)  // 动画期间暂存的战斗结果
+const opportunityMode = ref(false)  // 机遇模式
+const currentOpp = ref<any>(null)  // 当前机遇
+const oppDiceRolled = ref(false)  // 已掷骰
+const oppDiceResult = ref(0)
+const oppQueue = ref<any[]>([])
+const oppIndex = ref(0)
 
 // ==================== 游戏流程 ====================
 
@@ -232,6 +239,86 @@ watch(
     })
   }
 )
+
+// ==================== 机遇 ====================
+
+function showOpportunity(idx) {
+  if (idx >= oppQueue.value.length) {
+    finishOpportunities()
+    return
+  }
+  const opp = oppQueue.value[idx]
+  opportunityMode.value = true
+  currentOpp.value = opp
+  oppDiceRolled.value = false
+  oppDiceResult.value = 0
+
+  addJournalEntry(gameState, opp.baseText, 'narrative')
+
+  if (opp.type === 'narrative') {
+    setTimeout(() => showOpportunity(idx + 1), opp.delay * 1000)
+  } else if (opp.type === 'narrative_result') {
+    if (opp.resultEffects) {
+      for (const [k, v] of Object.entries(opp.resultEffects)) {
+        modifyStat(gameState, k, v)
+      }
+    }
+    if (opp.resultItem && itemDB[opp.resultItem]) {
+      addToInventory(gameState, itemDB[opp.resultItem])
+    }
+    setTimeout(() => showOpportunity(idx + 1), opp.delay * 1000)
+  }
+  // dice type waits for player to click roll
+}
+
+function handleOppDice() {
+  const opp = currentOpp.value
+  if (!opp || opp.type !== 'dice') return
+  const roll = Math.floor(Math.random() * 6) + 1
+  oppDiceResult.value = roll
+  oppDiceRolled.value = true
+
+  const diceGlyphs = ['', '⚀', '⚁', '⚂', '⚃', '⚄', '⚅']
+  const range = opp.diceRanges?.find(r => roll >= r.min && roll <= r.max)
+  const resultText = range?.text || '什么都没发生。'
+  const effects = range?.effects || {}
+
+  let out = `${diceGlyphs[roll]} ${resultText}`
+  if (effects.hp) out += ` 生命${effects.hp}`
+  if (effects.hunger) out += ` 饱腹${effects.hunger}`
+  if (effects.thirst) out += ` 口渴${effects.thirst}`
+  if (effects.sanity) out += ` 理智${effects.sanity}`
+  if (effects.infection) out += ` 感染${effects.infection}`
+
+  addJournalEntry(gameState, `<span class="dim">${out}</span>`, 'action')
+
+  // Apply effects
+  for (const [k, v] of Object.entries(effects)) {
+    modifyStat(gameState, k, v)
+  }
+  if (range?.lootItem && itemDB[range.lootItem]) {
+    addToInventory(gameState, itemDB[range.lootItem])
+  }
+
+  const nextIdx = oppQueue.value.indexOf(opp) + 1
+  setTimeout(() => showOpportunity(nextIdx), 4000)
+}
+
+function finishOpportunities() {
+  opportunityMode.value = false
+  currentOpp.value = null
+  oppQueue.value = []
+  oppIndex.value = 0
+  // 生成下一个事件
+  setTimeout(() => {
+    const event = generateEvent(gameState)
+    currentEventText.value = event.text
+    currentOptions.value = event.options
+    resultLoot.value = []
+    combatState.value = null
+    isResolving.value = false
+  }, 500)
+}
 
 function checkAndTriggerEnding() {
   const ending = checkEndings(gameState)
