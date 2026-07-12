@@ -309,11 +309,11 @@ function handleOppDice() {
   const effects = range?.effects || {}
 
   let out = `${diceGlyphs[roll]} ${resultText}`
-  if (effects.hp) out += ` 生命${effects.hp}`
-  if (effects.hunger) out += ` 饱腹${effects.hunger}`
-  if (effects.thirst) out += ` 口渴${effects.thirst}`
-  if (effects.sanity) out += ` 理智${effects.sanity}`
-  if (effects.infection) out += ` 感染${effects.infection}`
+  if (effects.hp) out += ` 生命${effects.hp > 0 ? '+' : ''}${effects.hp}`
+  if (effects.hunger) out += ` 饱腹${effects.hunger > 0 ? '+' : ''}${effects.hunger}`
+  if (effects.thirst) out += ` 口渴${effects.thirst > 0 ? '+' : ''}${effects.thirst}`
+  if (effects.sanity) out += ` 理智${effects.sanity > 0 ? '+' : ''}${effects.sanity}`
+  if (effects.infection) out += ` 感染${effects.infection > 0 ? '+' : ''}${effects.infection}`
 
   addJournalEntry(gameState, `<span class="dim">${out}</span>`, 'action')
 

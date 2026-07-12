@@ -803,6 +803,7 @@ export function resolveCombatRound(state, actionId) {
       if (addToInventory(state, li)) enemyText += ` 尸体旁找到：${li.name}。`
     }
     round = { action: actionId, playerDmg, enemyDmg: 0, playerText, enemyText }
+    combat.rounds.push(round)
     addJournalEntry(state, `✽ 战斗胜利！击败了 ${combat.enemy.count} 只${combat.enemy.name}。`, 'combat')
     return combat
   }
