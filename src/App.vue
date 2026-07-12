@@ -107,6 +107,7 @@ function handleSelectOption(option: any) {
 
   // 解析选项
   const result: any = resolveOption(gameState, option)
+  _pendingSceneChange = result.sceneChange ?? false
 
   // 将结果文本写入日志（显示在叙事区）
   addJournalEntry(gameState, result.narrativeText, 'result')
@@ -253,7 +254,8 @@ function handleCombatAction(strategyId: string) {
       combatState.value = null
       checkAndTriggerEnding()
       if (gameState.phase !== 'ending') {
-        const event = generateEvent(gameState)
+        const event = generateEvent(gameState, _pendingSceneChange)
+        _pendingSceneChange = false
         currentEventText.value = event.text
         currentOptions.value = event.options
         resultLoot.value = []
@@ -319,7 +321,8 @@ function finishCombatReward() {
   combatState.value = null
   checkAndTriggerEnding()
   if (gameState.phase !== 'ending') {
-    const event = generateEvent(gameState)
+    const event = generateEvent(gameState, _pendingSceneChange)
+    _pendingSceneChange = false
     currentEventText.value = event.text
     currentOptions.value = event.options
     resultLoot.value = []
