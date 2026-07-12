@@ -4,6 +4,7 @@
  */
 
 import { itemDB } from '../data/items.js'
+import { chance } from './utils.js'
 
 /**
  * 按类型获取物品列表
@@ -36,7 +37,7 @@ export function getLootPool(count = 3, inventory: any[] = []) {
 
   // 类型内物品权重（默认 1，越高越常见）
   const typeWeights: Record<string, Record<string, number>> = {
-    tool: { sleeping_bag: 4 },
+    tool: { sleeping_bag: 6 },
   }
 
   // 收集玩家已有的枪械需要的弹药类型
@@ -60,7 +61,7 @@ export function getLootPool(count = 3, inventory: any[] = []) {
 
   for (let i = 0; i < count; i++) {
     const type = types[Math.floor(Math.random() * types.length)]
-    if (type === 'misc' && gunAmmos.length > 0) {
+    if (type === 'misc' && gunAmmos.length > 0 && chance(0.5)) {
       // 优先掉落已有枪械的弹药
       const ammoTag = '弹药:' + gunAmmos[Math.floor(Math.random() * gunAmmos.length)]
       const ammoPool = getItemsByTag(ammoTag)
