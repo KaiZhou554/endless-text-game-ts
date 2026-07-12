@@ -62,7 +62,7 @@ const optionLabels = ['A', 'B', 'C', 'D', 'E', 'F']
 </script>
 
 <template>
-  <div class="w-full border-t px-2 sm:px-4 py-1.5 sm:py-2 space-y-1.5"
+  <div class="w-full border-t px-2 sm:px-4 py-1.5 sm:py-2 space-y-1"
        style="border-color: #2a3a3a; background: #0D1117;">
     <div
       v-for="(option, idx) in options"

@@ -232,7 +232,7 @@ const currentTurnId = computed(() => props.gameState.actionCount)
       </div>
 
       <!-- 日志条目：仅显示已 reveal 的条目（正在打字的条目由 typewriterTarget 显示） -->
-      <div v-else class="space-y-2 pb-6">
+      <div v-else class="space-y-1 pb-6">
         <div
           v-for="(entry, idx) in gameState.journal"
           :key="entry.id"
