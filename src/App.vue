@@ -32,6 +32,8 @@ const resultLoot = ref<any[]>([])       // 获得的物品
 const combatState = ref<CombatState | null>(null)    // 战斗状态
 const showCombatUI = ref(false)
 const combatStrategies = ref<any[]>([])  // 可用战斗策略
+const combatLogRef = ref<HTMLElement | null>(null)  // 战斗日志滚动容器
+const showCombatScrollBtn = ref(false)
 const rollingRound = ref<number | null>(null)  // 正在骰子动画的回合索引
 const rollingText = ref('')  // 动画期间的显示文本
 const pendingCombatResult = ref<string | null>(null)  // 动画期间暂存的战斗结果
@@ -104,8 +106,13 @@ function handleSelectOption(option: any) {
 
   // 检查战斗
   if (result.combat) {
+    // 先加入战斗日志条目（结果文本已在上方加入，保证正确顺序）
     if (result._zombieWarn) {
-      // 先显示警告文本，延迟 1.5 秒再进入战斗
+      addJournalEntry(gameState, '⚠️ 你的行动惊动了附近的丧尸！它们朝你冲了过来！即将进入战斗……', 'danger')
+    }
+    addJournalEntry(gameState, `⚔️ 进入战斗！遭遇了 ${result.combat.enemy.count} 只${result.combat.enemy.name}。`, 'combat')
+
+    if (result._zombieWarn) {
       setTimeout(() => {
         combatState.value = result.combat
         const enemy = result.combat?.enemy

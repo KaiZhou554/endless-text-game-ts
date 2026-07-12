@@ -427,7 +427,6 @@ function applyFailureEffects(result: any, option: any, state: any) {
   if (chance(0.8) && !state.inCombat) {
     result.combat = generateCombat(state)
     result._zombieWarn = true
-    addJournalEntry(state, '⚠️ 你的行动惊动了附近的丧尸！它们朝你冲了过来！即将进入战斗……', 'danger')
   } else if (chance(0.2)) {
     const inf = randInt(5, 15)
     modifyStat(state, 'infection', inf)
@@ -708,7 +707,6 @@ export function generateCombat(state) {
     playerHp: state.hp, rounds: [], result: null,
     _defending: false, enemyDesc: getEnemyDescription(enemy),
   }
-  addJournalEntry(state, `⚔️ 进入战斗！遭遇了 ${count} 只${enemy.name}。`, 'combat')
   return state.combatState
 }
 
@@ -716,7 +714,13 @@ export function resolveCombatRound(state, actionId) {
   const combat = state.combatState
   if (!combat) return null
   if (actionId === 'flee') {
-    if (chance(0.55)) { combat.result = 'fled'; state.inCombat = false; return combat }
+    if (chance(0.55)) {
+      combat.result = 'fled'
+      state.inCombat = false
+      const fleeTexts = ['你抓住机会转身就跑，头也不回地冲进最近的掩体。', '你全力冲刺，身后传来愤怒的嘶吼——你成功甩掉了它们。', '你且战且退，利用地形甩开了追击。', '你趁对方一个破绽，闪身消失在废墟之间。']
+      addJournalEntry(state, '🏃 ' + randomPick(fleeTexts), 'action')
+      return combat
+    }
     const dmg = randInt(5, 12)
     state.hp = clamp(state.hp - dmg, 0, state.maxHp)
     combat.playerHp = state.hp
