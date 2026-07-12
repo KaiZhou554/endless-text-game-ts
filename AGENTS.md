@@ -23,19 +23,28 @@ src/
 ├── assets/main.css            # 全局样式：CSS 变量、字体、滚动条、响应式
 ├── data/                      # ─── 纯数据层（无逻辑，仅供引擎引用）───
 │   ├── index.ts               #   顶层桶文件，统一导出所有数据
-│   ├── items.ts               #   60+ 物品，按 id 索引的 itemDB 对象
+│   ├── items.ts               #   桶文件，从 extensions/ 聚合物品
 │   ├── scenes.ts              #   23 场景，按 id 索引
-│   ├── situations.ts          #   34 情况/遭遇，按 id 索引
+│   ├── situations.ts          #   桶文件，从 extensions/ 聚合情景
 │   ├── modifiers.ts           #   时间/天气/状态/标签等修饰条件
 │   ├── endings.ts             #   8 个结局条件 + 结局文本
 │   ├── world.ts               #   兼容桶文件（重新导出 scenes/situations/modifiers）
 │   ├── npcs.ts                #   兼容桶文件（重新导出 npcs/index.ts）
-│   └── npcs/                  # ─── NPC 独立文件目录 ───
-│       ├── index.ts           #   桶文件，聚合所有 NPC 为 npcDB
-│       ├── lena.ts            #   莉娜（前急诊科护士）
-│       ├── marcus.ts          #   马库斯（前建筑工人）
-│       ├── stranger_mask.ts   #   戴防毒面具的人（掠夺者）
-│       └── child_anna.ts      #   安娜（九岁女孩）
+│   ├── npcs/                  # ─── NPC 独立文件目录 ───
+│   │   ├── index.ts           #   桶文件，聚合所有 NPC 为 npcDB
+│   │   ├── lena.ts            #   莉娜（前急诊科护士）
+│   │   ├── marcus.ts          #   马库斯（前建筑工人）
+│   │   ├── stranger_mask.ts   #   戴防毒面具的人（掠夺者）
+│   │   └── child_anna.ts      #   安娜（九岁女孩）
+│   └── extensions/            # ─── 扩展目录（按主题拆分）───
+│       ├── items-weapons.ts   #   武器 & 弹药
+│       ├── items-supplies.ts  #   消耗品（食物/饮品/医疗）
+│       ├── items-equipment.ts #   装备（防具/工具/杂项）
+│       ├── items-key.ts       #   关键道具
+│       ├── situations-combat.ts   #   战斗/危险类遭遇
+│       ├── situations-social.ts   #   社交/剧情类遭遇
+│       ├── situations-scavenge.ts #   搜索/物资类遭遇
+│       └── situations-explore.ts  #   探索/环境类遭遇
 ├── game/                      # ─── 引擎层（纯函数，无 Vue 依赖）───
 │   ├── state.ts               #   响应式状态管理 (Vue reactive)
 │   ├── engine.ts              #   核心：事件生成、选项解析、战斗、对话、叙事
@@ -281,18 +290,23 @@ endingChecks = [{
 
 ## How to Extend
 
+### 扩展工作流
+1. 在 `src/data/extensions/` 下找到对应主题的文件（如 `items-weapons.ts`），直接追加条目
+2. 如果新增的主题没有对应的扩展文件，新建一个（如 `items-armor.ts`），导出 `Partial<ItemDB>`
+3. 在桶文件（`items.ts` 或 `situations.ts`）中 import 并展开
+
 ### 添加新物品
-在 `src/data/items.ts` 的 `itemDB` 中添加新条目，遵循上方 Data Format。物品 id 自动可用于 `requireItems` 判定。type 为 `weapon` 的物品会自动出现在战斗武器选项中。
+在对应扩展文件中添加条目，遵循 Data Format 的字段定义。type 为 `weapon` 的物品会自动出现在战斗武器选项中。
 
 ### 添加新场景
-在 `src/data/scenes.ts` 的 `scenes` 对象中添加。如需按区域分组（如"医院剧情组"包含多个相关场景），可创建 `src/data/scenes/hospital.ts` 等文件，然后在 `src/data/scenes.ts` 中 `import` 并合并。
+在 `src/data/scenes.ts` 的 `scenes` 对象中添加。如需按区域分组，可创建 `src/data/extensions/scenes-hospital.ts` 等文件，然后在 `src/data/scenes.ts` 中 import 并合并。
 
 ### 添加新情况
-在 `src/data/situations.ts` 的 `situations` 对象中添加。选项 id 会被 `buildResultText` 的路由逻辑识别——如需新的叙事类型，在 `engine.ts` 的 `buildResultText` 中追加对应分支。
+在对应扩展文件中添加，或新建扩展文件后在 `situations.ts` 桶文件中合并。选项 id 在 `buildResultText` 的路由逻辑中识别——如需新的叙事类型，在 `engine.ts` 的 `buildResultText` 中追加分支。
 
 ### 添加新 NPC
-1. 在 `src/data/npcs/` 下新建角色文件（如 `dr_smith.ts`），导出完整 NPC 对象（含 `dialogueTree`）。
-2. 在 `src/data/npcs/index.ts` 中 `import` 并加入 `npcDB`。
+1. 在 `src/data/npcs/` 下新建角色文件（如 `dr_smith.ts`），导出完整 NPC 对象
+2. 在 `src/data/npcs/index.ts` 中 `import` 并加入 `npcDB`
 无需修改引擎层或组件层。NPC 通过固定剧情事件触发，不再随机遭遇。
 
 ### 添加新结局
@@ -302,10 +316,10 @@ endingChecks = [{
 `engine.ts` 的 `buildResultText` 函数按 `option.id` 和 `option.tags` 路由到不同叙事模板。新增类型时在此处追加分支。
 
 ### 添加全新数据类别
-若需全新的数据类别（如"帮派势力"、"派系声望"等）：
-1. 在 `src/data/` 下创建纯数据文件（如 `factions.ts`）
-2. 在 `src/data/index.ts` 中添加一行 `export { factionDB } from './factions.ts'`（Vite 将 `.ts` 解析为实际文件）
-3. 在 `src/game/` 下创建对应的工具函数文件（如 `faction-utils.ts`）
+若需全新的数据类别：
+1. 在 `src/data/` 下创建纯数据文件（如 `factions.ts`），或在 `src/data/extensions/` 下创建
+2. 在 `src/data/index.ts` 中添加一行 `export { factionDB } from './factions.ts'`
+3. 在 `src/game/` 下创建对应的工具函数文件
 
 ### 添加新战斗策略
 在 `engine.ts` 的 `combatStrategies` 数组中追加策略对象，包含：
