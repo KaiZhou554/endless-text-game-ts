@@ -175,9 +175,9 @@ export const weapons: ItemDB = {
 
   ammo_9mm: {
     id: 'ammo_9mm',
-    name: '9mm 子弹 (x12)',
+    name: '9mm 子弹 (x24)',
     type: 'misc',
-    desc: '一盒 9mm 帕拉贝鲁姆手枪弹，共 12 发。',
+    desc: '一盒 9mm 帕拉贝鲁姆手枪弹，共 24 发。',
     tags: ['弹药:9mm'],
     effects: {},
     stackable: true,
@@ -185,9 +185,9 @@ export const weapons: ItemDB = {
   },
   ammo_12gauge: {
     id: 'ammo_12gauge',
-    name: '12号霰弹 (x6)',
+    name: '12号霰弹 (x12)',
     type: 'misc',
-    desc: '六发红色塑料壳的 12 号霰弹。',
+    desc: '十二发红色塑料壳的 12 号霰弹。',
     tags: ['弹药:12gauge'],
     effects: {},
     stackable: true,
@@ -195,9 +195,9 @@ export const weapons: ItemDB = {
   },
   ammo_bolt: {
     id: 'ammo_bolt',
-    name: '弩箭 (x5)',
+    name: '弩箭 (x10)',
     type: 'misc',
-    desc: '五支碳纤维弩箭，箭头锋利。用完后可以尝试回收。',
+    desc: '十支碳纤维弩箭，箭头锋利。用完后可以尝试回收。',
     tags: ['弹药:bolt'],
     effects: {},
     stackable: true,
@@ -205,9 +205,9 @@ export const weapons: ItemDB = {
   },
   ammo_nails: {
     id: 'ammo_nails',
-    name: '钉枪钉 (x30)',
+    name: '钉枪钉 (x60)',
     type: 'misc',
-    desc: '一盒 30 发的镀锌排钉，适配大多数改装钉枪。',
+    desc: '一盒 60 发的镀锌排钉，适配大多数改装钉枪。',
     tags: ['弹药:nails'],
     effects: {},
     stackable: true,

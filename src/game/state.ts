@@ -35,7 +35,7 @@ export function createInitialState(): GameState {
 
     // === 背包 ===
     inventory: [],          // [{...item}, ...]
-    maxInventory: 6,        // 基础容量
+    maxInventory: 12,        // 基础容量（背包可额外拓展）
 
     // === 武器/装备（已装备） ===
     equippedWeapon: null,   // item 对象 或 null
@@ -115,6 +115,7 @@ export function getEffectiveCapacity(state) {
   const backpack = state.inventory.find(i => i.id === 'backpack')
   if (backpack) {
     capacity += (backpack.effects.capacityBonus || 0)
+    capacity -= 1 // 背包本身占 1 格
   }
   return capacity
 }

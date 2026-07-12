@@ -116,7 +116,7 @@ function handleEquip(item) {
       <div class="flex justify-between">
         <span style="color: #5a6a7a;">容量:</span>
         <span style="color: #B0C4DE;">
-          {{ inventoryItems.length }}/{{ gameState.maxInventory + (gameState.inventory.find(i => i.id === 'backpack') ? 2 : 0) }}
+          {{ inventoryItems.length }}/{{ gameState.maxInventory + (gameState.inventory.find(i => i.id === 'backpack') ? 4 : 0) }}
         </span>
       </div>
     </div>
