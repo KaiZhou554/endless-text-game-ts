@@ -203,6 +203,7 @@ function handleCombatAction(strategyId: string) {
       rollingText.value = realText
         .replace(/🎲\[[^\]]+\]/, `🎲[${fakeRoll}]`)
         .replace(/\d+ 点伤害/, '?? 点伤害')
+        .replace(/打出必杀一击！💥/, '造成了 ?? 点伤害')
       combatState.value = { ...combat }
 
       if (ticks >= 12) {
