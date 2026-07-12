@@ -37,6 +37,7 @@ export interface Item {
   effects: Record<string, any>
   stackable: boolean
   reusable: boolean
+  initialStack?: number  // 首次获得时的堆叠数（弹药默认多发）
   _count?: number
   slots?: number  // 占位格数（默认 2，小件物品 1）
   hitRanges?: HitRange[]

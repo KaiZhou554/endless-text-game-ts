@@ -126,7 +126,7 @@ export function getEffectiveCapacity(state) {
 export function getUsedSlots(state) {
   let used = 0
   for (const item of state.inventory) {
-    used += (item.slots || 2) * (item._count || 1)
+    used += (item.slots ?? 2) * (item._count || 1)
   }
   return used
 }
@@ -135,7 +135,7 @@ export function getUsedSlots(state) {
  * 添加物品到背包（基于占格数判断）
  */
 export function addToInventory(state, item) {
-  const slots = item.slots || 2
+  const slots = item.slots ?? 2
   const capacity = getEffectiveCapacity(state)
   const hardLimit = capacity + 4
   // 可堆叠物品尝试堆叠
@@ -151,7 +151,7 @@ export function addToInventory(state, item) {
   if (getUsedSlots(state) + slots > hardLimit) {
     return false
   }
-  state.inventory.push({ ...item, _count: 1 })
+  state.inventory.push({ ...item, _count: item.initialStack || 1 })
   state.itemsCollected++
   return true
 }

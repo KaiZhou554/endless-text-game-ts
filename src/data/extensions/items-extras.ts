@@ -42,14 +42,15 @@ export const extras: ItemDB = {
 
   ammo_harpoon: {
     id: 'ammo_harpoon',
-    name: '鱼叉 (x3)',
+    name: '鱼叉',
     type: 'misc',
     desc: '三支不锈钢鱼叉，尖端有倒刺。用完后可以尝试回收。',
     tags: ['弹药:harpoon'],
     effects: {},
     stackable: true,
     reusable: false,
-    slots: 1,
+    slots: 0,
+    initialStack: 3,
   },
 
   // ==================== 食物 ====================

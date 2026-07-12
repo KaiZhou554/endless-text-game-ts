@@ -250,6 +250,10 @@ function handleCombatAction(strategyId: string) {
   const delay = combat.rounds?.length ? Math.min(600 + combat.rounds.length * 200, 2000) : 600
 
   setTimeout(() => {
+    // 每回合后刷新策略（弹药可能已消耗）
+    if (!combat.result) {
+      combatStrategies.value = getCombatStrategies(gameState, combatState.value?.enemy)
+    }
     if (combat.result === 'victory') {
       // 胜利后延迟 1 秒让玩家看到击杀描述，然后显示奖励掷骰
       setTimeout(() => {

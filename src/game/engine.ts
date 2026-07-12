@@ -463,11 +463,17 @@ function applySuccessEffects(result: any, option: any, state: any) {
 }
 
 function applyFailureEffects(result: any, option: any, state: any) {
-  const dmg = randInt(5, 15)
-  modifyStat(state, 'hp', -dmg)
-  result.effects.hp = -dmg
-  // 大部分失败触发丧尸战斗，小概率直接受伤
-  if (chance(0.8) && !state.inCombat) {
+  const isCombatOption = option.combat === true
+  if (!isCombatOption) {
+    const dmg = randInt(5, 15)
+    modifyStat(state, 'hp', -dmg)
+    result.effects.hp = -dmg
+  }
+  // combat:true 的选项失败也确保触发战斗，非 combat 选项按概率触发
+  if (isCombatOption) {
+    result.combat = generateCombat(state)
+    result._zombieWarn = true
+  } else if (chance(0.8) && !state.inCombat) {
     result.combat = generateCombat(state)
     result._zombieWarn = true
   } else if (chance(0.2)) {

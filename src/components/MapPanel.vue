@@ -33,6 +33,7 @@ const mapLocations = [
   { id: 'armory', name: '军械库', icon: '🔫', desc: '国民警卫队', danger: 6, tags: ['武器'] },
   { id: 'library', name: '图书馆', icon: '📚', desc: '市立图书馆', danger: 1, tags: ['安静'] },
   { id: 'rooftop', name: '大楼天台', icon: '🏙️', desc: '写字楼顶', danger: 1, tags: ['安全'] },
+  { id: 'parking_garage', name: '地下停车场', icon: '🅿️', desc: '地下车库', danger: 3, tags: ['交通', '黑暗'] },
 ]
 
 function dangerColor(danger) {
