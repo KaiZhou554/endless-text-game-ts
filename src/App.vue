@@ -666,8 +666,8 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
             <p class="mt-0.5">{{ combatState.enemyDesc }}</p>
           </div>
           <!-- 背包破损/超重提示 -->
-          <div v-if="combatBagMsg" class="text-xs leading-relaxed px-2 py-1 border rounded-sm" style="border-color: #c4746e; color: #c4746e; background: #1a1111;">
-            {{ combatBagMsg }}
+          <div v-if="combatBagMsg" class="text-xs leading-relaxed px-2 py-1 border rounded-sm" style="border-color: #2a3a3a; background: #0D1117;">
+            <span class="dim" v-html="combatBagMsg"></span>
           </div>
           <div
             v-for="(round, idx) in combatState.rounds"
