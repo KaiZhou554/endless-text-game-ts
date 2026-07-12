@@ -165,7 +165,7 @@ function handleEquip(item) {
           <!-- 选中后的操作按钮 -->
           <div v-if="selectedItem === item" class="flex gap-2 mt-2">
             <button
-              v-if="item.type === 'food' || item.type === 'drink' || item.type === 'medical' || (item.type === 'misc' && item.effects && Object.keys(item.effects).length > 0)"
+              v-if="item.type === 'food' || item.type === 'drink' || item.type === 'medical'"
               @click.stop="handleUse(item)"
               class="text-[11px] px-2 py-1 border rounded-sm min-h-[36px] transition-colors"
               style="border-color: #9ACD9D; color: #9ACD9D; background: #0D1117;"

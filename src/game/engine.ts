@@ -88,29 +88,25 @@ export function applySurvivalDecay(state) {
   if (used > cap) {
     if (state._isOverweight) {
       // 连续第二回合超重 → 背包破损
-      let msg = '⊗ 你的背包终于撑不住了！'
+      let msg = '⊗ 你的背包终于撑不住了！有些东西损坏了。'
       // 先丢弃所有大容量背包
       const backpacks = state.inventory.filter(i => i.id === 'backpack')
       for (const bp of backpacks) {
         removeFromInventory(state, bp.id)
-        msg += ` ${bp.name}撑破了脱落，`
       }
       // 随机丢弃物品直到低于容量上限
       let tries = 0
       while (getUsedSlots(state) > cap && tries < 50) {
         const idx = Math.floor(Math.random() * state.inventory.length)
         if (idx >= 0 && idx < state.inventory.length) {
-          const item = state.inventory[idx]
-          msg += ` ${item.name}丢失，`
-          removeFromInventory(state, item.id)
+          removeFromInventory(state, state.inventory[idx].id)
         }
         tries++
       }
-      msg = msg.replace(/，$/, '。')
       addJournalEntry(state, msg, 'danger')
       state._isOverweight = false
     } else {
-      addJournalEntry(state, '⊗ 背包快装不下了！行动会受到影响，尽快整理或丢弃一些物品。', 'warning')
+      addJournalEntry(state, '⊗ 背包快装不下了！用掉或丢弃一些东西腾出空间。', 'warning')
       state._isOverweight = true
     }
   } else {

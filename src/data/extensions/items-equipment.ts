@@ -247,7 +247,7 @@ export const equipment: ItemDB = {
   mints: {
     id: 'mints',
     name: '薄荷糖',
-    type: 'misc',
+    type: 'food',
     desc: '一小盒薄荷糖，清凉的味道能让人精神一振。末日里的一点甜头。',
     tags: ['消耗品', '理智:+3'],
     effects: { sanity: 3 },
