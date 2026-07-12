@@ -89,6 +89,7 @@ export function createInitialState(): GameState {
 
     // === 战斗内部 ===
     _combatNextRoundBonus: 1.0,
+    _isOverweight: false,
   }
 }
 
@@ -134,17 +135,19 @@ export function getUsedSlots(state) {
  */
 export function addToInventory(state, item) {
   const slots = item.slots || 2
+  const capacity = getEffectiveCapacity(state)
+  const hardLimit = capacity + 4
   // 可堆叠物品尝试堆叠
   if (item.stackable) {
     const existing = state.inventory.find(i => i.id === item.id)
     if (existing) {
-      if (getUsedSlots(state) + slots > getEffectiveCapacity(state)) return false
+      if (getUsedSlots(state) + slots > hardLimit) return false
       existing._count = (existing._count || 1) + 1
       state.itemsCollected++
       return true
     }
   }
-  if (getUsedSlots(state) + slots > getEffectiveCapacity(state)) {
+  if (getUsedSlots(state) + slots > hardLimit) {
     return false
   }
   state.inventory.push({ ...item, _count: 1 })

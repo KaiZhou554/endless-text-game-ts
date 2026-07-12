@@ -287,5 +287,6 @@ export interface GameState {
   _pendingScene?: string | null
   _targetScene?: string | null
   _bleeding?: boolean
+  _isOverweight?: boolean
   currentEnding?: Ending | null
 }
