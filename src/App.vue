@@ -215,7 +215,7 @@ function handleCombatAction(strategyId: string) {
       showCombatUI.value = false
       checkAndTriggerEnding()
     }
-  }, delay)
+  }, Math.max(delay, 900)) // 确保延迟大于骰子动画(840ms)
 }
 
 function checkAndTriggerEnding() {
