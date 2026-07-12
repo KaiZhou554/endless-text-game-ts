@@ -179,6 +179,7 @@ export interface CombatRound {
   enemyDmg: number
   playerText: string
   enemyText: string
+  isCrit?: boolean
 }
 
 export interface CombatState {

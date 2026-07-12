@@ -45,6 +45,10 @@ const oppDiceResult = ref(0)
 const oppRollReady = ref(true)  // 骰子按钮可用
 const oppQueue = ref<any[]>([])
 const oppIndex = ref(0)
+const combatRewardActive = ref(false)  // 战后奖励掷骰
+const combatRewardRolled = ref(false)
+const combatRewardRoll = ref(0)
+const combatRewardText = ref('')
 
 // ==================== 游戏流程 ====================
 
@@ -222,18 +226,13 @@ function handleCombatAction(strategyId: string) {
 
   setTimeout(() => {
     if (combat.result === 'victory') {
-      // 胜利后延迟 2 秒让玩家看到击杀描述
+      // 胜利后延迟 1 秒让玩家看到击杀描述，然后显示奖励掷骰
       setTimeout(() => {
-        showCombatUI.value = false
-        combatState.value = null
-        checkAndTriggerEnding()
-        if (gameState.phase !== 'ending') {
-          const event = generateEvent(gameState)
-          currentEventText.value = event.text
-          currentOptions.value = event.options
-          resultLoot.value = []
-        }
-      }, 2000)
+        combatRewardActive.value = true
+        combatRewardRolled.value = false
+        combatRewardRoll.value = 0
+        combatRewardText.value = ''
+      }, 1000)
     } else if (combat.result === 'fled') {
       showCombatUI.value = false
       combatState.value = null
@@ -251,6 +250,60 @@ function handleCombatAction(strategyId: string) {
       }, 2000) // 死亡后延时 2 秒
     }
   }, Math.max(delay, 900)) // 确保延迟大于骰子动画(840ms)
+}
+
+// ==================== 战后奖励 ====================
+
+const combatRewardPools = {
+  small: ['bandage', 'canned_beans', 'energy_bar', 'water_bottle', 'painkillers'],
+  big: ['pistol', 'shotgun', 'first_aid_kit', 'antibiotics', 'antidote', 'military_rations', 'crossbow', 'axe'],
+}
+
+function handleCombatRewardDice() {
+  const roll = Math.floor(Math.random() * 6) + 1
+  combatRewardRoll.value = roll
+  combatRewardRolled.value = true
+
+  const diceGlyphs = ['', '⚀', '⚁', '⚂', '⚃', '⚄', '⚅']
+  const glyph = diceGlyphs[roll] + ' '
+
+  if (roll === 1) {
+    combatRewardText.value = `${glyph}这具丧尸身上空无一物。你叹了口气，准备离开。`
+    setTimeout(() => finishCombatReward(), 1500)
+  } else if (roll <= 3) {
+    const pool = combatRewardPools.small
+    const itemId = pool[Math.floor(Math.random() * pool.length)]
+    const item = itemDB[itemId]
+    if (item && addToInventory(gameState, item)) {
+      combatRewardText.value = `${glyph}你在尸体旁发现了一些有用物资：${item.name}。`
+    } else {
+      combatRewardText.value = `${glyph}你翻找了一番，但背包已经满了。`
+    }
+    setTimeout(() => finishCombatReward(), 2000)
+  } else {
+    const pool = combatRewardPools.big
+    const itemId = pool[Math.floor(Math.random() * pool.length)]
+    const item = itemDB[itemId]
+    if (item && addToInventory(gameState, item)) {
+      combatRewardText.value = `${glyph}你仔细搜索，找到了一件好东西：${item.name}！`
+    } else {
+      combatRewardText.value = `${glyph}你发现了好东西，但背包已经放不下了！`
+    }
+    setTimeout(() => finishCombatReward(), 2500)
+  }
+}
+
+function finishCombatReward() {
+  combatRewardActive.value = false
+  showCombatUI.value = false
+  combatState.value = null
+  checkAndTriggerEnding()
+  if (gameState.phase !== 'ending') {
+    const event = generateEvent(gameState)
+    currentEventText.value = event.text
+    currentOptions.value = event.options
+    resultLoot.value = []
+  }
 }
 
 // 战斗日志新增回合时自动滚动
@@ -599,9 +652,9 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
           >
             <!-- 玩家行动（右对齐） -->
             <div v-if="round.playerText" class="text-right"
-                 :style="{ color: rollingRound === idx ? '#5a6a7a' : '#9ACD9D' }">
+                 :style="{ color: rollingRound === idx ? '#5a6a7a' : (round.isCrit ? '#FFD700' : '#9ACD9D') }">
               <span class="text-[10px]" style="color: #5a6a7a;">你:</span>
-              <p class="mt-0.5">
+              <p class="mt-0.5" :class="{ 'crit-scan': round.isCrit && rollingRound !== idx }">
                 <template v-if="rollingRound === idx">{{ rollingText }}</template>
                 <template v-else>{{ round.playerText }}</template>
               </p>
@@ -671,9 +724,26 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
 
         <!-- 战斗结果 -->
         <div v-else class="border-t px-4 py-3 text-center" style="border-color: #2a3a3a;">
-          <p v-if="combatState.result === 'victory'" class="text-sm font-bold" style="color: #9ACD9D;">💀 战斗胜利！</p>
+          <p v-if="combatState.result === 'victory' && !combatRewardActive" class="text-sm font-bold" style="color: #9ACD9D;">💀 战斗胜利！</p>
           <p v-else-if="combatState.result === 'fled'" class="text-sm" style="color: #E6C37C;">🏃 你脱离了战斗。</p>
           <p v-else-if="combatState.result === 'death'" class="text-sm font-bold" style="color: #c4746e;">💀 你倒下了……</p>
+
+          <!-- 战后奖励：搜刮尸体 -->
+          <div v-if="combatRewardActive" class="mt-1">
+            <template v-if="!combatRewardRolled">
+              <p class="text-xs mb-2" style="color: #B0C4DE;">搜索尸体看看有什么可用的……</p>
+              <button
+                @click="handleCombatRewardDice"
+                class="w-full py-2.5 px-4 text-sm border rounded-sm transition-colors min-h-[44px]"
+                style="border-color: #E6C37C; color: #E6C37C; background: #0D1117;"
+                @mouseenter="hoverBg($event, '#1e2a2a')"
+                @mouseleave="hoverBg($event, '#0D1117')"
+              >🎲 搜刮战利品</button>
+            </template>
+            <template v-else>
+              <p class="text-sm leading-relaxed" style="color: #B0C4DE;">{{ combatRewardText }}</p>
+            </template>
+          </div>
         </div>
       </div>
 

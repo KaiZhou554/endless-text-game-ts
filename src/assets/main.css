@@ -124,3 +124,44 @@ html, body {
 .dim {
   color: #658080;
 }
+
+/* ===== 必杀一击 ===== */
+@keyframes crit-glow {
+  0% {
+    color: #FFD700;
+    text-shadow: 0 0 4px #FFD700, 0 0 12px #FFA500;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255,215,0,0.15) 10%,
+      rgba(255,255,255,0.2) 40%,
+      rgba(255,255,255,0.4) 50%,
+      rgba(255,255,255,0.2) 60%,
+      rgba(255,215,0,0.15) 90%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    background-position: -100% 0;
+  }
+  30% {
+    color: #FFD700;
+    text-shadow: 0 0 8px #FFD700, 0 0 20px #FFA500;
+    background-position: 50% 0;
+  }
+  60% {
+    color: #FFD700;
+    text-shadow: 0 0 4px #FFD700, 0 0 12px #FFA500;
+    background-position: 200% 0;
+  }
+  100% {
+    color: #FFD700;
+    text-shadow: none;
+    background: transparent;
+    background-position: 200% 0;
+  }
+}
+.crit-scan {
+  display: inline-block;
+  padding: 0 4px;
+  border-radius: 2px;
+  animation: crit-glow 1.2s ease-out forwards;
+}

@@ -733,6 +733,7 @@ export function resolveCombatRound(state, actionId) {
     return combat
   }
   let round
+  let isCritRound = false
   const isWeapon = actionId.startsWith('weapon_')
   let playerText = '', enemyText = '', playerDmg = 0, enemyDmg = 0
   if (isWeapon) {
@@ -749,6 +750,7 @@ export function resolveCombatRound(state, actionId) {
     } else if (roll === 20) {
       playerDmg = 9999
       playerText = `🎲[${roll}] 你使用${wn}打出了必杀一击！💥 摧枯拉朽！`
+      isCritRound = true
     } else {
       const ranges = getHitRanges(wd)
       const hit = ranges.find(r => roll >= r.min && roll <= r.max)
@@ -802,7 +804,7 @@ export function resolveCombatRound(state, actionId) {
       const li = getRandomItem()
       if (addToInventory(state, li)) enemyText += ` 尸体旁找到：${li.name}。`
     }
-    round = { action: actionId, playerDmg, enemyDmg: 0, playerText, enemyText }
+    round = { action: actionId, playerDmg, enemyDmg: 0, playerText, enemyText, isCrit: isCritRound }
     combat.rounds.push(round)
     addJournalEntry(state, `✽ 战斗胜利！击败了 ${combat.enemy.count} 只${combat.enemy.name}。`, 'combat')
     return combat
@@ -815,7 +817,7 @@ export function resolveCombatRound(state, actionId) {
     enemyDmg = Math.floor(enemyDmg * (1 - armor.effects.damageReduction))
     if (armor.effects.durability && --armor.effects.durability <= 0) { removeFromInventory(state, armor.id); enemyText += ` ⚠️${armor.name}损坏！` }
   }
-  round = { action: actionId, playerDmg, enemyDmg, playerText, enemyText: enemyText + ` ${combat.enemy.name}反击，${enemyDmg} 点伤害。` + (enemyDmg <= 0 ? '（被格挡）' : '') }
+  round = { action: actionId, playerDmg, enemyDmg, playerText, enemyText: enemyText + ` ${combat.enemy.name}反击，${enemyDmg} 点伤害。` + (enemyDmg <= 0 ? '（被格挡）' : ''), isCrit: false }
   state.hp = clamp(state.hp - enemyDmg, 0, state.maxHp)
   combat.playerHp = state.hp
   if (chance(0.2)) { const ia = randInt(5,10); state.infection = clamp(state.infection+ia,0,state.maxInfection); round.enemyText += ` ⚠️咬伤感染 +${ia}` }

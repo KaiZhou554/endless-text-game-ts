@@ -32,7 +32,7 @@ export function getRandomItem(type: any = null) {
  */
 export function getLootPool(count = 3) {
   const loot: any[] = []
-  const types = ['food', 'drink', 'medical', 'misc']
+  const types = ['food', 'drink', 'medical', 'misc', 'weapon']
   for (let i = 0; i < count; i++) {
     const type = types[Math.floor(Math.random() * types.length)]
     loot.push(getRandomItem(type))
