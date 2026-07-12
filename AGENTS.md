@@ -20,14 +20,14 @@ src/
 ├── main.ts                    # Vue 入口，挂载 #app
 ├── types.ts                   # 核心类型定义（Item, GameState, Scene, Opportunity 等）
 ├── App.vue                    # 主组件 — 流程编排、事件循环、面板切换、机遇系统
-├── assets/main.css            # 全局样式：CSS 变量、字体、滚动条、响应式
+├── assets/main.css            # 全局样式：CSS 变量、字体、滚动条、响应式、动画
 ├── data/                      # ─── 纯数据层（无逻辑，仅供引擎引用）───
 │   ├── index.ts               #   顶层桶文件，统一导出所有数据
 │   ├── items.ts               #   桶文件，从 extensions/ 聚合物品
 │   ├── scenes.ts              #   23 场景，按 id 索引
 │   ├── situations.ts          #   桶文件，从 extensions/ 聚合情景
 │   ├── modifiers.ts           #   时间/天气/状态/标签等修饰条件
-│   ├── endings.ts             #   8 个结局条件 + 结局文本
+│   ├── endings.ts             #   12 个结局条件 + 结局文本
 │   ├── opportunities.ts       #   15+ 机遇（通用 + 场景特有）
 │   ├── world.ts               #   兼容桶文件
 │   ├── npcs.ts                #   兼容桶文件
@@ -56,7 +56,7 @@ src/
 │   └── ending-utils.ts        #   结局检查
 └── components/                # ─── 组件层（Vue SFC）───
     ├── StartScreen.vue        #   开始画面 + 模式选择
-    ├── StatusBar.vue          #   5 指标状态栏 + 时段/疲劳显示（响应式）
+    ├── StatusBar.vue          #   5 指标（两行显示）+ 时段/疲劳（响应式）
     ├── NarrativeArea.vue      #   主叙事滚动区，打字机效果，队列显示
     ├── OptionsPanel.vue       #   选项按钮列表
     ├── ActionBar.vue          #   底部快捷栏（背包/日志/地图/存档）
@@ -75,24 +75,29 @@ src/
   → App.handleSelectOption()
     → engine.resolveOption(state, option)
       → 判定成功/失败
-      → buildResultText() 生成叙事段落
+      → buildResultText() 生成叙事段落（支持 successText/failText 自定义文本）
       → applySuccess/FailureEffects() 修改 state
       → applySurvivalDecay() 衰减指标（+1h，疲劳惩罚）
+      → 超重检查（容量+4，首次警告，二次破损）
       → checkEndings() 检查结局
       → 高危险场景 12% 概率触发战斗
+      → combat:true 选项 100% 触发战斗 UI
     → addJournalEntry() 写入日志（显示在 NarrativeArea）
-    → [可选] getOpportunities() 0-3 个机遇
-    → engine.generateEvent() 生成下一事件（同场景或换场景）
+    → [可选] getOpportunities() 0-3 个机遇（机遇推进 1h 但不计疲劳）
+    → engine.generateEvent() 生成下一事件（sceneChange 100% 换场景）
 
 使用物品（从背包）
-  → handleUseItem() → useItem() 应用效果
+  → handleUseItem() → useItem() 应用效果 + 派发 events
   → rebuildCurrentOptions() 刷新选项（背包满状态变化）
 
 战斗（d20 全屏对话式界面）
+  → 武器需弹药检查（无弹药不显示武器选项）
   → 玩家选择武器（≤2 件背包武器）或策略（4 中随机 2）
   → resolveCombatRound() → d20 骰子检定 + 命中区间计算伤害
+  → 噪音检查仅在敌人存活时触发（击杀后不引怪）
   → 玩家消息显示在右侧，丧尸反击/死状显示在左侧
   → 可一键跳过（单次检定）或逃跑（概率递增）
+  → 胜利后 d6 搜刮战利品（⚀⚁⚂ 无 ⚃⚄ 小奖 ⚅ 大奖）
 ```
 
 ## Data Format
@@ -106,8 +111,9 @@ itemDB = {
     name: '显示名称',
     type: 'weapon' | 'armor' | 'food' | 'drink' | 'medical' | 'tool' | 'key' | 'misc',
     desc: '描述文本',
-    tags: ['标签1', '标签2'],   // 用于选项条件判定
+    tags: ['标签1', '标签2'],   // 用于选项条件判定；'极稀有'/'稀有'触发背景特效
     effects: { damage: 3, noise: 1 },  // 实际效果数值
+    events?: ['clear_fatigue'],  // 使用时的特殊事件（events 系统）
     stackable: false,           // 可堆叠（同类物品数量叠加）
     reusable: true,             // 使用后不消耗
     slots: 1,                   // 占位格数（默认 2，小件 1）
@@ -116,12 +122,14 @@ itemDB = {
 ```
 
 **type 对应的 effects 字段：**
-- `weapon`: `damage` (影响命中区间分配), `noise` (1-10), `durability`
+- `weapon`: `damage` (影响命中区间分配), `noise` (1-10), `durability`, `ammo` (弹药类型)
 - `armor`: `damageReduction` (0-1), `durability`, `headProtection`, `gasProtection`
 - `food`: `hunger` (正值增加), `thirst` (可能为负), `sanity`
 - `drink`: `thirst`, `hunger`, `sanity`
 - `medical`: `hp`, `infection` (负值降低), `sanity`, `stopBleeding`
-- `tool`/`key`/`misc`: 通常无 effects，靠 tags 驱动判定
+- `tool`/`key`/`misc`: 通常无 effects，靠 tags 驱动判定；tool 有消耗效果时显示"使用"按钮
+
+**规格物品背景特效：** 日志中极稀有物品金色扫描（`item-rare`），稀有物品紫色扫描（`item-epic`），通过 `wrapItemName()` 根据 tags 自动添加。
 
 ### 武器命中区间 (hitRanges)
 
@@ -134,7 +142,8 @@ function getHitRanges(wd: number): Array<{min, max, dmg}>
 // wd=8: 2-5→+8, 6-14→+13, 15-19→+17
 ```
 
-伤害公式：`基础 4 + 区间加成`。骰出 1 = 失误，骰出 20 = 必杀。
+伤害公式：`基础 4 + 区间加成`。骰出 1 = 失误，骰出 20 = 必杀（金色扫描动画 `crit-scan`）。
+骰子动画期间所有结果（成功/失败/必杀）统一显示 `?? 点伤害` 占位，不提前剧透。
 
 ### 场景 (scenes.ts)
 
@@ -169,8 +178,10 @@ situations = {
         requireTags: ['食物'],          // 需要的物品标签（至少一个匹配）
         forbidTags: ['噪音:高'],        // 禁止的标签（有任何则禁用）
         successRate: 0.7,              // 基础成功率
-        combat: true,                  // 成功时可能触发战斗
+        combat: true,                  // 成功时 100% 触发战斗 UI
         sanityEffect: -10,             // 固定理智变化
+        successText?: '自定义成功叙事', // 优先于通用模板
+        failText?: '自定义失败叙事',    // 优先于通用模板
       }
     ],
     danger: 3,   // 危险等级，影响权重
@@ -184,6 +195,7 @@ situations = {
 - `forbidTags`: 背包物品或遗留标签匹配则禁用
 - 全部不可用时引擎自动注入 `fallback_move_on` 兜底选项
 - 背包满时（基于 slot 占位），`['搜索', '采集']` 标签的选项自动标记为不可用
+- 选项自定义文本（`successText`/`failText`）优先于 `buildResultText` 通用模板
 
 ### NPC (data/npcs/ — 独立文件，通过 npcs/index.ts 聚合为 npcDB)
 
@@ -232,6 +244,8 @@ opportunities = [{
 }]
 ```
 
+机遇完成后推进 1h（`dayCount += 1/24`），不增加 `hoursAwake`（不计疲劳）。
+
 ### 结局 (endings.ts)
 
 ```js
@@ -241,38 +255,46 @@ endingChecks = [{
   check(state) { return state.infection >= 100 },  // 返回 true 触发
   title: '标题', subtitle: '副标题（{days}替换为天数）',
   text: '结局文本（pre 格式，支持换行）',
-  stats: ['days', 'kills', 'itemsCollected'],  // 显示的统计项
+  stats: ['days', 'kills', 'itemsCollected'],  // 显示的统计项（含 kills 击杀数）
   isDeath: true,   // true = 死亡结局
 }]
 ```
 
 ## 战斗系统 (d20)
 
-全屏对话式界面，类似 DialogPanel 覆盖层。
+全屏对话式界面，战斗日志显示在战斗 UI 内。
 
-- **骰子系统**：武器攻击使用 **d20**（1=失误，20=必杀），策略使用 d6
+- **骰子系统**：武器攻击使用 **d20**（1=失误，20=必杀+金色动画），策略使用 d6
 - **命中区间**：每种武器根据 `effects.damage` 自动分配 3 档区间，伤害 = 基础 4 + 区间加成
-- **骰子动画**：攻击时 🎲[?] 快速变化约 840ms，伤害数字暂隐后揭晓
-- **武器选项**：每回合从背包随机取 ≤2 件武器（无需装备）
+- **骰子动画**：攻击时 🎲[?] 快速变化约 840ms，大成功/大失败统一用 `?? 点伤害` 占位不剧透
+- **武器选项**：每回合从背包随机取 ≤2 件武器（需弹药的武器无弹药时不显示）
+- **弹药**：开火时自动 `removeFromInventory` 消耗对应弹药（by ammo tag）
 - **策略选项**：4 个基础策略中随机 2 个：
   - ⚔️ 正面强攻 — 无特殊加成
   - 🎯 精准打击 — 对庞大/缓慢型 +2，消耗 5 理智，需理智≥30
   - 🛡️ 防守反击 — 受伤减半，对快速/灵敏型 +1
   - 🔍 寻找弱点 — 骰 4+ 伤害翻倍，消耗 8 理智，需理智≥40
 - **逃跑**：概率递增（55% → +15%/次，上限 90%）
-- **击杀死状**：每种敌人有专属死亡描述，胜利后延迟 2 秒返回
 - **丧尸反击**：每回合玩家行动后丧尸反击，可能造成感染
+- **噪音**：仅在敌人存活时触发（击杀后不引怪）
+- **战斗胜利奖励**：d6 搜刮战利品（⚀⚁⚂ 无 ⚃⚄ 小奖 ⚅ 大奖），枪械只通过此途径+特定事件获得
 - **战斗日志**：自动滚动 + 回到底部按钮
 
 ## 机遇系统
 
 每次选项后、生成下一事件前，随机触发 **0-3 个机遇**：
 
-- **dice 类型**：玩家点击 🎲 掷骰（d6），不同点数范围产生不同结果（获得/损失物品、属性变化）
+- **dice 类型**：玩家点击 🎲 掷骰（d6），不同点数范围产生不同结果
 - **narrative 类型**：纯剧情文字，打字机显示后自动继续
 - **narrative_result 类型**：剧情 + 自动应用效果
-- **通用机遇**：任何场景都可能触发
-- **场景特有**：匹配场景标签（医疗/武器/住宅/自然等）
+- 机遇完成推进 1h 但不计疲劳
+
+## 超重系统
+
+- 背包允许临时超过容量上限 **4 格**
+- 第一回合超重：`⊗ 背包快装不下了！用掉或丢弃一些东西腾出空间。`
+- 连续第二回合超重：丢弃所有大容量背包 + 随机丢弃物品直到低于上限
+- `_isOverweight` 标记跟踪超重状态
 
 ## State
 
@@ -307,6 +329,7 @@ endingChecks = [{
   // 标记
   npcsMet: [], npcRelations: {}, legacyTags: [],
   sacrificeTriggered, safeZoneJoined, labDiscovered,
+  _isOverweight: false,  // 超重状态标记
 }
 ```
 
@@ -315,18 +338,17 @@ endingChecks = [{
 - 每行动推进 **1 小时**（`dayCount += 1/24`）
 - 开局随机：早晨 6-10 点（60%）或傍晚 16-20 点（40%）
 - **疲劳惩罚**（`hoursAwake` 累加，以 `<span class="dim">` 显示）：
-  - ≥8h：每行动 -2 理智，8h 警告一次
+  - ≥8h：每行动 -2 理智，⊗ 警告一次
   - ≥10h：每行动 -4 理智、-1HP
-  - ≥12h：每行动 -8 理智、-2HP，12h 警告一次
+  - ≥12h：每行动 -8 理智、-2HP，⊗ 警告一次
 - **休息**可重置 `hoursAwake = 0`，额外跳过 6-8h
-- 夜间（20:00-6:00）和疲劳时，休息事件出现概率提升
+- 夜间（20:00-6:00）休息场景权重 +12，高危险场景权重 +6
 
 ## 地图系统
 
 - 仅可传送到 `scenesVisited` 中已探索的场景
-- 未探索地点完全隐藏（只显示 `?` + `???`）
+- "转移阵地"选项：3 次行动后出现，100% 切换到不同场景（`_pendingSceneChange` 确保不被战斗/机遇打断）
 - 旅行消耗：饱腹 -3~6 + 口渴 -2~4（基于场景危险度）
-- 探索新区域通过"转移阵地"选项随机前往
 
 ## UI Conventions
 
@@ -334,11 +356,12 @@ endingChecks = [{
 - **按钮**：`min-h-[44px]`，`rounded-sm`，1px border，hover 变背景色
 - **禁止**：阴影、渐变、模糊效果、纯白文字、高饱和荧光色
 - **响应式**：桌面 `max-w-lg mx-auto`（512px），有四周 16px 边距
+- **手机端**：添加 `w-screen` 占位 div 防止宽度收缩；StatusBar 顶部 `safe-area-inset-top`
 - **字体**：`JetBrains Mono, Fira Code, Consolas, monospace`，字号 15px
-- **面板**：右侧抽屉（手机全屏/桌面 320px），黑色半透明遮罩关闭
+- **面板**：右侧抽屉（手机全屏/桌面 320px），黑色半透明遮罩关闭，含 safe-area 内边距
 - **日志**：最近 5 条 `#15202a` 背景加亮，其余略暗，行高 1.6
-- **符号**：`✢` 战利品/初始物品，`✽` 战斗/逃跑/使用物品（均暗淡），`➤` 行动提示
-- **暗淡文本 (`.dim`)**：状态后缀、幻觉文本、疲劳警告使用 `#658080`
+- **符号**：`✢` 战利品/初始物品，`✽` 战斗/逃跑/使用物品（均暗淡），`⊗` 疲劳/超重警告，`➤` 行动提示
+- **暗淡文本 (`.dim`)**：状态后缀、幻觉文本、疲劳/超重警告使用 `#658080`
 - **输出提示**：`➤ 选择你的行动` 在日志队列空闲时显示
 
 ## Typewriter Effect
@@ -358,7 +381,10 @@ endingChecks = [{
 3. 在桶文件中 import 并展开
 
 ### 添加新物品
-在对应扩展文件中添加条目。type 为 `weapon` 的物品自动按 damage 值分配 d20 命中区间。小型物品（食物/医疗/弹药）需设置 `slots: 1`。
+在对应扩展文件中添加条目。type 为 `weapon` 的物品自动按 damage 值分配 d20 命中区间。
+需弹药的武器设置 `effects.ammo`（如 `'9mm'`），对应弹药物品 tags 含 `'弹药:9mm'`。
+小型物品（食物/医疗/弹药）需设置 `slots: 1`。
+特殊行为在 `events` 数组中加入事件 ID，并在 `useItem` 中添加处理分支。
 
 ### 添加新场景
 在 `src/data/scenes.ts` 的 `scenes` 对象中添加。如需按区域分组，可创建 `src/data/extensions/scenes-*.ts` 文件。
@@ -401,3 +427,4 @@ endingChecks = [{
 - 战斗日志通过 `combatLogRef` + `scrollCombatNow()` 每回合强制自动滚动
 - `getUsedSlots(state)` 计算背包已用格数（`slots × _count`），
   配合 `getEffectiveCapacity(state)` 判断背包空间
+- `getLootPool(count, inventory)` 弹药优先匹配已有枪械，无枪则随机
