@@ -200,7 +200,9 @@ function getTextStyle(entry: any, total: any[], currentTurnId: number) {
   }
 
   let color = baseColor
-  if (isRecent && entry.type !== 'action') {
+  if (entry.type === 'action') {
+    color = baseColor  // 保持暗淡
+  } else if (isRecent) {
     color = isNewest ? '#d0dce8' : '#c0d0e0'
   } else if (entry.type !== 'warning' && entry.type !== 'danger' && entry.type !== 'discovery') {
     color = '#8a9aaa'
@@ -252,6 +254,12 @@ const currentTurnId = computed(() => props.gameState.actionCount)
           class="px-3 py-2 -mx-2"
           style="font-size: 15px; line-height: 1.6; color: #B0C4DE; min-height: 1.5em;"
         ></div>
+
+        <!-- 剧情输出结束提示 -->
+        <div v-if="gameState.journal.length > 0 && !isProcessing"
+             class="text-center py-3" style="color: #4a5a5a; font-size: 12px;">
+          ➤ 选择你的行动
+        </div>
       </div>
     </div>
 
