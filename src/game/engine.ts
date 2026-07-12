@@ -718,7 +718,7 @@ export function resolveCombatRound(state, actionId) {
       combat.result = 'fled'
       state.inCombat = false
       const fleeTexts = ['你抓住机会转身就跑，头也不回地冲进最近的掩体。', '你全力冲刺，身后传来愤怒的嘶吼——你成功甩掉了它们。', '你且战且退，利用地形甩开了追击。', '你趁对方一个破绽，闪身消失在废墟之间。']
-      addJournalEntry(state, '🏃 ' + randomPick(fleeTexts), 'action')
+      addJournalEntry(state, '✽ ' + randomPick(fleeTexts), 'action')
       return combat
     }
     const dmg = randInt(5, 12)
@@ -785,7 +785,7 @@ export function resolveCombatRound(state, actionId) {
       if (addToInventory(state, li)) enemyText += ` 尸体旁找到：${li.name}。`
     }
     round = { action: actionId, playerDmg, enemyDmg: 0, playerText, enemyText }
-    addJournalEntry(state, `⚔️ 战斗胜利！击败了 ${combat.enemy.count} 只${combat.enemy.name}。`, 'combat')
+    addJournalEntry(state, `✽ 战斗胜利！击败了 ${combat.enemy.count} 只${combat.enemy.name}。`, 'combat')
     return combat
   }
   let defMod = combat._defending ? 0.5 : 1.0
@@ -826,7 +826,7 @@ export function autoResolveCombat(state) {
   } else {
     const d = randInt(8,15)*rounds; state.hp = clamp(state.hp-d,0,state.maxHp)
     if (state.hp <= 0) { combat.result='death';state.inCombat=false;addJournalEntry(state,`💀 自动战斗失败！倒下了。`,'danger') }
-    else { combat.result='fled';state.inCombat=false;addJournalEntry(state,`🏃 自动战斗失利，损失${d}HP。`,'combat') }
+    else { combat.result='fled';state.inCombat=false;addJournalEntry(state,`✽ 自动战斗失利，损失${d}HP。`,'combat') }
   }
   return combat
 }
@@ -922,7 +922,7 @@ export function equipWeapon(state, itemId) {
   if (state.equippedWeapon) addToInventory(state, state.equippedWeapon)
   removeFromInventory(state, itemId)
   state.equippedWeapon = item
-  addJournalEntry(state, `⚔️ 装备了 ${item.name}。`, 'action')
+  addJournalEntry(state, `✽ 装备了 ${item.name}。`, 'action')
   return true
 }
 

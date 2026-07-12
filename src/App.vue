@@ -109,8 +109,9 @@ function handleSelectOption(option: any) {
     // 先加入战斗日志条目（结果文本已在上方加入，保证正确顺序）
     if (result._zombieWarn) {
       addJournalEntry(gameState, '⚠️ 你的行动惊动了附近的丧尸！它们朝你冲了过来！即将进入战斗……', 'danger')
+      addJournalEntry(gameState, '⏳ 5…4…3…2…1…', 'warning')
     }
-    addJournalEntry(gameState, `⚔️ 进入战斗！遭遇了 ${result.combat.enemy.count} 只${result.combat.enemy.name}。`, 'combat')
+    addJournalEntry(gameState, `✽ 进入战斗！遭遇了 ${result.combat.enemy.count} 只${result.combat.enemy.name}。`, 'combat')
 
     if (result._zombieWarn) {
       setTimeout(() => {
@@ -118,7 +119,7 @@ function handleSelectOption(option: any) {
         const enemy = result.combat?.enemy
         combatStrategies.value = getCombatStrategies(gameState, enemy)
         showCombatUI.value = true
-      }, 5000)
+      }, 4000)
     } else {
       combatState.value = result.combat
       const enemy = result.combat?.enemy
@@ -273,7 +274,7 @@ function handleUseItem(itemId: string) {
 
   const effects = useItem(gameState, itemId)
   if (effects) {
-    let useText = `使用了 ${item.name}。`
+    let useText = `✽ 使用了 ${item.name}。`
     if (effects.hp) useText += ` 生命${effects.hp > 0 ? '+' : ''}${effects.hp}`
     if (effects.hunger) useText += ` 饱腹${effects.hunger > 0 ? '+' : ''}${effects.hunger}`
     if (effects.thirst) useText += ` 口渴${effects.thirst > 0 ? '+' : ''}${effects.thirst}`
@@ -555,6 +556,11 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
 
       <!-- 普通模式 -->
       <template v-else>
+        <!-- 输出结束提示 -->
+        <div v-if="currentOptions.length > 0 && !isResolving"
+             class="text-center pt-1 pb-3" style="color: #4a5a5a; font-size: 12px;">
+          ➤ 选择你的行动
+        </div>
         <!-- 选项区 -->
         <OptionsPanel
           v-if="!showCombatUI"
