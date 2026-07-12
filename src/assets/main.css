@@ -1,0 +1,109 @@
+@import "tailwindcss";
+
+/* ===== 丧尸末日生存 · 终端护眼风格 ===== */
+
+:root {
+  --bg: #0D1117;
+  --text: #B0C4DE;
+  --text-green: #9ACD9D;
+  --accent: #E6C37C;
+  --border: #2a3a3a;
+  --hover-bg: #1e2a2a;
+  --hover-bg2: #2a3a3a;
+  --danger: #c4746e;
+  --muted: #5a6a7a;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#app {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  max-width: 512px;
+  margin: 0 auto;
+  padding: 0;
+}
+
+/* 平板及以上：四周留呼吸空间 */
+@media (min-width: 640px) {
+  html, body {
+    padding: 16px;
+  }
+  #app {
+    height: calc(100% - 0px);
+    max-height: 900px;
+    border: 1px solid var(--border);
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 0;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--hover-bg2);
+}
+
+/* Selection */
+::selection {
+  background: rgba(230, 195, 124, 0.3);
+  color: var(--accent);
+}
+
+/* Transition utility */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* Slide drawer */
+.slide-enter-active,
+.slide-leave-active {
+  transition: transform 0.25s ease;
+}
+.slide-enter-from,
+.slide-leave-to {
+  transform: translateX(100%);
+}
+
+/* Typewriter-style cursor blink */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.cursor-blink::after {
+  content: '▌';
+  animation: blink 1s step-end infinite;
+  color: var(--accent);
+}
