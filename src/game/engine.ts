@@ -645,12 +645,30 @@ function getBestWeapon(state) {
 }
 
 function d6() { return Math.floor(Math.random() * 6) + 1 }
+function d20() { return Math.floor(Math.random() * 20) + 1 }
+
+/**
+ * 根据武器伤害值计算 d20 命中区间
+ * 不同武器有不同的区间和伤害加成
+ */
+function getHitRanges(wd: number): Array<{min: number, max: number, dmg: number}> {
+  if (wd <= 2) return [{min:2, max:8, dmg:5}, {min:9, max:15, dmg:9}, {min:16, max:19, dmg:12}]
+  if (wd <= 3) return [{min:2, max:7, dmg:5}, {min:8, max:16, dmg:10}, {min:17, max:19, dmg:13}]
+  if (wd <= 4) return [{min:2, max:7, dmg:6}, {min:8, max:16, dmg:11}, {min:17, max:19, dmg:13}]
+  if (wd <= 5) return [{min:2, max:6, dmg:6}, {min:7, max:16, dmg:11}, {min:17, max:19, dmg:14}]
+  if (wd <= 6) return [{min:2, max:6, dmg:7}, {min:7, max:15, dmg:12}, {min:16, max:19, dmg:15}]
+  if (wd <= 7) return [{min:2, max:6, dmg:7}, {min:7, max:15, dmg:12}, {min:16, max:19, dmg:16}]
+  if (wd <= 8) return [{min:2, max:5, dmg:8}, {min:6, max:14, dmg:13}, {min:15, max:19, dmg:17}]
+  if (wd <= 10) return [{min:2, max:5, dmg:8}, {min:6, max:14, dmg:14}, {min:15, max:19, dmg:18}]
+  // 12+ — 极端武器（霰弹枪、手榴弹等）
+  return [{min:2, max:4, dmg:10}, {min:5, max:12, dmg:16}, {min:13, max:19, dmg:22}]
+}
 
 export function getCombatStrategies(state, enemy) {
   const r: any[] = []
   const weapons = state.inventory.filter(i => i.type === 'weapon')
   for (const w of randomSample(weapons, Math.min(2, weapons.length))) {
-    r.push({ id: 'weapon_'+w.id, name: w.name, desc: '掷骰 d6 + '+ (w.effects.damage||0) + ' + 1', isWeapon: true, weaponId: w.id, weaponDmg: w.effects.damage||0 })
+    r.push({ id: 'weapon_'+w.id, name: w.name, desc: 'd20 · 1=失误 20=必杀', isWeapon: true, weaponId: w.id, weaponDmg: w.effects.damage||0 })
   }
   if (r.length === 0) {
     // 无武器时不显示拳头选项，玩家只能选策略
@@ -713,9 +731,20 @@ export function resolveCombatRound(state, actionId) {
       const w = state.inventory.find(i => i.id === wid && i.type === 'weapon')
       if (w) { wd = w.effects.damage||0; wn = w.name }
     }
-    const roll = d6()
-    playerDmg = roll + wd + 1
-    playerText = `你挥动${wn}，骰出了 ${roll} 点，加上 ${wd} 点武器加成和 1 点基础伤害，造成 ${playerDmg} 点伤害。`
+    const roll = d20()
+    if (roll === 1) {
+      playerDmg = 0
+      playerText = `🎲[${roll}] 你挥动${wn}，但攻击落空了！`
+    } else if (roll === 20) {
+      playerDmg = 9999
+      playerText = `🎲[${roll}] 你挥动${wn}，一击必杀！[INSTAKILL]`
+    } else {
+      const ranges = getHitRanges(wd)
+      const hit = ranges.find(r => roll >= r.min && roll <= r.max)
+      const bonusDmg = hit ? hit.dmg : 5
+      playerDmg = 4 + bonusDmg
+      playerText = `🎲[${roll}] 基础 4 + ${bonusDmg} = ${playerDmg} 点伤害`
+    }
   } else {
     const s = combatStrategies.find(x => x.id === actionId)
     let roll = d6(), bonus = 0
@@ -776,7 +805,9 @@ export function autoResolveCombat(state) {
   if (!combat) return null
   const weapon = getBestWeapon(state) || { effects: { damage: 1 } }
   const bd = weapon.effects.damage||1, hp = combat.enemy.actualHp
-  const rounds = Math.ceil(hp / (3.5+bd+1)), ok = chance(0.5+bd*0.05-combat.enemy.damage*0.02)
+  // 简化自动战斗：平均 d20 ≈ 10.5，平均区间加成 ≈ 武器伤害×2
+  const avgDmg = 4 + bd * 2
+  const rounds = Math.ceil(hp / avgDmg), ok = chance(0.5+bd*0.05-combat.enemy.damage*0.02)
   if (ok) {
     combat.result = 'victory'; state.inCombat = false; state.kills += combat.enemy.count
     const d = randInt(3,8)*rounds; state.hp = clamp(state.hp-d,0,state.maxHp)

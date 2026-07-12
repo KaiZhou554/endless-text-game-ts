@@ -393,9 +393,10 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
             class="text-sm leading-relaxed"
           >
             <!-- 玩家行动（右对齐） -->
-            <div v-if="round.playerText" class="text-right" style="color: #9ACD9D;">
+            <div v-if="round.playerText" class="text-right"
+                 :style="{ color: round.playerText.includes('[INSTAKILL]') ? '#E6C37C' : '#9ACD9D' }">
               <span class="text-[10px]" style="color: #5a6a7a;">你:</span>
-              <p class="mt-0.5">{{ round.playerText }}</p>
+              <p class="mt-0.5">{{ round.playerText.replace('[INSTAKILL]', '💥 一击必杀！') }}</p>
             </div>
             <!-- 敌人行动（左对齐） -->
             <div v-if="round.enemyText" class="mt-1" style="color: #c4746e;">

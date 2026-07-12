@@ -15,6 +15,13 @@ export interface Item {
   stackable: boolean
   reusable: boolean
   _count?: number
+  hitRanges?: HitRange[]  // d20 武器命中区间，留空则按 effects.damage 自动计算
+}
+
+export interface HitRange {
+  min: number   // 骰值下限（含）
+  max: number   // 骰值上限（含）
+  dmg: number   // 此区间造成的武器伤害加成
 }
 
 export interface ItemDB {
