@@ -118,7 +118,7 @@ function handleSelectOption(option: any) {
         const enemy = result.combat?.enemy
         combatStrategies.value = getCombatStrategies(gameState, enemy)
         showCombatUI.value = true
-      }, 3000)
+      }, 5000)
     } else {
       combatState.value = result.combat
       const enemy = result.combat?.enemy
