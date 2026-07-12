@@ -310,6 +310,7 @@ function handleOppDice() {
   }
   if (range?.lootItem && itemDB[range.lootItem]) {
     addToInventory(gameState, itemDB[range.lootItem])
+    addJournalEntry(gameState, `✢ 获得了：${itemDB[range.lootItem].name}`, 'action')
   }
 
   const nextIdx = oppQueue.value.indexOf(opp) + 1

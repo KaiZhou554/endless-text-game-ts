@@ -783,7 +783,21 @@ export function resolveCombatRound(state, actionId) {
   if (combat.enemy.actualHp <= 0) {
     combat.result = 'victory'; state.inCombat = false
     state.kills += combat.enemy.count
-    enemyText = `${combat.enemy.name}被击败了！`
+    const deathTexts: Record<string, string[]> = {
+      '普通丧尸': ['丧尸摇晃了几下，最终倒地不再动弹。', '你的一击命中了要害，丧尸像断了线一样瘫软下去。'],
+      '跑尸': ['跑尸的冲刺戛然而止，在地上翻滚了几圈后静止了。', '它的速度救不了它——你精准地击中了它的头部。'],
+      '臃肿丧尸': ['这庞大的躯体轰然倒塌，扬起一片尘土。', '臃肿的身躯终于支撑不住，沉重地砸在地上。'],
+      '尖啸者': ['尖啸者的声音戛然而止，只留下回荡的余音。', '它张开嘴还没来得及发出声音，就被你终结了。'],
+      '潜行者': ['潜行者的身影从阴影中显现，然后永远倒下了。', '它擅长隐蔽，但没能躲过你的最后一击。'],
+      '自爆者': ['自爆者肿胀的身体泄了气，缓缓瘫倒——没有爆炸。', '你在它引爆之前结束了它的挣扎。'],
+      '巨臂丧尸': ['巨臂丧尸那粗壮的手臂垂落下来，整个身躯轰然倒下。', '它巨大的手臂在地上砸出一个凹坑，然后彻底静止了。'],
+      '爬行者': ['爬行者抽搐了几下，终于不再动了。', '它贴在地面上，像一只被踩碎的虫子一样不再动弹。'],
+    }
+    const defaults = ['它倒下了，再也没有站起来。', '丧尸终于停止了行动。']
+    const name = combat.enemy.name
+    const pool = deathTexts[name] || defaults
+    const deathDesc = pool[Math.floor(Math.random() * pool.length)]
+    enemyText = `${deathDesc}`
     if (chance(combat.enemy.lootChance)) {
       const li = getRandomItem()
       if (addToInventory(state, li)) enemyText += ` 尸体旁找到：${li.name}。`
