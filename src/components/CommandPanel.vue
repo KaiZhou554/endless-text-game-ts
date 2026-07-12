@@ -103,11 +103,11 @@ onUnmounted(() => {
       style="pointer-events: none;"
     >
       <div
-        class="w-full max-w-lg mx-4 mt-4 border rounded-sm"
+        class="w-full max-w-lg mx-4 mt-4 border rounded-sm p-5 space-y-4"
         style="background: #0D1117; border-color: #2a3a3a; pointer-events: auto;"
       >
         <!-- Header -->
-        <div class="flex items-center justify-between px-4 pt-4 pb-3">
+        <div class="flex items-center justify-between">
           <span class="text-sm font-bold text-white">⌘ 命令面板</span>
           <button
             @click="close"
@@ -121,7 +121,7 @@ onUnmounted(() => {
         </div>
 
         <!-- Input row -->
-        <div class="flex gap-2 px-4 pb-3">
+        <div class="flex gap-2">
           <input
             ref="inputRef"
             v-model="input"
@@ -142,7 +142,7 @@ onUnmounted(() => {
         <!-- Result -->
         <div
           v-if="result"
-          class="px-4 pb-4 text-sm leading-relaxed"
+          class="text-sm leading-relaxed"
           style="color: #9ACD9D;"
         >
           {{ result }}
