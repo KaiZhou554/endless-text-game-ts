@@ -1,8 +1,17 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 const emit = defineEmits(['toggle-inventory', 'toggle-journal', 'toggle-map', 'save-game', 'load-game'])
 
 const props = defineProps({
   gameState: { type: Object, required: true },
+})
+
+const effectiveCapacity = computed(() => {
+  let cap = props.gameState.maxInventory || 6
+  if (props.gameState.inventory.some((i: any) => i.id === 'backpack')) {
+    cap += 2
+  }
+  return cap
 })
 
 function hoverBg(e: Event, color: string) {
@@ -26,7 +35,7 @@ function hoverBg(e: Event, color: string) {
       <span v-if="gameState.inventory.length > 0"
             class="text-[10px] px-1 rounded-sm"
             style="background: #1e2a2a; color: #E6C37C;">
-        {{ gameState.inventory.length }}/{{ gameState.maxInventory }}
+        {{ gameState.inventory.length }}/{{ effectiveCapacity }}
       </span>
     </button>
 

@@ -118,7 +118,7 @@ function handleSelectOption(option: any) {
         const enemy = result.combat?.enemy
         combatStrategies.value = getCombatStrategies(gameState, enemy)
         showCombatUI.value = true
-      }, 2500)
+      }, 3000)
     } else {
       combatState.value = result.combat
       const enemy = result.combat?.enemy
@@ -217,6 +217,18 @@ function handleCombatAction(strategyId: string) {
     }
   }, Math.max(delay, 900)) // 确保延迟大于骰子动画(840ms)
 }
+
+// 战斗日志新增回合时自动滚动
+watch(
+  () => combatState.value?.rounds.length,
+  () => {
+    nextTick(() => {
+      if (combatLogRef.value) {
+        combatLogRef.value.scrollTop = combatLogRef.value.scrollHeight
+      }
+    })
+  }
+)
 
 function checkAndTriggerEnding() {
   const ending = checkEndings(gameState)
