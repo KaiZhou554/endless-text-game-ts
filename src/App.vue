@@ -44,7 +44,6 @@ const oppDiceRolled = ref(false)  // 已掷骰
 const oppDiceResult = ref(0)
 const oppQueue = ref<any[]>([])
 const oppIndex = ref(0)
-const oppWaiting = ref(false)  // 机遇等待中
 
 // ==================== 游戏流程 ====================
 
@@ -311,7 +310,7 @@ function handleOppDice() {
   }
 
   const nextIdx = oppQueue.value.indexOf(opp) + 1
-  setTimeout(() => showOpportunity(nextIdx), 4000)
+  setTimeout(() => showOpportunity(nextIdx), 3000)
 }
 
 function finishOpportunities() {
@@ -542,7 +541,7 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
       />
 
       <!-- 叙事区（始终挂载，战斗中隐藏） -->
-      <NarrativeArea v-show="!showCombatUI" :gameState="gameState" :oppActive="oppWaiting" />
+      <NarrativeArea v-show="!showCombatUI" :gameState="gameState"  />
 
       <!-- 战斗模式 -->
       <div
@@ -658,14 +657,6 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
           <p v-if="combatState.result === 'victory'" class="text-sm font-bold" style="color: #9ACD9D;">💀 战斗胜利！</p>
           <p v-else-if="combatState.result === 'fled'" class="text-sm" style="color: #E6C37C;">🏃 你脱离了战斗。</p>
           <p v-else-if="combatState.result === 'death'" class="text-sm font-bold" style="color: #c4746e;">💀 你倒下了……</p>
-        </div>
-      </div>
-
-      <!-- 机遇等待指示器 -->
-      <div v-if="oppWaiting" class="border-t px-4 py-3 text-center" style="border-color: #2a3a3a;">
-        <div class="text-xs" style="color: #4a5a5a;">➤ 等待下一回合</div>
-        <div class="mt-1.5 h-0.5 rounded-full overflow-hidden mx-auto" style="background: #1e2a2a; max-width: 200px;">
-          <div class="h-full rounded-full animate-progress" style="background: #4a5a5a;"></div>
         </div>
       </div>
 
