@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, nextTick, onMounted, computed } from 'vue'
+import Typewriter from 'typewriter-effect/dist/core'
 
 const props = defineProps({
   gameState: { type: Object, required: true },
@@ -8,6 +9,10 @@ const props = defineProps({
 const scrollContainer = ref<HTMLElement | null>(null)
 const isNearBottom = ref(true)
 const showScrollButton = ref(false)
+const typewriterTarget = ref<HTMLElement | null>(null)
+const typingText = ref('')
+const typingEntryId = ref<number | null>(null)  // 当前正在打字的日志条目 id
+let typewriterInstance: any = null
 
 // 检查是否在底部附近（100px 内）
 function checkScrollPosition() {
@@ -24,32 +29,86 @@ function scrollToBottom() {
   scrollContainer.value.scrollTop = scrollContainer.value.scrollHeight
 }
 
-// 当日志更新时，若已在底部则自动滚到底部
+// 监听日志新增，对叙事类消息启动打字机效果
 watch(
   () => props.gameState.journal.length,
-  async () => {
+  async (newLen, oldLen) => {
     await nextTick()
     if (scrollContainer.value && isNearBottom.value) {
       scrollToBottom()
     }
-  }
+    // 检查是否有新的叙事类条目需要打字
+    if (newLen > (oldLen || 0)) {
+      const journal = props.gameState.journal
+      const newest = journal[journal.length - 1]
+      if (newest && isTypewriterEligible(newest.type) && typingEntryId.value !== newest.id) {
+        startTyping(newest)
+      }
+    }
+  },
+  { immediate: false }
 )
+
+function isTypewriterEligible(type: string): boolean {
+  // 仅对叙事/地点/发现类消息使用打字机，排除 action/combat/warning/danger
+  return ['narrative', 'location', 'discovery', 'result', 'alliance'].includes(type)
+}
+
+function startTyping(entry: any) {
+  if (typewriterInstance) {
+    typewriterInstance.stop()
+    typewriterInstance = null
+  }
+  typingEntryId.value = entry.id
+  typingText.value = entry.text
+
+  nextTick(() => {
+    if (!typewriterTarget.value) return
+    typewriterTarget.value.innerHTML = ''
+    typewriterInstance = new Typewriter(typewriterTarget.value, {
+      delay: 20,
+      cursor: '▋',
+      loop: false,
+      autoStart: false,
+    })
+    typewriterInstance
+      .typeString(entry.text)
+      .callFunction(() => {
+        // 打字完成，清除打字状态
+        typingText.value = ''
+        typingEntryId.value = null
+        typewriterInstance = null
+        nextTick(() => {
+          if (scrollContainer.value && isNearBottom.value) {
+            scrollToBottom()
+          }
+        })
+      })
+      .start()
+  })
+}
 
 // 窗口缩放时也检查位置
 onMounted(async () => {
   await nextTick()
   scrollToBottom()
-  // 监听滚动事件
   if (scrollContainer.value) {
     scrollContainer.value.addEventListener('scroll', checkScrollPosition)
   }
+  // 处理初始已有的叙事条目
+  const journal = props.gameState.journal
+  if (journal.length > 0) {
+    const last = journal[journal.length - 1]
+    if (last && isTypewriterEligible(last.type)) {
+      startTyping(last)
+    }
+  }
 })
 
-function getTextStyle(entry, total, currentTurnId) {
-  const isRecent = entry.turnId === currentTurnId  // 本回合消息
-  const isNewest = entry.id === total > 0 ? total[total.length - 1]?.id : null
+function getTextStyle(entry: any, total: any[], currentTurnId: number) {
+  const isRecent = entry.turnId === currentTurnId
+  const isNewest = entry.id === total.length > 0 ? total[total.length - 1]?.id : null
 
-  // 基础颜色
   let baseColor = '#B0C4DE'
   switch (entry.type) {
     case 'warning': baseColor = '#E6C37C'; break
@@ -62,7 +121,6 @@ function getTextStyle(entry, total, currentTurnId) {
     case 'action': baseColor = '#5a6a7a'; break
   }
 
-  // 最近消息加亮，其余（非提示）稍暗
   let color = baseColor
   if (isRecent) {
     color = isNewest ? '#d0dce8' : '#c0d0e0'
@@ -76,7 +134,6 @@ function getTextStyle(entry, total, currentTurnId) {
   }
 }
 
-// 当前回合 ID（用于高亮判定）
 const currentTurnId = computed(() => props.gameState.actionCount)
 </script>
 
@@ -88,7 +145,7 @@ const currentTurnId = computed(() => props.gameState.actionCount)
       style="background: #0D1117;"
     >
       <!-- 空状态 -->
-      <div v-if="gameState.journal.length === 0" class="flex items-center justify-center h-full">
+      <div v-if="gameState.journal.length === 0 && !typingText" class="flex items-center justify-center h-full">
         <p class="text-sm cursor-blink" style="color: #5a6a7a;">
           等待游戏开始...
         </p>
@@ -106,8 +163,22 @@ const currentTurnId = computed(() => props.gameState.actionCount)
             lineHeight: '1.6',
           }"
         >
-          <span>{{ entry.text }}</span>
+          <!-- 正在打字的条目只显示占位，实际打字在下方 typewriterTarget 中 -->
+          <template v-if="typingEntryId === entry.id">
+            <span style="opacity: 0.3; color: #5a6a7a;">{{ entry.text }}</span>
+          </template>
+          <template v-else>
+            <span>{{ entry.text }}</span>
+          </template>
         </div>
+
+        <!-- Typewriter 打字区域 -->
+        <div
+          v-if="typingText"
+          ref="typewriterTarget"
+          class="px-3 py-2 -mx-2"
+          style="font-size: 15px; line-height: 1.6; color: #B0C4DE; min-height: 1.5em;"
+        ></div>
       </div>
     </div>
 

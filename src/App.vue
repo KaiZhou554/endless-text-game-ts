@@ -32,6 +32,8 @@ const resultLoot = ref<any[]>([])       // 获得的物品
 const combatState = ref<CombatState | null>(null)    // 战斗状态
 const showCombatUI = ref(false)
 const combatStrategies = ref<any[]>([])  // 可用战斗策略
+const rollingRound = ref<number | null>(null)  // 正在骰子动画的回合索引
+const rollingText = ref('')  // 动画期间的显示文本
 
 // ==================== 游戏流程 ====================
 
@@ -146,6 +148,34 @@ function handleCombatAction(strategyId: string) {
   } else {
     combat = resolveCombatRound(gameState, strategyId)
   }
+  const roundIdx = combat.rounds ? combat.rounds.length - 1 : -1
+
+  // 骰子动画：对含有 🎲[ 的回合进行摇晃动画
+  if (roundIdx >= 0 && combat.rounds[roundIdx].playerText.includes('🎲[')) {
+    const realText = combat.rounds[roundIdx].playerText
+    const match = realText.match(/🎲\[(\d+)\]/) || realText.match(/🎲\[(\d+)\]/)
+    rollingRound.value = roundIdx
+
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+    let ticks = 0
+    const interval = setInterval(() => {
+      ticks++
+      const fakeRoll = chars[Math.floor(Math.random() * chars.length)] +
+                       chars[Math.floor(Math.random() * chars.length)]
+      rollingText.value = realText
+        .replace(/🎲\[[^\]]+\]/, `🎲[${fakeRoll}]`)
+        .replace(/\d+ 点伤害/, '?? 点伤害')
+      combatState.value = { ...combat }
+
+      if (ticks >= 12) {
+        clearInterval(interval)
+        rollingRound.value = null
+        rollingText.value = ''
+        combatState.value = { ...combat }
+      }
+    }, 70)
+  }
+
   combatState.value = { ...combat }
 
   const delay = combat.rounds?.length ? Math.min(600 + combat.rounds.length * 200, 2000) : 600
@@ -394,9 +424,12 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
           >
             <!-- 玩家行动（右对齐） -->
             <div v-if="round.playerText" class="text-right"
-                 :style="{ color: round.playerText.includes('[INSTAKILL]') ? '#E6C37C' : '#9ACD9D' }">
+                 :style="{ color: rollingRound === idx ? '#5a6a7a' : '#9ACD9D' }">
               <span class="text-[10px]" style="color: #5a6a7a;">你:</span>
-              <p class="mt-0.5">{{ round.playerText.replace('[INSTAKILL]', '💥 一击必杀！') }}</p>
+              <p class="mt-0.5">
+                <template v-if="rollingRound === idx">{{ rollingText }}</template>
+                <template v-else>{{ round.playerText }}</template>
+              </p>
             </div>
             <!-- 敌人行动（左对齐） -->
             <div v-if="round.enemyText" class="mt-1" style="color: #c4746e;">
