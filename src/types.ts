@@ -40,6 +40,7 @@ export interface Item {
   _count?: number
   slots?: number  // 占位格数（默认 2，小件物品 1）
   hitRanges?: HitRange[]
+  events?: string[]  // 使用时的特殊事件（如 clear_fatigue）
 }
 
 export interface HitRange {
