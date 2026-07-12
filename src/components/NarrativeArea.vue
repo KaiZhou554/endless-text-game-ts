@@ -17,7 +17,6 @@ const processingQueue = ref<any[]>([])      // 待处理队列
 const isProcessing = ref(false)             // 是否正在处理
 const currentTypingEntry = ref<any>(null)    // 当前正在打字机显示的条目
 let typewriterInstance: any = null
-let _lastJournalLen = 0                     // 上次处理的日志长度
 
 // 检查是否在底部附近（100px 内）
 function checkScrollPosition() {
@@ -38,23 +37,25 @@ function isTypewriterEligible(type: string): boolean {
   return ['narrative', 'location', 'discovery', 'result', 'alliance'].includes(type)
 }
 
-// 监听日志新增，将新条目加入队列
+// 监听日志新增（监听最后一个条目的 id，避免满 30 条 shift 后 length 不变）
 watch(
-  () => props.gameState.journal.length,
-  async (newLen) => {
+  () => {
+    const j = props.gameState.journal
+    return j.length > 0 ? j[j.length - 1]?.id : null
+  },
+  async (newId, oldId) => {
+    if (newId === null || newId === oldId) return
     await nextTick()
     if (scrollContainer.value && isNearBottom.value) {
       scrollToBottom()
     }
     const journal = props.gameState.journal
-    // 将自上次处理后新增的条目加入队列
-    for (let i = _lastJournalLen; i < journal.length; i++) {
-      const entry = journal[i]
+    // 将未 reveal 的条目加入队列
+    for (const entry of journal) {
       if (entry && !revealedIds.value.has(entry.id)) {
         processingQueue.value.push(entry)
       }
     }
-    _lastJournalLen = journal.length
     processQueue()
   }
 )
@@ -176,7 +177,6 @@ onMounted(async () => {
   }
   // 处理已有日志
   const journal = props.gameState.journal
-  _lastJournalLen = journal.length
   for (const entry of journal) {
     processingQueue.value.push(entry)
   }
