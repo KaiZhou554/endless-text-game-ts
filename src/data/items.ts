@@ -12,10 +12,12 @@ import { weapons } from './extensions/items-weapons'
 import { supplies } from './extensions/items-supplies'
 import { equipment } from './extensions/items-equipment'
 import { keyItems } from './extensions/items-key'
+import { extras } from './extensions/items-extras'
 
 export const itemDB: ItemDB = {
   ...weapons,
   ...supplies,
   ...equipment,
   ...keyItems,
+  ...extras,
 } as ItemDB

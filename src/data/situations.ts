@@ -12,10 +12,12 @@ import { situations_combat } from './extensions/situations-combat'
 import { situations_social } from './extensions/situations-social'
 import { situations_scavenge } from './extensions/situations-scavenge'
 import { situations_explore } from './extensions/situations-explore'
+import { situations_extras } from './extensions/situations-extras'
 
 export const situations: Situations = {
   ...situations_combat,
   ...situations_social,
   ...situations_scavenge,
   ...situations_explore,
+  ...situations_extras,
 } as Situations

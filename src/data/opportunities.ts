@@ -3,6 +3,7 @@
  * 通用机遇 = 无 sceneTags，场景特定机遇 = sceneTags 匹配当前场景
  */
 import type { Opportunity } from '../types'
+import { opportunities_extras } from './extensions/opportunities-extras'
 
 export const opportunities: Opportunity[] = [
 
@@ -161,4 +162,7 @@ export const opportunities: Opportunity[] = [
       { min: 6, max: 6, text: '树根的泥土里嵌着一个徒步旅行者的背包。你把它拽了出来——里面的东西多半不能用，但有一罐蜂蜜完好无损。', lootItem: 'honey_jar' },
     ],
   },
+
+  // ==================== 来自 extensions/opportunities-extras.ts ====================
+  ...opportunities_extras,
 ]
