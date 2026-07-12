@@ -124,3 +124,12 @@ html, body {
 .dim {
   color: #557070;
 }
+
+/* Progress bar animation for waiting prompt */
+@keyframes progress-shrink {
+  from { width: 100%; }
+  to { width: 0%; }
+}
+.animate-progress {
+  animation: progress-shrink 1.5s linear forwards;
+}
