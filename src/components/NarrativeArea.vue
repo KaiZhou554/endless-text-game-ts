@@ -125,6 +125,22 @@ function startTyping(entry: any, onDone: () => void) {
           return
         }
         typewriterTarget.value.innerHTML = ''
+
+        // 用 MutationObserver 监听打字机内容变化，自动滚动到底部
+        let twObserver: MutationObserver | null = null
+        try {
+          twObserver = new MutationObserver(() => {
+            if (scrollContainer.value && isNearBottom.value) {
+              scrollContainer.value.scrollTop = scrollContainer.value.scrollHeight
+            }
+          })
+          twObserver.observe(typewriterTarget.value, {
+            childList: true,
+            subtree: true,
+            characterData: true,
+          })
+        } catch (_e) { /* 不支持 MutationObserver 时忽略 */ }
+
         typewriterInstance = new (Typewriter as any)(typewriterTarget.value, {
           delay: 20,
           cursor: '▋',
@@ -134,6 +150,7 @@ function startTyping(entry: any, onDone: () => void) {
         typewriterInstance
           .typeString(entry.text)
           .callFunction(() => {
+            if (twObserver) { twObserver.disconnect(); twObserver = null }
             currentTypingEntry.value = null
             typewriterInstance = null
             onDone()
