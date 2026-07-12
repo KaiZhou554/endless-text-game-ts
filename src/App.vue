@@ -394,6 +394,9 @@ function handleOppDice() {
 }
 
 function finishOpportunities() {
+  // 机遇推进 1h，但不计疲劳
+  gameState.dayCount += 1 / 24
+  gameState.actionCount++
   opportunityMode.value = false
   currentOpp.value = null
   oppQueue.value = []

@@ -230,6 +230,13 @@ function selectSituation(scene, state) {
       if (awake >= 10) w += 12
       if (awake >= 12) w += 20
     }
+    // 夜晚时遭遇危险的概率提升
+    const hour = (state.dayCount * 24) % 24
+    const isNight = hour >= 20 || hour < 6
+    if (isNight) {
+      if (sit.danger >= 4) w += 6   // 高危险情景夜晚更常见
+      if (sit.id.includes('horde') || sit.id.includes('ambush')) w += 8
+    }
     return { value: sit, weight: Math.max(1, w) }
   })
   return weightedPick(weights)
@@ -499,6 +506,11 @@ const sceneAtmosphere = {
 }
 
 function buildResultText(option: any, success: any, state: any) {
+  // 优先使用选项自定义文本
+  if (option.successText || option.failText) {
+    return success ? option.successText : (option.failText || option.successText)
+  }
+
   const scene = scenes[state.currentScene]
   const sceneName = scene ? scene.name : '这里'
   const atmArr = sceneAtmosphere[state.currentScene] || sceneAtmosphere.default

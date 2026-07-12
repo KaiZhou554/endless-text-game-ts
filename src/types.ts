@@ -83,6 +83,8 @@ export interface SituationOption {
   available?: boolean
   disabledReason?: string | null
   situationId?: string
+  successText?: string   // 自定义成功叙事
+  failText?: string      // 自定义失败叙事
 }
 
 export interface Situation {
