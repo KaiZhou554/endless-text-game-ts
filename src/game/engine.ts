@@ -715,7 +715,10 @@ export function resolveCombatRound(state, actionId) {
   const combat = state.combatState
   if (!combat) return null
   if (actionId === 'flee') {
-    if (chance(0.55)) {
+    const fleeCount = combat._fleeAttempts || 0
+    combat._fleeAttempts = fleeCount + 1
+    const fleeChance = Math.min(0.55 + fleeCount * 0.15, 0.9)
+    if (chance(fleeChance)) {
       combat.result = 'fled'
       state.inCombat = false
       const fleeTexts = ['你抓住机会转身就跑，头也不回地冲进最近的掩体。', '你全力冲刺，身后传来愤怒的嘶吼——你成功甩掉了它们。', '你且战且退，利用地形甩开了追击。', '你趁对方一个破绽，闪身消失在废墟之间。']

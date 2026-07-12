@@ -232,8 +232,10 @@ function handleCombatAction(strategyId: string) {
         resultLoot.value = []
       }
     } else if (combat.result === 'death') {
-      showCombatUI.value = false
-      checkAndTriggerEnding()
+      setTimeout(() => {
+        showCombatUI.value = false
+        checkAndTriggerEnding()
+      }, 2000) // 死亡后延时 2 秒
     }
   }, Math.max(delay, 900)) // 确保延迟大于骰子动画(840ms)
 }
@@ -283,7 +285,7 @@ function showOpportunity(idx) {
 
 function handleOppDice() {
   const opp = currentOpp.value
-  if (!opp || opp.type !== 'dice') return
+  if (!opp || opp.type !== 'dice' || !oppRollReady.value) return  // 打字中禁用
   const roll = Math.floor(Math.random() * 6) + 1
   oppDiceResult.value = roll
   oppDiceRolled.value = true
@@ -668,11 +670,10 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
           <button
             @click="handleOppDice"
             class="w-full py-3 px-4 text-sm border rounded-sm transition-colors min-h-[44px]"
-            style="border-color: #E6C37C; color: #E6C37C; background: #0D1117;"
+            :disabled="!oppRollReady"
+            :style="{ borderColor: oppRollReady ? '#E6C37C' : '#2a3a3a', color: oppRollReady ? '#E6C37C' : '#5a6a7a', background: '#0D1117' }"
             @mouseenter="hoverBg($event, '#1e2a2a')"
             @mouseleave="hoverBg($event, '#0D1117')"
-          :disabled="!oppRollReady"
-          :style="{ borderColor: oppRollReady ? '#E6C37C' : '#2a3a3a', color: oppRollReady ? '#E6C37C' : '#5a6a7a', background: '#0D1117' }"
           >🎲 掷骰子</button>
         </div>
       </div>
