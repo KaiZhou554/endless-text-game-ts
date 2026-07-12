@@ -221,7 +221,20 @@ function handleCombatAction(strategyId: string) {
   const delay = combat.rounds?.length ? Math.min(600 + combat.rounds.length * 200, 2000) : 600
 
   setTimeout(() => {
-    if (combat.result === 'victory' || combat.result === 'fled') {
+    if (combat.result === 'victory') {
+      // 胜利后延迟 2 秒让玩家看到击杀描述
+      setTimeout(() => {
+        showCombatUI.value = false
+        combatState.value = null
+        checkAndTriggerEnding()
+        if (gameState.phase !== 'ending') {
+          const event = generateEvent(gameState)
+          currentEventText.value = event.text
+          currentOptions.value = event.options
+          resultLoot.value = []
+        }
+      }, 2000)
+    } else if (combat.result === 'fled') {
       showCombatUI.value = false
       combatState.value = null
       checkAndTriggerEnding()
