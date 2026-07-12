@@ -908,7 +908,7 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
         <div class="flex gap-2">
           <input ref="cmdInputRef" v-model="cmdInput"
                  @keydown.enter="handleCmd"
-                 class="flex-1 text-sm px-3 py-2 border rounded-sm outline-none"
+                 class="flex-1 px-2 py-1.5 text-sm border rounded-sm outline-none"
                  style="background: #1a1f1f; border-color: #2a3a3a; color: #B0C4DE;">
           <button @click="handleCmd"
                   class="px-3 py-2 text-sm border rounded-sm min-h-[44px]"
