@@ -22,7 +22,6 @@ const mapLocations = [
   { id: 'pharmacy', name: '药房', icon: '💊', desc: '绿十字药房', danger: 2, tags: ['医疗'] },
   { id: 'gas_station', name: '加油站', icon: '⛽', desc: '壳牌加油站', danger: 2, tags: ['燃料'] },
   { id: 'school', name: '小学', icon: '🏫', desc: '市第三小学', danger: 3, tags: ['教育'] },
-  { id: 'church', name: '教堂', icon: '⛪', desc: '圣心教堂', danger: 1, tags: ['避难所'] },
   { id: 'forest_path', name: '森林小径', icon: '🌲', desc: '城郊次生林', danger: 1, tags: ['自然'] },
   { id: 'riverside', name: '河岸边', icon: '🏞️', desc: '城市运河', danger: 1, tags: ['水源'] },
   { id: 'radio_station', name: '广播站', icon: '📻', desc: '市广播站', danger: 2, tags: ['通讯'] },

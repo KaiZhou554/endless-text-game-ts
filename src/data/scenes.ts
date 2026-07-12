@@ -94,22 +94,6 @@ export const scenes: Scenes = {
     danger: 3,
     lootTypes: ['tool', 'weapon', 'misc'],
   },
-  church: {
-    id: 'church',
-    name: '教堂',
-    desc: '彩色玻璃窗被震碎了一半，长椅东倒西歪。讲台上的圣经翻到了《启示录》那一章，有人用红笔在段落间画了线。',
-    tags: ['室内', '宗教', '避难所'],
-    danger: 1,
-    lootTypes: ['food', 'medical', 'misc'],
-  },
-  sewer: {
-    id: 'sewer',
-    name: '下水道',
-    desc: '污水没过脚踝，墙壁上的苔藓发出幽幽的绿光。管道里回荡着水流声和某种生物的窸窣声。',
-    tags: ['地下', '黑暗', '潮湿', '危险'],
-    danger: 5,
-    lootTypes: ['misc', 'key'],
-  },
   pharmacy: {
     id: 'pharmacy',
     name: '药房',
