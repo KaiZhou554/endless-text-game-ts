@@ -204,7 +204,7 @@ function handleCombatAction(strategyId: string) {
         .replace(/🎲\[[^\]]+\]/, `🎲[${fakeRoll}]`)
         .replace(/\d+ 点伤害/, '?? 点伤害')
         .replace(/打出必杀一击！💥/, '造成了 ?? 点伤害')
-        .replace(/，但攻击落空了！/, '')
+        .replace(/，但攻击落空了！/, '造成了 ?? 点伤害')
       combatState.value = { ...combat }
 
       if (ticks >= 12) {
