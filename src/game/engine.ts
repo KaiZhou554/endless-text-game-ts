@@ -650,7 +650,7 @@ export function getCombatStrategies(state, enemy) {
   const r: any[] = []
   const weapons = state.inventory.filter(i => i.type === 'weapon')
   for (const w of randomSample(weapons, Math.min(2, weapons.length))) {
-    r.push({ id: 'weapon_'+w.id, name: w.name, desc: '掷骰 d6 + '+ (w.effects.damage||0), isWeapon: true, weaponId: w.id, weaponDmg: w.effects.damage||0 })
+    r.push({ id: 'weapon_'+w.id, name: w.name, desc: '掷骰 d6 + '+ (w.effects.damage||0) + ' + 1', isWeapon: true, weaponId: w.id, weaponDmg: w.effects.damage||0 })
   }
   if (r.length === 0) {
     // 无武器时不显示拳头选项，玩家只能选策略
@@ -714,8 +714,8 @@ export function resolveCombatRound(state, actionId) {
       if (w) { wd = w.effects.damage||0; wn = w.name }
     }
     const roll = d6()
-    playerDmg = roll + wd
-    playerText = `你挥动${wn}，骰出了 ${roll} 点，加上 ${wd} 点武器加成，造成 ${playerDmg} 点伤害。`
+    playerDmg = roll + wd + 1
+    playerText = `你挥动${wn}，骰出了 ${roll} 点，加上 ${wd} 点武器加成和 1 点基础伤害，造成 ${playerDmg} 点伤害。`
   } else {
     const s = combatStrategies.find(x => x.id === actionId)
     let roll = d6(), bonus = 0
@@ -776,7 +776,7 @@ export function autoResolveCombat(state) {
   if (!combat) return null
   const weapon = getBestWeapon(state) || { effects: { damage: 1 } }
   const bd = weapon.effects.damage||1, hp = combat.enemy.actualHp
-  const rounds = Math.ceil(hp / (3.5+bd)), ok = chance(0.5+bd*0.05-combat.enemy.damage*0.02)
+  const rounds = Math.ceil(hp / (3.5+bd+1)), ok = chance(0.5+bd*0.05-combat.enemy.damage*0.02)
   if (ok) {
     combat.result = 'victory'; state.inCombat = false; state.kills += combat.enemy.count
     const d = randInt(3,8)*rounds; state.hp = clamp(state.hp-d,0,state.maxHp)

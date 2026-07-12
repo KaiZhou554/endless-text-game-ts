@@ -44,16 +44,18 @@ function handleStartGame(mode: string) {
   const startHour = Math.random() < 0.6 ? 6 + Math.floor(Math.random() * 4) : 16 + Math.floor(Math.random() * 4)
   gameState.dayCount = startHour / 24
 
-  // 初始物品：水壶 + 能量棒 + 随机常规武器/工具
+  // 初始物品：水壶 + 能量棒 + 随机武器（确保新手有自卫能力）
   const starterItems = ['water_bottle', 'energy_bar']
   for (const itemId of starterItems) {
     const item = itemDB[itemId]
     if (item) addToInventory(gameState, item)
   }
-  // 随机给一个常规武器或工具（不要枪械/专业装备）
-  const starterTools = ['bat', 'knife', 'crowbar_weapon', 'multitool', 'flashlight', 'lighter', 'compass', 'machete', 'duct_tape']
-  const bonusItem = itemDB[starterTools[Math.floor(Math.random() * starterTools.length)]]
-  if (bonusItem) addToInventory(gameState, bonusItem)
+  // 随机给一把初始武器
+  const starterWeapons = ['bat', 'knife', 'crowbar_weapon', 'machete']
+  const bonusItem = itemDB[starterWeapons[Math.floor(Math.random() * starterWeapons.length)]]
+  if (bonusItem) {
+    addToInventory(gameState, bonusItem)
+  }
 
   addJournalEntry(gameState, '你在一栋废弃公寓的浴室里醒来。窗外是燃烧的城市，远处传来警笛和尖叫。你必须生存下去。', 'narrative')
   addJournalEntry(gameState, `👜 初始物品：水壶、能量棒、${bonusItem ? bonusItem.name : ''}`, 'action')
@@ -210,11 +212,11 @@ function handleUseItem(itemId: string) {
   const effects = useItem(gameState, itemId)
   if (effects) {
     let useText = `使用了 ${item.name}。`
-    if (effects.hp) useText += ` 生命+${effects.hp}`
-    if (effects.hunger) useText += ` 饱腹+${effects.hunger}`
-    if (effects.thirst) useText += ` 口渴+${effects.thirst}`
-    if (effects.sanity) useText += ` 理智+${effects.sanity}`
-    if (effects.infection && effects.infection < 0) useText += ` 感染${effects.infection}`
+    if (effects.hp) useText += ` 生命${effects.hp > 0 ? '+' : ''}${effects.hp}`
+    if (effects.hunger) useText += ` 饱腹${effects.hunger > 0 ? '+' : ''}${effects.hunger}`
+    if (effects.thirst) useText += ` 口渴${effects.thirst > 0 ? '+' : ''}${effects.thirst}`
+    if (effects.sanity) useText += ` 理智${effects.sanity > 0 ? '+' : ''}${effects.sanity}`
+    if (effects.infection) useText += ` 感染${effects.infection > 0 ? '+' : ''}${effects.infection}`
     addJournalEntry(gameState, useText, 'action')
   }
   // 刷新选项（背包满状态可能已变）

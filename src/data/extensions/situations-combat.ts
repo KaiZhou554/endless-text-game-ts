@@ -217,7 +217,7 @@ export const situations_combat: Situations = {
   fog_ambush: {
     id: 'fog_ambush',
     name: '雾中身影',
-    baseText: '浓雾笼罩了街道，能见度不足三米。雾中有人影在蹒跚移动——不是一个，是{count}个。它们还没注意到你，但雾太浓了，你不知道哪里是安全方向。',
+    baseText: '浓雾笼罩了街道，能见度不足三米。雾中隐约有{count}个人影在蹒跚移动。它们还没注意到你，但雾太浓了，你不知道哪里是安全方向。',
     options: [
       {
         id: 'silent_retreat',
