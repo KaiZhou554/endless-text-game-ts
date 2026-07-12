@@ -103,7 +103,7 @@ onUnmounted(() => {
       style="pointer-events: none;"
     >
       <div
-        class="w-full max-w-lg mx-4 mt-4 border rounded-sm p-5 space-y-4"
+        class="w-full max-w-lg mx-4 mt-4 border rounded-sm p-3 space-y-2"
         style="background: #0D1117; border-color: #2a3a3a; pointer-events: auto;"
       >
         <!-- Header -->
@@ -116,7 +116,7 @@ onUnmounted(() => {
             @mouseenter="(e: MouseEvent) => ((e.target as HTMLElement).style.background = '#1e1a1a')"
             @mouseleave="(e: MouseEvent) => ((e.target as HTMLElement).style.background = 'none')"
           >
-            ✕ 关闭
+            ✕
           </button>
         </div>
 
@@ -126,16 +126,16 @@ onUnmounted(() => {
             ref="inputRef"
             v-model="input"
             @keydown.enter="handleCmd"
-            placeholder="/give 或 /effect"
-            class="flex-1 px-3 py-2 text-sm border rounded-sm outline-none placeholder-gray-600"
+            placeholder="输入命令"
+            class="flex-1 px-2 py-1.5 text-sm border rounded-sm outline-none placeholder-gray-600"
             style="background: #1a1f1f; border-color: #2a3a3a; color: #B0C4DE;"
           />
           <button
             @click="handleCmd"
-            class="px-4 py-2 text-sm font-bold border rounded-sm min-h-[44px] transition-colors border-[#B0C4DE] text-[#B0C4DE] hover:bg-[#1e2a2a]"
+            class="px-3 py-2 text-sm border rounded-sm min-h-[44px] transition-colors border-[#B0C4DE] text-[#B0C4DE] hover:bg-[#1e2a2a]"
             style="background: none;"
           >
-            提交
+            ⏎
           </button>
         </div>
 
