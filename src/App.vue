@@ -49,7 +49,6 @@ const combatRewardActive = ref(false)  // 战后奖励掷骰
 const combatRewardRolled = ref(false)
 const combatRewardRoll = ref(0)
 const combatRewardText = ref('')
-const combatBagMsg = ref('')  // 战斗触发前的背包破损消息
 
 // ==================== 游戏流程 ====================
 
@@ -119,11 +118,6 @@ function handleSelectOption(option: any) {
 
   // 检查战斗
   if (result.combat) {
-    // 捕捉战斗触发前的背包消息
-    const bagEntry = gameState.journal.filter(
-      (e: any) => (e.type === 'warning' || e.type === 'danger') && e.text.includes('⊗')
-    ).pop()
-    combatBagMsg.value = bagEntry ? bagEntry.text : ''
     // 先加入战斗日志条目（结果文本已在上方加入，保证正确顺序）
     if (result._zombieWarn) {
       addJournalEntry(gameState, '⚠️ 你的行动惊动了附近的丧尸！它们朝你冲了过来！即将进入战斗……', 'danger')
@@ -133,7 +127,6 @@ function handleSelectOption(option: any) {
     if (result._zombieWarn) {
       setTimeout(() => {
         combatState.value = result.combat
-        combatBagMsg.value = ''
         const enemy = result.combat?.enemy
         combatStrategies.value = getCombatStrategies(gameState, enemy)
         showCombatUI.value = true
@@ -142,7 +135,6 @@ function handleSelectOption(option: any) {
       // 非丧尸触发也有短暂延迟，让玩家看到日志
       setTimeout(() => {
         combatState.value = result.combat
-        combatBagMsg.value = ''
         const enemy = result.combat?.enemy
         combatStrategies.value = getCombatStrategies(gameState, enemy)
         showCombatUI.value = true
@@ -248,7 +240,6 @@ function handleCombatAction(strategyId: string) {
     } else if (combat.result === 'fled') {
       showCombatUI.value = false
       combatState.value = null
-      combatBagMsg.value = ''
       checkAndTriggerEnding()
       if (gameState.phase !== 'ending') {
         const event = generateEvent(gameState)
@@ -259,7 +250,6 @@ function handleCombatAction(strategyId: string) {
     } else if (combat.result === 'death') {
       setTimeout(() => {
         showCombatUI.value = false
-        combatBagMsg.value = ''
         checkAndTriggerEnding()
       }, 2000) // 死亡后延时 2 秒
     }
@@ -316,7 +306,6 @@ function finishCombatReward() {
   combatRewardActive.value = false
   showCombatUI.value = false
   combatState.value = null
-  combatBagMsg.value = ''
   checkAndTriggerEnding()
   if (gameState.phase !== 'ending') {
     const event = generateEvent(gameState)
@@ -664,10 +653,6 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
           <div v-if="combatState.enemyDesc" class="text-sm leading-relaxed" style="color: #c4746e;">
             <span class="text-[10px] font-bold" style="color: #5a6a7a;">{{ combatState.enemy.name }}:</span>
             <p class="mt-0.5">{{ combatState.enemyDesc }}</p>
-          </div>
-          <!-- 背包破损/超重提示 -->
-          <div v-if="combatBagMsg" class="text-xs leading-relaxed px-2 py-1 border rounded-sm" style="border-color: #2a3a3a; background: #0D1117;">
-            <span class="dim" v-html="combatBagMsg"></span>
           </div>
           <div
             v-for="(round, idx) in combatState.rounds"
