@@ -42,14 +42,14 @@ const subtitle = computed(() => {
 </script>
 
 <template>
-  <div class="flex flex-col items-center justify-center min-h-screen px-4 pt-16 pb-8
+  <div class="flex flex-col items-center justify-center min-h-screen
               max-w-lg mx-auto overflow-y-auto">
     <!-- 标题 -->
-    <div class="text-center mb-6">
-      <div class="text-4xl mb-3 select-none">
+    <div class="text-center">
+      <div class="text-4xl select-none">
         {{ ending.isDeath ? '💀' : '🌟' }}
       </div>
-      <h2 class="text-xl font-bold mb-1" style="color: #E6C37C;">
+      <h2 class="text-xl font-bold" style="color: #E6C37C;">
         {{ ending.title }}
       </h2>
       <p class="text-xs" style="color: #5a6a7a;">
@@ -57,24 +57,24 @@ const subtitle = computed(() => {
       </p>
     </div>
 
-    <div class="w-full border-t mb-6" style="border-color: #2a3a3a;"></div>
+    <div class="w-full border-t" style="border-color: #2a3a3a;"></div>
 
     <!-- 结局文本 -->
-    <div class="w-full mb-6">
+    <div class="w-full">
       <pre class="text-sm leading-relaxed whitespace-pre-wrap font-mono"
            style="color: #B0C4DE; font-family: inherit;">{{ ending.text }}</pre>
     </div>
 
-    <div class="w-full border-t mb-6" style="border-color: #2a3a3a;"></div>
+    <div class="w-full border-t" style="border-color: #2a3a3a;"></div>
 
     <!-- 统计 -->
-    <div v-if="statsList.length > 0" class="w-full mb-6">
-      <h3 class="text-sm font-bold mb-3" style="color: #9ACD9D;">📊 生存统计</h3>
+    <div v-if="statsList.length > 0" class="w-full">
+      <h3 class="text-sm font-bold" style="color: #9ACD9D;">📊 生存统计</h3>
       <div class="space-y-1">
         <div
           v-for="stat in statsList"
           :key="stat.label"
-          class="flex justify-between text-sm py-1 border-b"
+          class="flex justify-between text-sm border-b"
           style="border-color: #1e2a2a;"
         >
           <span style="color: #5a6a7a;">{{ stat.label }}</span>
@@ -86,7 +86,7 @@ const subtitle = computed(() => {
     <!-- 重新开始 -->
     <button
       @click="emit('restart')"
-      class="w-full py-3 px-4 text-center text-sm border transition-colors duration-150
+      class="w-full text-center text-sm border transition-colors duration-150
              min-h-[44px] rounded-sm font-bold"
       style="background: #0D1117; border-color: #E6C37C; color: #E6C37C;"
       @mouseenter="e => (e.target as HTMLElement).style.background = '#1e2a2a'"
@@ -95,7 +95,7 @@ const subtitle = computed(() => {
       🔄 重新开始
     </button>
 
-    <p class="text-xs mt-4 text-center" style="color: #5a6a7a;">
+    <p class="text-xs text-center" style="color: #5a6a7a;">
       {{ ending.isDeath ? '死亡是终点，也是新的开始。' : '你的故事告一段落，但世界还在继续。' }}
     </p>
   </div>

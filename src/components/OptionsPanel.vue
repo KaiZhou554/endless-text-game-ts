@@ -83,17 +83,17 @@ const optionLabels = ['A', 'B', 'C', 'D', 'E', 'F']
                min-h-[44px] rounded-sm flex items-start gap-2"
         :style="optionStyle(option)"
       >
-        <span class="font-bold shrink-0 mt-px">{{ optionLabels[idx] || '?' }}.</span>
+        <span class="font-bold shrink-0">{{ optionLabels[idx] || '?' }}.</span>
         <span class="flex-1">
           {{ (option as any).text }}
           <span
             v-if="(option as any).risk"
-            class="block text-xs mt-0.5"
+            class="block text-xs"
             style="color: #5a6a7a;"
           >{{ (option as any).risk }}</span>
           <span
             v-if="(option as any).disabledReason"
-            class="block text-xs mt-0.5"
+            class="block text-xs"
             style="color: #c4746e;"
           >{{ (option as any).disabledReason }}</span>
         </span>
@@ -103,7 +103,7 @@ const optionLabels = ['A', 'B', 'C', 'D', 'E', 'F']
     <!-- 没有可用选项 -->
     <div
       v-if="options.length === 0"
-      class="text-center py-3 text-sm"
+      class="text-center text-sm"
       style="color: #5a6a7a;"
     >
       没有可用的选项...

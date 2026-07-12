@@ -69,12 +69,12 @@ function travelTo(locationId) {
            w-full sm:w-80 right-0"
     style="background: #0D1117; border-left: 1px solid #2a3a3a; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);"
   >
-    <div class="flex items-center justify-between px-4 py-3 border-b"
+    <div class="flex items-center justify-between border-b"
          style="border-color: #2a3a3a;">
       <h2 class="text-sm font-bold" style="color: #E6C37C;">🗺️ 地图</h2>
       <button
         @click="emit('close')"
-        class="text-sm px-2 py-1 min-h-[44px] border rounded-sm"
+        class="text-sm min-h-[44px] border rounded-sm"
         style="color: #c4746e; background: none; border-color: #c4746e; cursor: pointer;"
         @mouseenter="e => { (e.target as HTMLElement).style.background = '#1e1a1a'; (e.target as HTMLElement).style.borderColor = '#d08070' }"
         @mouseleave="e => { (e.target as HTMLElement).style.background = 'none'; (e.target as HTMLElement).style.borderColor = '#c4746e' }"
@@ -82,23 +82,23 @@ function travelTo(locationId) {
     </div>
 
     <!-- 当前位置 -->
-    <div class="px-4 py-2 border-b text-xs" style="border-color: #2a3a3a;">
+    <div class="border-b text-xs" style="border-color: #2a3a3a;">
       <span style="color: #5a6a7a;">📍 当前位置: </span>
       <span class="font-bold" style="color: #9ACD9D;">
         {{ mapLocations.find(l => l.id === gameState.currentScene)?.name || '未知' }}
       </span>
-      <span class="text-[10px] ml-2" style="color: #5a6a7a;">
+      <span class="text-[10px]" style="color: #5a6a7a;">
         · 已探索 {{ gameState.scenesVisited?.length || 0 }}/{{ mapLocations.length }}
       </span>
     </div>
 
     <!-- 地点列表 -->
-    <div class="flex-1 overflow-y-auto px-2 py-2 space-y-1">
+    <div class="flex-1 overflow-y-auto space-y-1">
       <div
         v-for="loc in mapLocations"
         :key="loc.id"
         @click="travelTo(loc.id)"
-        class="px-3 py-2 border transition-colors duration-150 rounded-sm
+        class="border transition-colors duration-150 rounded-sm
                flex items-center gap-3"
         :style="{
           borderColor: isUnlocked(loc.id) ? (gameState.currentScene === loc.id ? '#E6C37C' : '#2a3a3a') : '#1a2828',
@@ -115,14 +115,14 @@ function travelTo(locationId) {
               <span class="text-xs font-bold" style="color: #B0C4DE;">{{ loc.name }}</span>
               <span
                 v-if="isUnlocked(loc.id)"
-                class="text-[9px] px-1 rounded-sm"
+                class="text-[9px] rounded-sm"
                 :style="{ background: '#1e2a2a', color: dangerColor(loc.danger) }"
               >{{ dangerText(loc.danger) }}危</span>
               <span class="text-[9px]" style="color: #c4746e; opacity: 0.7;">-{{ 3 + loc.danger }}</span>
               <span class="text-[9px]" style="color: #7ab8d4; opacity: 0.7;">-{{ 2 + Math.floor(loc.danger/2) }}</span>
               <span
                 v-if="gameState.currentScene === loc.id"
-                class="text-[9px] px-1"
+                class="text-[9px]"
                 style="color: #E6C37C; border: 1px solid #E6C37C;"
               >当前</span>
             </div>

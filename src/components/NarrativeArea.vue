@@ -221,7 +221,7 @@ const currentTurnId = computed(() => props.gameState.actionCount)
   <div class="relative flex-1 overflow-hidden" style="background: #0D1117;">
     <div
       ref="scrollContainer"
-      class="absolute inset-0 overflow-y-auto px-2 sm:px-4"
+      class="absolute inset-0 overflow-y-auto"
       style="background: #0D1117;"
     >
       <!-- 空状态 -->
@@ -232,7 +232,7 @@ const currentTurnId = computed(() => props.gameState.actionCount)
       </div>
 
       <!-- 日志条目：仅显示已 reveal 的条目（正在打字的条目由 typewriterTarget 显示） -->
-      <div v-else class="pb-6">
+      <div v-else>
         <div
           v-for="(entry, idx) in gameState.journal"
           :key="entry.id"
@@ -256,7 +256,7 @@ const currentTurnId = computed(() => props.gameState.actionCount)
         <!-- 剧情输出结束提示（延迟 0.3s 淡入） -->
         <transition name="prompt-fade">
           <div v-if="gameState.journal.length > 0 && !isProcessing"
-               class="pl-3 pt-2 pb-5" style="color: #4a5a5a; font-size: 13px;">
+               style="color: #4a5a5a; font-size: 13px;">
             ➤ 选择你的行动
           </div>
         </transition>
@@ -267,7 +267,7 @@ const currentTurnId = computed(() => props.gameState.actionCount)
     <button
       v-if="showScrollButton"
       @click="scrollToBottom"
-      class="absolute bottom-3 right-3 z-10 text-xs px-4 py-1.5 rounded-sm border transition-colors"
+      class="absolute bottom-3 right-3 z-10 text-xs rounded-sm border transition-colors"
       style="background: #1a1f1f; border-color: #E6C37C; color: #E6C37C;"
       @mouseenter="e => { (e.target as HTMLElement).style.background = '#2a3535'; (e.target as HTMLElement).style.borderColor = '#f0d080' }"
       @mouseleave="e => { (e.target as HTMLElement).style.background = '#1a1f1f'; (e.target as HTMLElement).style.borderColor = '#E6C37C' }"

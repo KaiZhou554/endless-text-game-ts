@@ -82,12 +82,12 @@ function handleEquip(item) {
     style="background: #0D1117; border-left: 1px solid #2a3a3a; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);"
   >
     <!-- 头部 -->
-    <div class="flex items-center justify-between px-4 py-3 border-b"
+    <div class="flex items-center justify-between border-b"
          style="border-color: #2a3a3a;">
       <h2 class="text-sm font-bold" style="color: #E6C37C;">🎒 背包</h2>
       <button
         @click="emit('close')"
-        class="text-sm px-2 py-1 min-h-[44px] border rounded-sm"
+        class="text-sm min-h-[44px] border rounded-sm"
         style="color: #c4746e; background: none; border-color: #c4746e; cursor: pointer;"
         @mouseenter="e => { (e.target as HTMLElement).style.background = '#1e1a1a'; (e.target as HTMLElement).style.borderColor = '#d08070' }"
         @mouseleave="e => { (e.target as HTMLElement).style.background = 'none'; (e.target as HTMLElement).style.borderColor = '#c4746e' }"
@@ -95,13 +95,13 @@ function handleEquip(item) {
     </div>
 
     <!-- 装备栏 -->
-    <div class="px-4 py-2 border-b text-xs space-y-1" style="border-color: #2a3a3a;">
+    <div class="border-b text-xs space-y-1" style="border-color: #2a3a3a;">
       <div class="flex justify-between">
         <span style="color: #5a6a7a;">⚔️ 武器:</span>
         <span v-if="equippedWeapon" style="color: #c4746e;">
           {{ equippedWeapon.name }}
           <button @click="emit('unequip', 'weapon')"
-                  class="ml-1 text-[10px] hover:underline" style="color: #5a6a7a;">卸下</button>
+                  class="text-[10px] hover:underline" style="color: #5a6a7a;">卸下</button>
         </span>
         <span v-else style="color: #5a6a7a;">空手</span>
       </div>
@@ -110,7 +110,7 @@ function handleEquip(item) {
         <span v-if="equippedArmor" style="color: #7ab8d4;">
           {{ equippedArmor.name }}
           <button @click="emit('unequip', 'armor')"
-                  class="ml-1 text-[10px] hover:underline" style="color: #5a6a7a;">卸下</button>
+                  class="text-[10px] hover:underline" style="color: #5a6a7a;">卸下</button>
         </span>
         <span v-else style="color: #5a6a7a;">无</span>
       </div>
@@ -123,8 +123,8 @@ function handleEquip(item) {
     </div>
 
     <!-- 物品列表 -->
-    <div class="flex-1 overflow-y-auto px-2 py-2">
-      <div v-if="inventoryItems.length === 0" class="text-center py-8">
+    <div class="flex-1 overflow-y-auto">
+      <div v-if="inventoryItems.length === 0" class="text-center">
         <p class="text-sm" style="color: #5a6a7a;">背包是空的</p>
       </div>
       <div v-else class="space-y-1">
@@ -132,7 +132,7 @@ function handleEquip(item) {
           v-for="item in inventoryItems"
           :key="item.id + '-' + Math.random()"
           @click="selectItem(item)"
-          class="px-3 py-2 border cursor-pointer transition-colors duration-150 rounded-sm"
+          class="border cursor-pointer transition-colors duration-150 rounded-sm"
           :style="{
             borderColor: selectedItem === item ? getItemTypeColor(item.type) : '#2a3a3a',
             background: selectedItem === item ? '#1e2a2a' : '#0D1117',
@@ -143,31 +143,31 @@ function handleEquip(item) {
           <div class="flex items-center justify-between">
             <span class="text-xs font-bold" :style="{ color: getItemTypeColor(item.type) }">
               {{ item.name }}
-              <span v-if="item._count > 1" class="ml-1" style="color: #5a6a7a;">x{{ item._count }}</span>
+              <span v-if="item._count > 1" style="color: #5a6a7a;">x{{ item._count }}</span>
             </span>
-            <span class="text-[10px] px-1.5 py-0.5 rounded-sm"
+            <span class="text-[10px] rounded-sm"
                   :style="{ background: '#1e2a2a', color: getItemTypeColor(item.type) }">
               {{ getItemTypeName(item.type) }}
             </span>
           </div>
-          <p class="text-[11px] mt-1 leading-relaxed" style="color: #5a6a7a;">
+          <p class="text-[11px] leading-relaxed" style="color: #5a6a7a;">
             {{ item.desc }}
           </p>
           <!-- 标签 -->
-          <div v-if="item.tags && item.tags.length > 0" class="flex flex-wrap gap-1 mt-1">
+          <div v-if="item.tags && item.tags.length > 0" class="flex flex-wrap gap-1">
             <span
               v-for="tag in item.tags.slice(0, 3)"
               :key="tag"
-              class="text-[9px] px-1"
+              class="text-[9px]"
               style="color: #5a6a7a; border: 1px solid #2a3a3a;"
             >{{ tag }}</span>
           </div>
           <!-- 选中后的操作按钮 -->
-          <div v-if="selectedItem === item" class="flex gap-2 mt-2">
+          <div v-if="selectedItem === item" class="flex gap-2">
             <button
               v-if="item.type === 'food' || item.type === 'drink' || item.type === 'medical' || item.usable"
               @click.stop="handleUse(item)"
-              class="text-[11px] px-2 py-1 border rounded-sm min-h-[36px] transition-colors"
+              class="text-[11px] border rounded-sm min-h-[36px] transition-colors"
               style="border-color: #9ACD9D; color: #9ACD9D; background: #0D1117;"
               @mouseenter="e => (e.target as HTMLElement).style.background = '#1e2a2a'"
               @mouseleave="e => (e.target as HTMLElement).style.background = '#0D1117'"
@@ -175,14 +175,14 @@ function handleEquip(item) {
             <button
               v-if="item.type === 'weapon' || item.type === 'armor'"
               @click.stop="handleEquip(item)"
-              class="text-[11px] px-2 py-1 border rounded-sm min-h-[36px] transition-colors"
+              class="text-[11px] border rounded-sm min-h-[36px] transition-colors"
               style="border-color: #E6C37C; color: #E6C37C; background: #0D1117;"
               @mouseenter="e => (e.target as HTMLElement).style.background = '#1e2a2a'"
               @mouseleave="e => (e.target as HTMLElement).style.background = '#0D1117'"
             >装备</button>
             <button
               @click.stop="handleDrop(item)"
-              class="text-[11px] px-2 py-1 border rounded-sm min-h-[36px] transition-colors"
+              class="text-[11px] border rounded-sm min-h-[36px] transition-colors"
               style="border-color: #c4746e; color: #c4746e; background: #0D1117;"
               @mouseenter="e => (e.target as HTMLElement).style.background = '#1e2a2a'"
               @mouseleave="e => (e.target as HTMLElement).style.background = '#0D1117'"

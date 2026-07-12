@@ -48,29 +48,29 @@ function formatTime(dayCount) {
            w-full sm:w-80 right-0"
     style="background: #0D1117; border-left: 1px solid #2a3a3a; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);"
   >
-    <div class="flex items-center justify-between px-4 py-3 border-b"
+    <div class="flex items-center justify-between border-b"
          style="border-color: #2a3a3a;">
       <h2 class="text-sm font-bold" style="color: #E6C37C;">📖 日志</h2>
       <button
         @click="emit('close')"
-        class="text-sm px-2 py-1 min-h-[44px] border rounded-sm"
+        class="text-sm min-h-[44px] border rounded-sm"
         style="color: #c4746e; background: none; border-color: #c4746e; cursor: pointer;"
         @mouseenter="e => { (e.target as HTMLElement).style.background = '#1e1a1a'; (e.target as HTMLElement).style.borderColor = '#d08070' }"
         @mouseleave="e => { (e.target as HTMLElement).style.background = 'none'; (e.target as HTMLElement).style.borderColor = '#c4746e' }"
       >✕ 关闭</button>
     </div>
 
-    <div ref="scrollRef" class="flex-1 overflow-y-auto px-3 py-2 space-y-2">
-      <div v-if="reversedJournal.length === 0" class="text-center py-8">
+    <div ref="scrollRef" class="flex-1 overflow-y-auto space-y-2">
+      <div v-if="reversedJournal.length === 0" class="text-center">
         <p class="text-xs" style="color: #5a6a7a;">还没有任何记录</p>
       </div>
       <div
         v-for="entry in reversedJournal"
         :key="entry.id"
-        class="text-xs leading-relaxed border-b pb-2"
+        class="text-xs leading-relaxed border-b"
         style="border-color: #1e2a2a;"
       >
-        <div class="flex justify-between mb-0.5">
+        <div class="flex justify-between">
           <span class="text-[10px]" style="color: #5a6a7a;">
             {{ formatTime(entry.time) }}
           </span>

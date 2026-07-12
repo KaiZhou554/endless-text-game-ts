@@ -623,7 +623,7 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
 </script>
 
 <template>
-  <div class="h-full flex flex-col max-w-lg mx-auto w-full" style="background: #0D1117;">
+  <div class="h-full flex flex-col max-w-lg w-full" style="background: #0D1117;">
 
     <!-- ========== 开始画面 ========== -->
     <StartScreen
@@ -665,7 +665,7 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
         style="background: #0D1117;"
       >
         <!-- 敌人信息头部 -->
-        <div class="border-b px-4 py-2" style="border-color: #2a3a3a;">
+        <div class="border-b" style="border-color: #2a3a3a;">
           <div class="flex items-center justify-between">
             <div>
               <span class="text-sm font-bold" style="color: #c4746e;">
@@ -682,7 +682,7 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
       </div>
 
         <!-- 战斗日志 -->
-        <div class="flex-1 overflow-y-auto px-4 py-3 space-y-2 relative"
+        <div class="flex-1 overflow-y-auto space-y-2 relative"
              ref="combatLogRef"
              @scroll="checkCombatScroll">
           <!-- 丧尸描述（左侧） -->
@@ -717,7 +717,7 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
           <button
             v-if="showCombatScrollBtn"
             @click="scrollCombatLog"
-            class="sticky bottom-2 z-10 text-xs px-3 py-1 border rounded-sm mx-auto block"
+            class="sticky bottom-2 z-10 text-xs border rounded-sm mx-auto block"
             style="background: #1a1f1f; border-color: #E6C37C; color: #E6C37C;"
             @mouseenter="e => (e.target as HTMLElement).style.background = '#2a3535'"
             @mouseleave="e => (e.target as HTMLElement).style.background = '#1a1f1f'"
@@ -728,7 +728,7 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
         </div>
 
         <!-- 策略选项（骰子动画期间隐藏，保留占位） -->
-        <div :class="{ 'hidden': combatState.result, 'invisible': rollingRound !== null && !combatState.result }" class="border-t" style="border-color: #2a3a3a;">
+        <div :class="{ 'h-0 overflow-hidden': combatState.result, 'invisible': rollingRound !== null && !combatState.result }" class="border-t" :style="{ borderColor: combatState.result ? 'transparent' : '#2a3a3a' }">
           <button
             v-for="s in combatStrategies"
             :key="s.id"
@@ -768,7 +768,7 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
         </div>
 
         <!-- 战斗结果 -->
-        <div :class="{ 'invisible': !combatState.result && rollingRound === null }" class="border-t px-4 py-3 text-center" style="border-color: #2a3a3a;">
+        <div :class="{ 'invisible': !combatState.result && rollingRound === null }" class="border-t text-center" style="border-color: #2a3a3a;">
           <p v-if="combatState.result === 'victory' && !combatRewardActive" class="text-sm font-bold" style="color: #9ACD9D;">💀 战斗胜利！</p>
           <p v-else-if="combatState.result === 'fled'" class="text-sm" style="color: #E6C37C;">🏃 你脱离了战斗。</p>
           <p v-else-if="combatState.result === 'death'" class="text-sm font-bold" style="color: #c4746e;">💀 你倒下了……</p>
@@ -779,7 +779,7 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
               <p class="text-xs mb-2" style="color: #B0C4DE;">搜索尸体看看有什么可用的……</p>
               <button
                 @click="handleCombatRewardDice"
-                class="w-full py-2.5 px-4 text-sm border rounded-sm transition-colors min-h-[44px]"
+                class="w-full text-sm border rounded-sm transition-colors min-h-[44px]"
                 style="border-color: #E6C37C; color: #E6C37C; background: #0D1117;"
                 @mouseenter="hoverBg($event, '#1e2a2a')"
                 @mouseleave="hoverBg($event, '#0D1117')"
@@ -798,7 +798,7 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
         <div class="text-center">
           <button
             @click="handleOppDice"
-            class="w-full py-1.5 px-2 text-sm border rounded-sm transition-colors min-h-[44px]"
+            class="w-full text-sm border rounded-sm transition-colors min-h-[44px]"
             :disabled="!oppRollReady"
             :style="{ borderColor: oppRollReady ? '#E6C37C' : '#2a3a3a', color: oppRollReady ? '#E6C37C' : '#5a6a7a', background: '#0D1117' }"
             @mouseenter="hoverBg($event, '#1e2a2a')"
