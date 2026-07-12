@@ -47,18 +47,18 @@ export function applySurvivalDecay(state) {
   // 睡眠不足惩罚（每行动 +1h）
   state.hoursAwake = (state.hoursAwake || 0) + 1
   if (state.hoursAwake >= 12) {
-    const fatiguePenalty = 8
+    const fatiguePenalty = 4
     state.sanity = clamp(state.sanity - fatiguePenalty, 0, state.maxSanity)
     state.hp = clamp(state.hp - 2, 0, state.maxHp)
     if (state.hoursAwake >= 12 && state.hoursAwake <= 12.5) {
       addJournalEntry(state, '<span class="dim">⊗ 你已经超过12小时没休息了，视线开始模糊，脚步踉跄。再不休息你会垮掉的。</span>', 'warning')
     }
   } else if (state.hoursAwake >= 10) {
-    const fatiguePenalty = 4
+    const fatiguePenalty = 2
     state.sanity = clamp(state.sanity - fatiguePenalty, 0, state.maxSanity)
     state.hp = clamp(state.hp - 1, 0, state.maxHp)
   } else if (state.hoursAwake >= 8) {
-    const fatiguePenalty = 2
+    const fatiguePenalty = 1
     state.sanity = clamp(state.sanity - fatiguePenalty, 0, state.maxSanity)
     if (state.hoursAwake >= 8 && state.hoursAwake <= 8.5) {
       addJournalEntry(state, '<span class="dim">⊗ 你已经连续行动8小时了，体力开始下降。最好找个地方休息一下。</span>', 'warning')
