@@ -71,7 +71,7 @@ function handleStartGame(mode: string) {
   }
 
   addJournalEntry(gameState, '你在一栋废弃公寓的浴室里醒来。窗外是燃烧的城市，远处传来警笛和尖叫。你必须生存下去。', 'narrative')
-  addJournalEntry(gameState, `👜 初始物品：水壶、能量棒、${bonusItem ? bonusItem.name : ''}`, 'action')
+  addJournalEntry(gameState, `✢ 初始物品：水壶、能量棒、${bonusItem ? bonusItem.name : ''}`, 'action')
 
   // 生成第一个事件
   generateFirstEvent()
@@ -101,7 +101,7 @@ function handleSelectOption(option: any) {
   if (result.loot && result.loot.length > 0) {
     resultLoot.value = result.loot
     const lootNames = result.loot.map(i => i.name).join('、')
-    addJournalEntry(gameState, `👜 获得了：${lootNames}`, 'action')
+    addJournalEntry(gameState, `✢ 获得了：${lootNames}`, 'action')
   }
 
   // 检查结局
