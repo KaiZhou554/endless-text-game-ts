@@ -50,6 +50,10 @@ const combatRewardRolled = ref(false)
 const combatRewardRoll = ref(0)
 const combatRewardText = ref('')
 let _pendingSceneChange = false  // 机遇打断时暂存的场景切换标记
+const cmdVisible = ref(false)
+const cmdInput = ref('')
+const cmdResult = ref('')
+const cmdInputRef = ref<HTMLInputElement | null>(null)
 
 // 返回物品稀有度对应的 CSS class
 function itemRarityClass(item: any): string {
@@ -589,6 +593,66 @@ function handleRestart() {
   gameState.currentEnding = null
 }
 
+// ==================== 命令面板 ====================
+
+function handleCmd() {
+  const text = cmdInput.value.trim()
+  cmdResult.value = ''
+  if (!text.startsWith('/')) { cmdResult.value = '命令必须以 / 开头'; return }
+
+  const parts = text.slice(1).split(/\s+/)
+  const cmd = parts[0]
+  const args = parts.slice(1)
+
+  if (cmd === 'give') {
+    const given: string[] = []
+    const skipped: string[] = []
+    for (const id of args) {
+      const item = itemDB[id]
+      if (item && addToInventory(gameState, item)) {
+        given.push(item.name)
+      } else {
+        skipped.push(id)
+      }
+    }
+    const msgs: string[] = []
+    if (given.length) msgs.push('✔ 获得：' + given.join('、'))
+    if (skipped.length) msgs.push('✘ 无效或背包满：' + skipped.join('、'))
+    cmdResult.value = msgs.join(' | ')
+  } else if (cmd === 'effect') {
+    const applied: string[] = []
+    for (const arg of args) {
+      const m = arg.match(/^(hp|hunger|thirst|sanity|infection)([+-]\d+)$/)
+      if (m) {
+        modifyStat(gameState, m[1], parseInt(m[2]))
+        applied.push(m[1] + m[2])
+      } else {
+        applied.push('✘' + arg)
+      }
+    }
+    cmdResult.value = applied.join(' ')
+  } else {
+    cmdResult.value = '未知命令: /' + cmd + '  (支持: give, effect)'
+  }
+}
+
+// Ctrl+P 快捷键
+function onKeydown(e) {
+  if (e.ctrlKey && e.key === 'p') {
+    e.preventDefault()
+    cmdVisible.value = !cmdVisible.value
+    if (cmdVisible.value) { cmdInput.value = ''; cmdResult.value = ''; nextTick(() => cmdInputRef.value?.focus()) }
+  }
+  if (e.key === 'Escape' && cmdVisible.value) {
+    cmdVisible.value = false
+  }
+}
+
+// \u6302\u8F7D/\u5378\u8F7D\u952E\u76D8\u4E8B\u4EF6
+import { onMounted, onUnmounted } from 'vue'
+onMounted(() => window.addEventListener('keydown', onKeydown))
+onUnmounted(() => window.removeEventListener('keydown', onKeydown))
+
 function hoverBg(e: Event, color: string) {
   const el = e.currentTarget as HTMLElement | null
   if (el) el.style.background = color
@@ -827,6 +891,30 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
         @load-game="handleLoad"
       />
     </template>
+
+    <!-- ========== 命令面板 ========== -->
+    <div v-if="cmdVisible"
+         class="fixed inset-x-0 top-0 z-50 flex justify-center pt-4"
+         style="pointer-events: none;">
+      <div class="w-full max-w-lg mx-4 border rounded-sm"
+           style="background: #0D1117; border-color: #2a3a3a; pointer-events: auto;">
+        <div class="flex items-center justify-between px-3 py-2 border-b" style="border-color: #2a3a3a;">
+          <span class="text-xs font-bold" style="color: #E6C37C;">⌨ 命令面板</span>
+          <button @click="cmdVisible = false" class="text-xs px-2 py-1 border rounded-sm"
+                  style="border-color: #c4746e; color: #c4746e; background: none;"
+                  @mouseenter="e => (e.target as HTMLElement).style.background = '#1e1a1a'"
+                  @mouseleave="e => (e.target as HTMLElement).style.background = 'none'">✕ 关闭</button>
+        </div>
+        <div class="px-3 py-2">
+          <input ref="cmdInputRef" v-model="cmdInput"
+                 @keydown.enter="handleCmd"
+                 placeholder="/give rope lockpick | /effect hp:+5 sanity:10"
+                 class="w-full text-xs px-2 py-1.5 border rounded-sm outline-none"
+                 style="background: #1a1f1f; border-color: #2a3a3a; color: #B0C4DE;">
+          <div v-if="cmdResult" class="mt-1.5 text-xs leading-relaxed" style="color: #9ACD9D;">{{ cmdResult }}</div>
+        </div>
+      </div>
+    </div>
 
     <!-- ========== 面板覆盖层 ========== -->
     <InventoryDrawer
