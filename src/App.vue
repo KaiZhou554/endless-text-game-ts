@@ -44,6 +44,7 @@ const oppDiceRolled = ref(false)  // 已掷骰
 const oppDiceResult = ref(0)
 const oppQueue = ref<any[]>([])
 const oppIndex = ref(0)
+const waitDuration = ref(0)  // 传递给 NarrativeArea 的等待延时
 
 // ==================== 游戏流程 ====================
 
@@ -151,12 +152,22 @@ function handleSelectOption(option: any) {
   if (opps.length > 0) {
     oppQueue.value = opps
     oppIndex.value = 0
+    // 总延时 = 各机遇 delay 之和 + 间隙
+    let total = 800
+    for (const o of opps) {
+      if (o.type === 'narrative') total += o.delay * 1000 + 400
+      else if (o.type === 'narrative_result') total += o.delay * 1000 + 400
+      else total += 4000 + 600  // dice: 4s result + gap
+    }
+    waitDuration.value = total
     setTimeout(() => showOpportunity(0), 800)
     return
   }
 
+  waitDuration.value = 800
   // 生成下一个事件
   setTimeout(() => {
+    waitDuration.value = 0
     const event = generateEvent(gameState, result.sceneChange ?? false)
     currentEventText.value = event.text
     currentOptions.value = event.options
@@ -318,6 +329,7 @@ function finishOpportunities() {
   currentOpp.value = null
   oppQueue.value = []
   oppIndex.value = 0
+  waitDuration.value = 0
   isResolving.value = false
   // 生成下一个事件
   setTimeout(() => {
@@ -541,7 +553,7 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
       />
 
       <!-- 叙事区（始终挂载，战斗中隐藏） -->
-      <NarrativeArea v-show="!showCombatUI" :gameState="gameState" />
+      <NarrativeArea v-show="!showCombatUI" :gameState="gameState" :waitDuration="waitDuration" />
 
       <!-- 战斗模式 -->
       <div

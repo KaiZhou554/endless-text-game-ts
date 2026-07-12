@@ -4,12 +4,11 @@ import Typewriter from 'typewriter-effect/dist/core'
 
 const props = defineProps({
   gameState: { type: Object, required: true },
+  waitDuration: { type: Number, default: 0 },  // 等待延时(ms)，0=无延时
 })
 
 const scrollContainer = ref<HTMLElement | null>(null)
 const isNearBottom = ref(true)
-const promptState = ref("waiting")  // "waiting" | "ready"
-let promptTimer: any = null
 const showScrollButton = ref(false)
 const typewriterTarget = ref<HTMLElement | null>(null)
 
@@ -218,16 +217,7 @@ function getTextStyle(entry: any, total: any[], currentTurnId: number) {
 
 const currentTurnId = computed(() => props.gameState.actionCount)
 
-watch(isProcessing, (v) => {
-  if (!v && props.gameState.journal.length > 0) {
-    // 队列空闲 → 先显示等待，1.5s 后变为就绪
-    promptState.value = "waiting"
-    if (promptTimer) clearTimeout(promptTimer)
-    promptTimer = setTimeout(() => {
-      promptState.value = "ready"
-    }, 1500)
-  }
-})
+
 </script>
 
 <template>
@@ -272,12 +262,12 @@ watch(isProcessing, (v) => {
         <transition name="prompt-fade">
           <div v-if="gameState.journal.length > 0 && !isProcessing"
                class="pl-3 pt-2 pb-4" style="color: #4a5a5a; font-size: 13px;">
-            {{ promptState === 'waiting' ? '⏳ 等待下一回合……' : '➤ 选择你的行动' }}
-            <div v-if="promptState === 'waiting'"
+            {{ props.waitDuration > 0 ? '➤ 等待下一回合' : '➤ 选择你的行动' }}
+            <div v-if="props.waitDuration > 0"
                  class="mt-1.5 h-0.5 rounded-full overflow-hidden"
                  style="background: #1e2a2a; width: 100%;">
-              <div class="h-full rounded-full animate-progress"
-                   style="background: #4a5a5a;"></div>
+              <div class="h-full rounded-full"
+                   :style="{ animation: 'progress-shrink ' + (props.waitDuration / 1000) + 's linear forwards', background: '#4a5a5a', width: '100%' }"></div>
             </div>
           </div>
         </transition>
