@@ -794,11 +794,11 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
 
       <!-- 机遇模式（骰子判定） -->
       <div v-if="opportunityMode && currentOpp && currentOpp.type === 'dice' && !oppDiceRolled"
-           class="border-t px-4 py-3" style="border-color: #2a3a3a;">
+           class="border-t px-2 py-1" style="border-color: #2a3a3a;">
         <div class="text-center">
           <button
             @click="handleOppDice"
-            class="w-full py-3 px-4 text-sm border rounded-sm transition-colors min-h-[44px]"
+            class="w-full py-1.5 px-2 text-sm border rounded-sm transition-colors min-h-[44px]"
             :disabled="!oppRollReady"
             :style="{ borderColor: oppRollReady ? '#E6C37C' : '#2a3a3a', color: oppRollReady ? '#E6C37C' : '#5a6a7a', background: '#0D1117' }"
             @mouseenter="hoverBg($event, '#1e2a2a')"
