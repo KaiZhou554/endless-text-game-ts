@@ -109,7 +109,6 @@ function handleSelectOption(option: any) {
     // 先加入战斗日志条目（结果文本已在上方加入，保证正确顺序）
     if (result._zombieWarn) {
       addJournalEntry(gameState, '⚠️ 你的行动惊动了附近的丧尸！它们朝你冲了过来！即将进入战斗……', 'danger')
-      addJournalEntry(gameState, '⏳ 5…4…3…2…1…', 'warning')
     }
     addJournalEntry(gameState, `✽ 进入战斗！遭遇了 ${result.combat.enemy.count} 只${result.combat.enemy.name}。`, 'combat')
 
@@ -556,11 +555,6 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
 
       <!-- 普通模式 -->
       <template v-else>
-        <!-- 输出结束提示 -->
-        <div v-if="currentOptions.length > 0 && !isResolving"
-             class="text-center pt-1 pb-3" style="color: #4a5a5a; font-size: 12px;">
-          ➤ 选择你的行动
-        </div>
         <!-- 选项区 -->
         <OptionsPanel
           v-if="!showCombatUI"

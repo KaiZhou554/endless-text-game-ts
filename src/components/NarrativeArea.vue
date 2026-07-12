@@ -200,7 +200,7 @@ function getTextStyle(entry: any, total: any[], currentTurnId: number) {
   }
 
   let color = baseColor
-  if (isRecent) {
+  if (isRecent && entry.type !== 'action') {
     color = isNewest ? '#d0dce8' : '#c0d0e0'
   } else if (entry.type !== 'warning' && entry.type !== 'danger' && entry.type !== 'discovery') {
     color = '#8a9aaa'
