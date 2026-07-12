@@ -372,6 +372,20 @@ function hoverBg(e: Event, color: string) {
   if (el) el.style.background = color
 }
 
+// 战斗日志滚动
+function checkCombatScroll() {
+  if (!combatLogRef.value) return
+  const el = combatLogRef.value
+  const threshold = 80
+  showCombatScrollBtn.value = el.scrollHeight - el.scrollTop - el.clientHeight > threshold
+}
+function scrollCombatLog() {
+  if (combatLogRef.value) {
+    combatLogRef.value.scrollTop = combatLogRef.value.scrollHeight
+    showCombatScrollBtn.value = false
+  }
+}
+
 function toggleInventory() { gameState.showInventory = !gameState.showInventory }
 function toggleJournal() { gameState.showJournal = !gameState.showJournal }
 function toggleMap() { gameState.showMap = !gameState.showMap }
@@ -433,8 +447,10 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
         </div>
       </div>
 
-        <!-- 战斗日志（类似对话历史） -->
-        <div class="flex-1 overflow-y-auto px-4 py-3 space-y-2">
+        <!-- 战斗日志 -->
+        <div class="flex-1 overflow-y-auto px-4 py-3 space-y-2 relative"
+             ref="combatLogRef"
+             @scroll="checkCombatScroll">
           <!-- 丧尸描述（左侧） -->
           <div v-if="combatState.enemyDesc" class="text-sm leading-relaxed" style="color: #c4746e;">
             <span class="text-[10px] font-bold" style="color: #5a6a7a;">{{ combatState.enemy.name }}:</span>
@@ -462,6 +478,19 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
               <p class="mt-0.5">{{ round.enemyText }}</p>
             </div>
           </div>
+
+          <!-- 战斗日志回到底部按钮 -->
+          <button
+            v-if="showCombatScrollBtn"
+            @click="scrollCombatLog"
+            class="sticky bottom-2 z-10 text-xs px-3 py-1 border rounded-sm mx-auto block"
+            style="background: #1a1f1f; border-color: #E6C37C; color: #E6C37C;"
+            @mouseenter="e => (e.target as HTMLElement).style.background = '#2a3535'"
+            @mouseleave="e => (e.target as HTMLElement).style.background = '#1a1f1f'"
+          >↓ 回到底部</button>
+
+          <!-- 底部留空避免按钮遮挡日志 -->
+          <div class="h-16"></div>
         </div>
 
         <!-- 策略选项（骰子动画期间隐藏） -->
