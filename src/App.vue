@@ -728,7 +728,7 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
         </div>
 
         <!-- 策略选项（骰子动画期间隐藏，保留占位） -->
-        <div :class="{ 'invisible': combatState.result || rollingRound !== null }" class="border-t" style="border-color: #2a3a3a;">
+        <div :class="{ 'hidden': combatState.result, 'invisible': rollingRound !== null && !combatState.result }" class="border-t" style="border-color: #2a3a3a;">
           <button
             v-for="s in combatStrategies"
             :key="s.id"

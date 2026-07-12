@@ -43,7 +43,7 @@ function handleCmd() {
   } else if (cmd === 'effect') {
     const applied: string[] = []
     for (const arg of args) {
-      const m = arg.match(/^(hp|hunger|thirst|sanity|infection)([+-]\d+)$/)
+      const m = arg.match(/^(hp|hunger|thirst|sanity|infection)[:：]?([+-]?\d+)$/)
       if (m) {
         modifyStat(props.gameState, m[1], parseInt(m[2]))
         applied.push(m[1] + m[2])
