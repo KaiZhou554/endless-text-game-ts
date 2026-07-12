@@ -15,7 +15,7 @@ const typewriterTarget = ref<HTMLElement | null>(null)
 const revealedIds = ref(new Set<number>())  // 已显示完成的条目 id
 const processingQueue = ref<any[]>([])      // 待处理队列
 const isProcessing = ref(false)             // 是否正在处理
-let currentTypingEntry: any = null          // 当前正在打字机显示的条目
+const currentTypingEntry = ref<any>(null)    // 当前正在打字机显示的条目
 let typewriterInstance: any = null
 let _lastJournalLen = 0                     // 上次处理的日志长度
 
@@ -106,7 +106,7 @@ function startTyping(entry: any, onDone: () => void) {
     typewriterInstance.stop()
     typewriterInstance = null
   }
-  currentTypingEntry = entry
+  currentTypingEntry.value = entry
 
   nextTick(() => {
     if (!typewriterTarget.value) {
@@ -123,7 +123,7 @@ function startTyping(entry: any, onDone: () => void) {
     typewriterInstance
       .typeString(entry.text)
       .callFunction(() => {
-        currentTypingEntry = null
+        currentTypingEntry.value = null
         typewriterInstance = null
         onDone()
       })
