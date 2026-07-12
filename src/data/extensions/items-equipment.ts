@@ -206,10 +206,10 @@ export const equipment: ItemDB = {
     type: 'misc',
     desc: '一个军规三日突击包，扩展了你的携带能力。',
     tags: ['扩展:容量+5', '占位:1'],
+    slots: 1,
     effects: { capacityBonus: 5 },
     stackable: false,
     reusable: true,
-    slots: 1,
   },
   sleeping_bag: {
     id: 'sleeping_bag',
