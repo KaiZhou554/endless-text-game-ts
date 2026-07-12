@@ -98,6 +98,7 @@ export const keyItems: ItemDB = {
     tags: ['关键', '提示:军事设施', '可合并'],
     effects: {},
     events: ['unlock_all_scenes'],
+    usable: true,
     stackable: false,
     reusable: true,
   },
