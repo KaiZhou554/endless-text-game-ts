@@ -613,6 +613,9 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
       <!-- 状态栏 -->
       <StatusBar :gameState="gameState" />
 
+      <!-- 手机端宽度占位（确保容器宽度不被内容撑缩） -->
+      <div class="sm:hidden w-screen h-0 pointer-events-none" aria-hidden="true"></div>
+
       <!-- 对话模式 -->
       <DialogPanel
         v-if="gameState.phase === 'dialogue'"
