@@ -186,6 +186,7 @@ export function useItem(state, itemId) {
   if (effects.sanity) state.sanity = clamp(state.sanity + effects.sanity, 0, state.maxSanity)
   if (effects.infection) state.infection = clamp(state.infection + effects.infection, 0, state.maxInfection)
   if (effects.stopBleeding) state._bleeding = false
+  if (effects.clearFatigue) state.hoursAwake = 0
 
   // 非可复用物品移除
   if (!item.reusable) {

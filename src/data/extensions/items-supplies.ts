@@ -195,7 +195,7 @@ export const supplies: ItemDB = {
     type: 'medical',
     desc: '一支标注着"ZM-07"的玻璃注射器，里面是淡蓝色的液体。这是某间实验室留下的实验性抗病毒血清。',
     tags: ['医疗', '感染:-40', '关键:血清结局', '极稀有'],
-    effects: { infection: -50 },
+    effects: { hp: 20, thirst: 15, infection: -50 },
     stackable: true,
     reusable: false,
     slots: 1,
@@ -285,6 +285,18 @@ export const supplies: ItemDB = {
     stackable: true,
     reusable: false,
     slots: 1,
+  },
+
+  sleeping_bag: {
+    id: 'sleeping_bag',
+    name: '野营睡袋',
+    type: 'tool',
+    desc: '一个干净的野营睡袋，保暖防潮。虽然不能完全替代安全的床铺，但在废墟里能让你睡个好觉。',
+    tags: ['工具', '休息', '消耗品'],
+    effects: { hp: 25, sanity: 20, hunger: -8, thirst: -5, clearFatigue: 1 },
+    stackable: false,
+    reusable: false,
+    slots: 2,
   },
 
 }
