@@ -233,6 +233,7 @@ function handleCombatAction(strategyId: string) {
           combatRewardRolled.value = false
           combatRewardRoll.value = 0
           combatRewardText.value = ''
+          nextTick(() => scrollCombatNow())
         } else {
           finishCombatReward()
         }
