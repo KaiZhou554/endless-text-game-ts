@@ -295,6 +295,7 @@ export const supplies: ItemDB = {
     tags: ['工具', '休息', '消耗品'],
     effects: { hp: 25, sanity: 20, hunger: -8, thirst: -5 },
     events: ['clear_fatigue'],
+    usable: true,
     stackable: false,
     reusable: false,
     slots: 2,
