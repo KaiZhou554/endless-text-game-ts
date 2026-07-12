@@ -99,10 +99,21 @@ function handleSelectOption(option: any) {
 
   // 检查战斗
   if (result.combat) {
-    combatState.value = result.combat
-    const enemy = result.combat?.enemy
-    combatStrategies.value = getCombatStrategies(gameState, enemy)
-    showCombatUI.value = true
+    const hasWarning = result.narrativeText && result.narrativeText.includes('惊动了附近的丧尸')
+    if (hasWarning) {
+      // 先显示警告文本，延迟 1.5 秒再进入战斗
+      setTimeout(() => {
+        combatState.value = result.combat
+        const enemy = result.combat?.enemy
+        combatStrategies.value = getCombatStrategies(gameState, enemy)
+        showCombatUI.value = true
+      }, 1500)
+    } else {
+      combatState.value = result.combat
+      const enemy = result.combat?.enemy
+      combatStrategies.value = getCombatStrategies(gameState, enemy)
+      showCombatUI.value = true
+    }
     isResolving.value = false
     return
   }

@@ -426,7 +426,7 @@ function applyFailureEffects(result: any, option: any, state: any) {
   // 大部分失败触发丧尸战斗，小概率直接受伤
   if (chance(0.8) && !state.inCombat) {
     result.combat = generateCombat(state)
-    addJournalEntry(state, '⚠️ 你的行动惊动了附近的丧尸！它们朝你冲了过来！', 'danger')
+    addJournalEntry(state, '⚠️ 你的行动惊动了附近的丧尸！它们朝你冲了过来！即将进入战斗……', 'danger')
   } else if (chance(0.2)) {
     const inf = randInt(5, 15)
     modifyStat(state, 'infection', inf)
