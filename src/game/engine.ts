@@ -668,6 +668,8 @@ export function getCombatStrategies(state, enemy) {
   const r: any[] = []
   const weapons = state.inventory.filter(i => i.type === 'weapon')
   for (const w of randomSample(weapons, Math.min(2, weapons.length))) {
+    // 需要弹药的武器：没有对应弹药则不显示
+    if (w.effects.ammo && !hasItemWithTag(state.inventory, '弹药:' + w.effects.ammo)) continue
     const wd = w.effects.damage||0
     const ranges = getHitRanges(wd)
     const rangeStr = '基础 4| ' + ranges.map(r => `<span class="dim">${r.min}-${r.max}</span> +${r.dmg}`).join('| ')
@@ -742,6 +744,12 @@ export function resolveCombatRound(state, actionId) {
     if (wid !== 'fists') {
       const w = state.inventory.find(i => i.id === wid && i.type === 'weapon')
       if (w) { wd = w.effects.damage||0; wn = w.name }
+      // 消耗弹药
+      if (w && w.effects.ammo) {
+        const ammoTag = '弹药:' + w.effects.ammo
+        const ammoItem = state.inventory.find(i => i.tags && i.tags.includes(ammoTag))
+        if (ammoItem) removeFromInventory(state, ammoItem.id, 1)
+      }
     }
     const roll = d20()
     if (roll === 1) {

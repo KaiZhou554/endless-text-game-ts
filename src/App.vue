@@ -273,7 +273,7 @@ function handleCombatRewardDice() {
 
   if (roll <= 3) {
     combatRewardText.value = `${glyph}这具丧尸身上空无一物。你叹了口气，准备离开。`
-    addJournalEntry(gameState, `✽ 搜刮尸体：${glyph} 什么都没有。`, 'action')
+    addJournalEntry(gameState, `${glyph} 搜刮尸体：什么都没有。`, 'action')
     setTimeout(() => finishCombatReward(), 1500)
   } else if (roll <= 5) {
     const pool = combatRewardPools.small
@@ -281,10 +281,10 @@ function handleCombatRewardDice() {
     const item = itemDB[itemId]
     if (item && addToInventory(gameState, item)) {
       combatRewardText.value = `${glyph}你在尸体旁发现了一些有用物资：${item.name}。`
-      addJournalEntry(gameState, `✽ 搜刮尸体：${glyph} 获得 ${item.name}。`, 'action')
+      addJournalEntry(gameState, `${glyph} 搜刮尸体：获得 ${item.name}。`, 'action')
     } else {
       combatRewardText.value = `${glyph}你翻找了一番，但背包已经满了。`
-      addJournalEntry(gameState, `✽ 搜刮尸体：${glyph} 背包满了！`, 'action')
+      addJournalEntry(gameState, `${glyph} 搜刮尸体：背包满了！`, 'action')
     }
     setTimeout(() => finishCombatReward(), 2000)
   } else {
@@ -293,10 +293,10 @@ function handleCombatRewardDice() {
     const item = itemDB[itemId]
     if (item && addToInventory(gameState, item)) {
       combatRewardText.value = `${glyph}你仔细搜索，找到了一件好东西：${item.name}！`
-      addJournalEntry(gameState, `✽ 搜刮尸体：${glyph} 获得 ${item.name}！`, 'action')
+      addJournalEntry(gameState, `${glyph} 搜刮尸体：获得 ${item.name}！`, 'action')
     } else {
       combatRewardText.value = `${glyph}你发现了好东西，但背包已经放不下了！`
-      addJournalEntry(gameState, `✽ 搜刮尸体：${glyph} 背包满了！`, 'action')
+      addJournalEntry(gameState, `${glyph} 搜刮尸体：背包满了！`, 'action')
     }
     setTimeout(() => finishCombatReward(), 2500)
   }
