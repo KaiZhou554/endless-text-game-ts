@@ -894,25 +894,29 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
 
     <!-- ========== 命令面板 ========== -->
     <div v-if="cmdVisible"
-         class="fixed inset-x-0 top-0 z-50 flex justify-center pt-4"
+         class="fixed inset-x-0 top-0 z-50 flex justify-center pt-4 px-3"
          style="pointer-events: none;">
-      <div class="w-full max-w-lg mx-4 border rounded-sm"
+      <div class="w-full max-w-lg border rounded-sm p-4"
            style="background: #0D1117; border-color: #2a3a3a; pointer-events: auto;">
-        <div class="flex items-center justify-between px-3 py-2 border-b" style="border-color: #2a3a3a;">
-          <span class="text-xs font-bold" style="color: #E6C37C;">⌨ 命令面板</span>
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-sm font-bold" style="color: #E6C37C;">⌘ 命令面板</span>
           <button @click="cmdVisible = false" class="text-xs px-2 py-1 border rounded-sm"
                   style="border-color: #c4746e; color: #c4746e; background: none;"
                   @mouseenter="e => (e.target as HTMLElement).style.background = '#1e1a1a'"
                   @mouseleave="e => (e.target as HTMLElement).style.background = 'none'">✕ 关闭</button>
         </div>
-        <div class="px-3 py-2">
+        <div class="flex gap-2">
           <input ref="cmdInputRef" v-model="cmdInput"
                  @keydown.enter="handleCmd"
-                 placeholder="/give rope lockpick | /effect hp:+5 sanity:10"
-                 class="w-full text-xs px-2 py-1.5 border rounded-sm outline-none"
+                 class="flex-1 text-sm px-3 py-2 border rounded-sm outline-none"
                  style="background: #1a1f1f; border-color: #2a3a3a; color: #B0C4DE;">
-          <div v-if="cmdResult" class="mt-1.5 text-xs leading-relaxed" style="color: #9ACD9D;">{{ cmdResult }}</div>
+          <button @click="handleCmd"
+                  class="px-3 py-2 text-sm border rounded-sm min-h-[44px]"
+                  style="border-color: #E6C37C; color: #E6C37C; background: #0D1117;"
+                  @mouseenter="e => (e.target as HTMLElement).style.background = '#1e2a2a'"
+                  @mouseleave="e => (e.target as HTMLElement).style.background = '#0D1117'">⏎</button>
         </div>
+        <div v-if="cmdResult" class="mt-2 text-sm leading-relaxed" style="color: #9ACD9D;">{{ cmdResult }}</div>
       </div>
     </div>
 
