@@ -79,7 +79,7 @@ function handleEquip(item) {
   <div
     class="fixed top-0 bottom-0 z-50 flex flex-col overflow-hidden
            w-full sm:w-80 right-0"
-    style="background: #0D1117; border-left: 1px solid #2a3a3a;"
+    style="background: #0D1117; border-left: 1px solid #2a3a3a; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);"
   >
     <!-- 头部 -->
     <div class="flex items-center justify-between px-4 py-3 border-b"

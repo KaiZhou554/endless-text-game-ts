@@ -41,7 +41,7 @@ html, body {
   flex-direction: column;
   max-width: 512px;
   margin: 0 auto;
-  padding: 0;
+  padding: env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px) 0;
 }
 
 /* 平板及以上：四周留呼吸空间 */
