@@ -107,3 +107,8 @@ html, body {
   animation: blink 1s step-end infinite;
   color: var(--accent);
 }
+
+/* Weapon hit range dimmer style */
+.dim {
+  color: #3a4a4a;
+}

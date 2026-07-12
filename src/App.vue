@@ -400,9 +400,12 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
         @dialogue-result="handleDialogueResult"
       />
 
-      <!-- 战斗模式（全屏覆盖，类似对话） -->
+      <!-- 叙事区（始终挂载，战斗中隐藏） -->
+      <NarrativeArea v-show="!showCombatUI" :gameState="gameState" />
+
+      <!-- 战斗模式 -->
       <div
-        v-else-if="showCombatUI && combatState"
+        v-if="showCombatUI && combatState"
         class="flex-1 flex flex-col overflow-hidden"
         style="background: #0D1117;"
       >
@@ -471,7 +474,8 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
           >
             <div class="leading-tight">
               <span>{{ s.name }}</span>
-              <div style="color: #5a6a7a; font-size: 10px;">{{ s.desc }}</div>
+              <div v-if="s.isWeapon" style="color: #5a6a7a; font-size: 10px;" v-html="s.desc"></div>
+              <div v-else style="color: #5a6a7a; font-size: 10px;">{{ s.desc }}</div>
             </div>
           </button>
           <!-- 逃跑 + 一键 同一行 -->
@@ -503,9 +507,6 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
 
       <!-- 普通模式 -->
       <template v-else>
-        <!-- 叙事区 -->
-        <NarrativeArea :gameState="gameState" />
-
         <!-- 选项区 -->
         <OptionsPanel
           v-if="!showCombatUI"

@@ -670,7 +670,7 @@ export function getCombatStrategies(state, enemy) {
   for (const w of randomSample(weapons, Math.min(2, weapons.length))) {
     const wd = w.effects.damage||0
     const ranges = getHitRanges(wd)
-    const rangeStr = '基础' + ranges.map(r => `${r.min}-${r.max} ${r.dmg}`).join('| ')
+    const rangeStr = '基础 4| ' + ranges.map(r => `<span class="dim">${r.min}-${r.max}</span> +${r.dmg}`).join('| ')
     r.push({ id: 'weapon_'+w.id, name: w.name, desc: rangeStr, isWeapon: true, weaponId: w.id, weaponDmg: wd })
   }
   if (r.length === 0) {
