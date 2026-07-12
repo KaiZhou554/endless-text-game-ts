@@ -668,7 +668,10 @@ export function getCombatStrategies(state, enemy) {
   const r: any[] = []
   const weapons = state.inventory.filter(i => i.type === 'weapon')
   for (const w of randomSample(weapons, Math.min(2, weapons.length))) {
-    r.push({ id: 'weapon_'+w.id, name: w.name, desc: 'd20 · 1=失误 20=必杀', isWeapon: true, weaponId: w.id, weaponDmg: w.effects.damage||0 })
+    const wd = w.effects.damage||0
+    const ranges = getHitRanges(wd)
+    const rangeStr = '基础' + ranges.map(r => `${r.min}-${r.max} ${r.dmg}`).join('| ')
+    r.push({ id: 'weapon_'+w.id, name: w.name, desc: rangeStr, isWeapon: true, weaponId: w.id, weaponDmg: wd })
   }
   if (r.length === 0) {
     // 无武器时不显示拳头选项，玩家只能选策略
@@ -734,16 +737,16 @@ export function resolveCombatRound(state, actionId) {
     const roll = d20()
     if (roll === 1) {
       playerDmg = 0
-      playerText = `🎲[${roll}] 你挥动${wn}，但攻击落空了！`
+      playerText = `🎲[${roll}] 你使用${wn}，但攻击落空了！`
     } else if (roll === 20) {
       playerDmg = 9999
-      playerText = `🎲[${roll}] 你挥动${wn}，一击必杀！[INSTAKILL]`
+      playerText = `🎲[${roll}] 你使用${wn}打出了必杀一击！💥 摧枯拉朽！`
     } else {
       const ranges = getHitRanges(wd)
       const hit = ranges.find(r => roll >= r.min && roll <= r.max)
       const bonusDmg = hit ? hit.dmg : 5
       playerDmg = 4 + bonusDmg
-      playerText = `🎲[${roll}] 基础 4 + ${bonusDmg} = ${playerDmg} 点伤害`
+      playerText = `🎲[${roll}] 你使用${wn}造成了 ${playerDmg} 点伤害`
     }
   } else {
     const s = combatStrategies.find(x => x.id === actionId)
