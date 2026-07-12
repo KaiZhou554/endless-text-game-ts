@@ -190,6 +190,12 @@ export function useItem(state, itemId) {
   if (item.events) {
     for (const evt of item.events) {
       if (evt === 'clear_fatigue') state.hoursAwake = 0
+      if (evt === 'heal_40_percent_missing') {
+        const missing = state.maxHp - state.hp
+        const heal = Math.ceil(missing * 0.4)
+        state.hp = clamp(state.hp + heal, 0, state.maxHp)
+        effects.hp = heal  // 记录实际治疗量供日志显示
+      }
     }
   }
 
