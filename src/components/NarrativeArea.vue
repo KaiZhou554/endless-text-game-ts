@@ -221,7 +221,7 @@ const currentTurnId = computed(() => props.gameState.actionCount)
   <div class="relative flex-1 overflow-hidden" style="background: #0D1117;">
     <div
       ref="scrollContainer"
-      class="absolute inset-0 overflow-y-auto px-2 sm:px-4 py-2 sm:py-3"
+      class="absolute inset-0 overflow-y-auto px-2 sm:px-4 py-1"
       style="background: #0D1117;"
     >
       <!-- 空状态 -->
@@ -232,11 +232,11 @@ const currentTurnId = computed(() => props.gameState.actionCount)
       </div>
 
       <!-- 日志条目：仅显示已 reveal 的条目（正在打字的条目由 typewriterTarget 显示） -->
-      <div v-else class="space-y-1 pb-6">
+      <div v-else class="pb-6">>
         <div
           v-for="(entry, idx) in gameState.journal"
           :key="entry.id"
-          class="px-3 py-2 -mx-2"
+          class="px-2 py-1 -mx-2"
           :style="{
             ...getTextStyle(entry, gameState.journal, currentTurnId),
             fontSize: '15px',
@@ -251,7 +251,7 @@ const currentTurnId = computed(() => props.gameState.actionCount)
         <div
           v-if="currentTypingEntry && !revealedIds.has(currentTypingEntry.id)"
           ref="typewriterTarget"
-          class="px-3 py-2 -mx-2"
+          class="px-2 py-1 -mx-2"
           style="font-size: 15px; line-height: 1.6; color: #B0C4DE; min-height: 1.5em;"
         ></div>
 
