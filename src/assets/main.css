@@ -165,3 +165,29 @@ html, body {
   border-radius: 2px;
   animation: crit-glow 1.2s ease-out forwards;
 }
+
+/* ===== 贵重物品特效 ===== */
+@keyframes item-rare {
+  0% { color: #E6C37C; text-shadow: 0 0 4px #E6C37C, 0 0 12px #FFD700; background: linear-gradient(90deg, transparent 0%, rgba(230,195,124,0.15) 10%, rgba(255,255,255,0.2) 50%, rgba(230,195,124,0.15) 90%, transparent 100%); background-size: 200% 100%; background-position: -100% 0; }
+  30% { color: #E6C37C; text-shadow: 0 0 8px #E6C37C, 0 0 20px #FFD700; background-position: 50% 0; }
+  60% { color: #E6C37C; background-position: 200% 0; }
+  100% { color: inherit; text-shadow: none; background: transparent; }
+}
+@keyframes item-epic {
+  0% { color: #b388ff; text-shadow: 0 0 4px #b388ff, 0 0 12px #7c4dff; background: linear-gradient(90deg, transparent 0%, rgba(179,136,255,0.15) 10%, rgba(255,255,255,0.2) 50%, rgba(179,136,255,0.15) 90%, transparent 100%); background-size: 200% 100%; background-position: -100% 0; }
+  30% { color: #b388ff; text-shadow: 0 0 8px #b388ff, 0 0 20px #7c4dff; background-position: 50% 0; }
+  60% { color: #b388ff; background-position: 200% 0; }
+  100% { color: inherit; text-shadow: none; background: transparent; }
+}
+.item-rare {
+  display: inline-block;
+  padding: 0 4px;
+  border-radius: 2px;
+  animation: item-rare 1.2s ease-out forwards;
+}
+.item-epic {
+  display: inline-block;
+  padding: 0 4px;
+  border-radius: 2px;
+  animation: item-epic 1.2s ease-out forwards;
+}

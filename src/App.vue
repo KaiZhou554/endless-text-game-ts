@@ -49,6 +49,7 @@ const combatRewardActive = ref(false)  // 战后奖励掷骰
 const combatRewardRolled = ref(false)
 const combatRewardRoll = ref(0)
 const combatRewardText = ref('')
+let _pendingSceneChange = false  // 机遇打断时暂存的场景切换标记
 
 // ==================== 游戏流程 ====================
 
@@ -406,7 +407,8 @@ function finishOpportunities() {
   isResolving.value = false
   // 生成下一个事件
   setTimeout(() => {
-    const event = generateEvent(gameState)
+    const event = generateEvent(gameState, _pendingSceneChange)
+    _pendingSceneChange = false
     currentEventText.value = event.text
     currentOptions.value = event.options
     resultLoot.value = []
@@ -759,7 +761,9 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
               >🎲 搜刮战利品</button>
             </template>
             <template v-else>
-              <p class="text-sm leading-relaxed" style="color: #B0C4DE;">{{ combatRewardText }}</p>
+              <p class="text-sm leading-relaxed"
+                 :class="combatRewardRoll === 6 ? 'item-epic' : (combatRewardRoll >= 4 ? 'item-rare' : '')"
+                 style="color: #B0C4DE;">{{ combatRewardText }}</p>
             </template>
           </div>
         </div>

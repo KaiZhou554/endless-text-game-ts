@@ -844,12 +844,8 @@ export function resolveCombatRound(state, actionId) {
     if (s && s.defMod < 1) combat._defending = true
   }
   combat.enemy.actualHp -= playerDmg
-  const wn = isWeapon ? (state.inventory.find(i => i.id === actionId.replace('weapon_','') && i.type === 'weapon')?.effects.noise||0) : 0
-  if (wn >= 3 && chance(0.3)) {
-    combat.enemy.actualHp += randInt(5, 15); combat.enemy.count += randInt(1, 2)
-    playerText += ' ⚠️ 噪音引来了更多丧尸！'
-  }
   if (combat.enemy.actualHp <= 0) {
+    // 死亡处理...
     combat.result = 'victory'; state.inCombat = false
     state.kills += combat.enemy.count
     const deathTexts: Record<string, string[]> = {
@@ -871,6 +867,12 @@ export function resolveCombatRound(state, actionId) {
     combat.rounds.push(round)
     addJournalEntry(state, `✽ 战斗胜利！击败了 ${combat.enemy.count} 只${combat.enemy.name}。`, 'combat')
     return combat
+  }
+  // 噪音可能引来更多丧尸（仅当敌人没死时）
+  const wn = isWeapon ? (state.inventory.find(i => i.id === actionId.replace('weapon_','') && i.type === 'weapon')?.effects.noise||0) : 0
+  if (wn >= 3 && chance(0.3)) {
+    combat.enemy.actualHp += randInt(5, 15); combat.enemy.count += randInt(1, 2)
+    playerText += ' ⚠️ 噪音引来了更多丧尸！'
   }
   let defMod = combat._defending ? 0.5 : 1.0
   combat._defending = false
