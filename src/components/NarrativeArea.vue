@@ -69,14 +69,22 @@ function processQueue() {
     return
   }
 
-  if (isTypewriterEligible(entry.type)) {
-    // 打字机类：逐字动画显示
-    startTyping(entry, () => {
-      finishEntry(entry)
-    })
-  } else {
-    // 非打字机类（action/combat/warning）：短暂延迟后直接显示
+  // Safety timeout: 30秒后强制释放队列（防止 onDone 因异常未被调用）
+  const safetyTimer = setTimeout(() => {
+    isProcessing.value = false
+    processingQueue.value.shift()
+    processQueue()
+  }, 30000)
+
+  const originalFinish = () => {
+    clearTimeout(safetyTimer)
     finishEntry(entry)
+  }
+
+  if (isTypewriterEligible(entry.type)) {
+    startTyping(entry, originalFinish)
+  } else {
+    originalFinish()
   }
 }
 
@@ -102,33 +110,44 @@ function finishEntry(entry: any) {
 }
 
 function startTyping(entry: any, onDone: () => void) {
-  if (typewriterInstance) {
-    typewriterInstance.stop()
-    typewriterInstance = null
-  }
-  currentTypingEntry.value = entry
-
-  nextTick(() => {
-    if (!typewriterTarget.value) {
-      onDone()
-      return
+  try {
+    if (typewriterInstance) {
+      typewriterInstance.stop()
+      typewriterInstance = null
     }
-    typewriterTarget.value.innerHTML = ''
-    typewriterInstance = new Typewriter(typewriterTarget.value, {
-      delay: 20,
-      cursor: '▋',
-      loop: false,
-      autoStart: false,
-    })
-    typewriterInstance
-      .typeString(entry.text)
-      .callFunction(() => {
-        currentTypingEntry.value = null
-        typewriterInstance = null
+    currentTypingEntry.value = entry
+
+    nextTick(() => {
+      try {
+        if (!typewriterTarget.value) {
+          // 目标元素尚未就绪，直接完成
+          onDone()
+          return
+        }
+        typewriterTarget.value.innerHTML = ''
+        typewriterInstance = new (Typewriter as any)(typewriterTarget.value, {
+          delay: 20,
+          cursor: '▋',
+          loop: false,
+          autoStart: false,
+        })
+        typewriterInstance
+          .typeString(entry.text)
+          .callFunction(() => {
+            currentTypingEntry.value = null
+            typewriterInstance = null
+            onDone()
+          })
+          .start()
+      } catch (e) {
+        console.warn('typewriter error:', e)
         onDone()
-      })
-      .start()
-  })
+      }
+    })
+  } catch (e) {
+    console.warn('startTyping error:', e)
+    onDone()
+  }
 }
 
 // 窗口缩放时也检查位置
