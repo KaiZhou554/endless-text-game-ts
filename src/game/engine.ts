@@ -433,7 +433,7 @@ function applySuccessEffects(result: any, option: any, state: any) {
       if (addToInventory(state, item)) result.loot.push(item)
     }
   }
-  if (option.id === 'rest') {
+  if (option.id === 'rest' || option.id === 'rest_here') {
     modifyStat(state, 'hp', 10)
     modifyStat(state, 'sanity', 15)
     state.hoursAwake = 0  // 休息后清醒时间归零
