@@ -428,7 +428,7 @@ function applySuccessEffects(result: any, option: any, state: any) {
   const lootChance = option.tags && option.tags.includes('搜索') ? 0.9 : 0
   if (chance(lootChance)) {
     const lootCount = randInt(1, 3)
-    const loot = getLootPool(lootCount)
+    const loot = getLootPool(lootCount, state.inventory)
     for (const item of loot) {
       if (addToInventory(state, item)) result.loot.push(item)
     }

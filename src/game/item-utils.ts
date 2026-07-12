@@ -30,11 +30,29 @@ export function getRandomItem(type: any = null) {
 /**
  * 获取随机战利品池（用于事件奖励）
  */
-export function getLootPool(count = 3) {
+export function getLootPool(count = 3, inventory: any[] = []) {
   const loot: any[] = []
   const types = ['food', 'drink', 'medical', 'misc']
+
+  // 收集玩家已有的枪械需要的弹药类型
+  const gunAmmos: string[] = []
+  for (const item of inventory) {
+    if (item.type === 'weapon' && item.effects?.ammo) {
+      gunAmmos.push(item.effects.ammo)
+    }
+  }
+
   for (let i = 0; i < count; i++) {
     const type = types[Math.floor(Math.random() * types.length)]
+    if (type === 'misc' && gunAmmos.length > 0) {
+      // 优先掉落已有枪械的弹药
+      const ammoTag = '弹药:' + gunAmmos[Math.floor(Math.random() * gunAmmos.length)]
+      const ammoPool = getItemsByTag(ammoTag)
+      if (ammoPool.length > 0) {
+        loot.push(ammoPool[Math.floor(Math.random() * ammoPool.length)])
+        continue
+      }
+    }
     loot.push(getRandomItem(type))
   }
   return loot

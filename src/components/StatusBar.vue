@@ -157,8 +157,8 @@ function formatTimeOfDay(dayCount) {
           {{ bar.value }}
         </span>
       </div>
-      <span class="text-[10px] font-bold ml-1 tabular-nums" style="color: #E6C37C; min-width: 24px;">
-        D{{ Math.floor(gameState.dayCount) + 1 }}
+      <span class="text-[10px] font-bold ml-1 tabular-nums" style="color: #E6C37C;">
+        D{{ Math.floor(gameState.dayCount) + 1 }} {{ formatTimeOfDay(gameState.dayCount) }}
       </span>
       <span v-if="(gameState.hoursAwake || 0) >= 12" class="text-[9px]" :style="{ color: (gameState.hoursAwake || 0) >= 20 ? '#c4746e' : '#E6C37C' }">
         😪{{ Math.floor(gameState.hoursAwake || 0) }}h
