@@ -224,7 +224,7 @@ function selectSituation(scene, state) {
     // 夜晚和疲劳时更可能找到休息处
     if (sit.id.includes('sleep')) {
       const hour = (state.dayCount * 24) % 24
-      if (hour >= 20 || hour < 6) w += 8
+      if (hour >= 20 || hour < 6) w += 12
       const awake = state.hoursAwake || 0
       if (awake >= 8) w += 8
       if (awake >= 10) w += 12
@@ -816,7 +816,7 @@ export function resolveCombatRound(state, actionId) {
       playerText = `🎲[${roll}] 你使用${wn}，但攻击落空了！`
     } else if (roll === 20) {
       playerDmg = 9999
-      playerText = `🎲[${roll}] 你使用${wn}打出了必杀一击！💥 摧枯拉朽！`
+      playerText = `🎲[${roll}] 你使用${wn}打出必杀一击！💥`
       isCritRound = true
     } else {
       const ranges = getHitRanges(wd)
