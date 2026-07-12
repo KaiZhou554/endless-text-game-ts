@@ -233,14 +233,14 @@ function buildEventText(scene, situation, modifiers, state) {
   text += sitText + '\n'
   // 玩家状态后缀始终展示（因为状态会变化）
   for (const mod of modifiers) {
-    if (mod.textSuffix) text += '\n' + mod.textSuffix
+    if (mod.textSuffix) text += '\n<span class="dim">' + mod.textSuffix + '</span>'
   }
   if (state.sanity < 30 && chance(0.4)) {
     const hallucinations = [
-      '\n（墙角的阴影似乎在移动……不，那只是你的幻觉。）',
-      '\n（你听到有人在叫你的名字——但周围没有人。）',
-      '\n（那些尸体……它们刚才是不是动了一下？）',
-      '\n（你觉得有人在背后看着你。你回头，什么都没有。）',
+      '<span class="dim">\n（墙角的阴影似乎在移动……不，那只是你的幻觉。）</span>',
+      '<span class="dim">\n（你听到有人在叫你的名字——但周围没有人。）</span>',
+      '<span class="dim">\n（那些尸体……它们刚才是不是动了一下？）</span>',
+      '<span class="dim">\n（你觉得有人在背后看着你。你回头，什么都没有。）</span>',
     ]
     text += '\n' + randomPick(hallucinations)
   }

@@ -242,7 +242,7 @@ const currentTurnId = computed(() => props.gameState.actionCount)
           }"
         >
           <!-- 已揭示的条目正常显示；正在打字的和未处理的隐藏 -->
-          <span v-if="revealedIds.has(entry.id)">{{ entry.text }}</span>
+          <span v-if="revealedIds.has(entry.id)" v-html="entry.text"></span>
         </div>
 
         <!-- Typewriter 打字区域 -->
