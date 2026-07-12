@@ -118,7 +118,7 @@ function handleSelectOption(option: any) {
         const enemy = result.combat?.enemy
         combatStrategies.value = getCombatStrategies(gameState, enemy)
         showCombatUI.value = true
-      }, 1500)
+      }, 2500)
     } else {
       combatState.value = result.combat
       const enemy = result.combat?.enemy
@@ -158,8 +158,8 @@ function handleCombatAction(strategyId: string) {
   }
   const roundIdx = combat.rounds ? combat.rounds.length - 1 : -1
 
-  // 骰子动画：对含有 🎲[ 的回合进行摇晃动画
-  if (roundIdx >= 0 && combat.rounds[roundIdx].playerText.includes('🎲[')) {
+  // 骰子动画：对含有 🎲[ 的回合进行摇晃动画（逃跑/自动不触发）
+  if (strategyId !== 'flee' && strategyId !== 'auto' && roundIdx >= 0 && combat.rounds[roundIdx].playerText.includes('🎲[')) {
     const realText = combat.rounds[roundIdx].playerText
     rollingRound.value = roundIdx
 
