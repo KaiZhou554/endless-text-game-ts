@@ -103,7 +103,7 @@ onUnmounted(() => {
       style="pointer-events: none;"
     >
       <div
-        class="w-full max-w-lg mx-4 mt-4 border rounded-sm p-3 space-y-2"
+        class="w-full max-w-lg mx-4 mt-4 border rounded-sm p-3 space-y-1.5"
         style="background: #0D1117; border-color: #2a3a3a; pointer-events: auto;"
       >
         <!-- Header -->
@@ -111,10 +111,8 @@ onUnmounted(() => {
           <span class="text-sm font-bold text-white">⌘ 命令面板</span>
           <button
             @click="close"
-            class="text-xs px-2 py-1 border rounded-sm transition-colors"
-            style="border-color: #c4746e; color: #c4746e; background: none;"
-            @mouseenter="(e: MouseEvent) => ((e.target as HTMLElement).style.background = '#1e1a1a')"
-            @mouseleave="(e: MouseEvent) => ((e.target as HTMLElement).style.background = 'none')"
+            class="text-xs px-2 py-1 border rounded-sm transition-colors border-[#c4746e] text-[#c4746e] hover:bg-[#1e1a1a] active:bg-[#2a1515]"
+            style="background: none;"
           >
             ✕
           </button>
@@ -132,7 +130,7 @@ onUnmounted(() => {
           />
           <button
             @click="handleCmd"
-            class="px-3 py-2 text-sm border rounded-sm min-h-[44px] transition-colors border-[#B0C4DE] text-[#B0C4DE] hover:bg-[#1e2a2a]"
+            class="text-xs px-2 py-1 border rounded-sm transition-colors border-[#B0C4DE] text-[#B0C4DE] hover:bg-[#1e2a2a] active:bg-[#253535]"
             style="background: none;"
           >
             ⏎
