@@ -71,7 +71,7 @@ function formatTimeOfDay(dayCount) {
 </script>
 
 <template>
-  <div class="w-full border-b px-2 sm:px-4 py-2 flex-shrink-0" style="border-color: #2a3a3a; background: #0D1117;">
+  <div class="w-full border-b px-2 sm:px-4 py-1.5 sm:py-2 flex-shrink-0" style="border-color: #2a3a3a; background: #0D1117;">
     <!-- PC 端：完整显示 -->
     <!-- 第一行：生命/饱腹/口渴 -->
     <div class="hidden sm:flex w-full gap-x-4">

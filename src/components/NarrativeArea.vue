@@ -221,7 +221,7 @@ const currentTurnId = computed(() => props.gameState.actionCount)
   <div class="relative flex-1 overflow-hidden" style="background: #0D1117;">
     <div
       ref="scrollContainer"
-      class="absolute inset-0 overflow-y-auto px-4 py-3"
+      class="absolute inset-0 overflow-y-auto px-2 sm:px-4 py-2 sm:py-3"
       style="background: #0D1117;"
     >
       <!-- 空状态 -->
