@@ -62,7 +62,7 @@ const optionLabels = ['A', 'B', 'C', 'D', 'E', 'F']
 </script>
 
 <template>
-  <div class="w-full border-t px-2 sm:px-4 py-1"
+  <div class="w-full border-t px-2 sm:px-4"
        style="border-color: #2a3a3a; background: #0D1117;">
     <div
       v-for="(option, idx) in options"
@@ -79,7 +79,7 @@ const optionLabels = ['A', 'B', 'C', 'D', 'E', 'F']
           (e.target as HTMLElement).style.background = optionStyle(option).background
         }"
         :disabled="!(option as any).available || disabled"
-        class="w-full text-left px-2 py-2 text-sm border transition-colors duration-150
+        class="w-full text-left px-1.5 py-1.5 text-sm border transition-colors duration-150
                min-h-[44px] rounded-sm flex items-start gap-2"
         :style="optionStyle(option)"
       >
