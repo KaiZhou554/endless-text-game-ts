@@ -1,12 +1,13 @@
 # 丧尸末日生存 · 纯文字冒险
 
-Vue 3 (Composition API) + Tailwind CSS v4 单页文字冒险游戏。终端护眼暗色风格，响应式（手机/桌面）。
+Vue 3 (Composition API) + Tailwind CSS v4 单页文字冒险游戏。终端护眼暗色风格，响应式（手机/桌面）。**已从 JavaScript 迁移至 TypeScript**。
 
 ## Commands
 
 ```bash
 npm run dev      # 开发服务器 → http://localhost:5173
-npm run build    # 生产构建 → dist/
+npm run build    # 类型检查 + 生产构建 → dist/
+npm run type-check  # 仅类型检查（vue-tsc --build）
 npm run preview  # 预览生产构建
 ```
 
@@ -16,32 +17,33 @@ npm run preview  # 预览生产构建
 
 ```
 src/
-├── main.js                    # Vue 入口，挂载 #app
+├── main.ts                    # Vue 入口，挂载 #app
+├── types.ts                   # 核心类型定义（Item, GameState, Scene 等）
 ├── App.vue                    # 主组件 — 流程编排、事件循环、面板切换
 ├── assets/main.css            # 全局样式：CSS 变量、字体、滚动条、响应式
 ├── data/                      # ─── 纯数据层（无逻辑，仅供引擎引用）───
-│   ├── index.js               #   顶层桶文件，统一导出所有数据
-│   ├── items.js               #   60+ 物品，按 id 索引的 itemDB 对象
-│   ├── scenes.js              #   23 场景，按 id 索引
-│   ├── situations.js          #   34 情况/遭遇，按 id 索引
-│   ├── modifiers.js           #   时间/天气/状态/标签等修饰条件
-│   ├── endings.js             #   8 个结局条件 + 结局文本
-│   ├── world.js               #   兼容桶文件（重新导出 scenes/situations/modifiers）
-│   ├── npcs.js                #   兼容桶文件（重新导出 npcs/index.js）
+│   ├── index.ts               #   顶层桶文件，统一导出所有数据
+│   ├── items.ts               #   60+ 物品，按 id 索引的 itemDB 对象
+│   ├── scenes.ts              #   23 场景，按 id 索引
+│   ├── situations.ts          #   34 情况/遭遇，按 id 索引
+│   ├── modifiers.ts           #   时间/天气/状态/标签等修饰条件
+│   ├── endings.ts             #   8 个结局条件 + 结局文本
+│   ├── world.ts               #   兼容桶文件（重新导出 scenes/situations/modifiers）
+│   ├── npcs.ts                #   兼容桶文件（重新导出 npcs/index.ts）
 │   └── npcs/                  # ─── NPC 独立文件目录 ───
-│       ├── index.js           #   桶文件，聚合所有 NPC 为 npcDB
-│       ├── lena.js            #   莉娜（前急诊科护士）
-│       ├── marcus.js          #   马库斯（前建筑工人）
-│       ├── stranger_mask.js   #   戴防毒面具的人（掠夺者）
-│       └── child_anna.js      #   安娜（九岁女孩）
+│       ├── index.ts           #   桶文件，聚合所有 NPC 为 npcDB
+│       ├── lena.ts            #   莉娜（前急诊科护士）
+│       ├── marcus.ts          #   马库斯（前建筑工人）
+│       ├── stranger_mask.ts   #   戴防毒面具的人（掠夺者）
+│       └── child_anna.ts      #   安娜（九岁女孩）
 ├── game/                      # ─── 引擎层（纯函数，无 Vue 依赖）───
-│   ├── state.js               #   响应式状态管理 (Vue reactive)
-│   ├── engine.js              #   核心：事件生成、选项解析、战斗、对话、叙事
-│   ├── utils.js               #   工具：随机、加权选择、格式化
-│   ├── item-utils.js          #   物品查询/筛选/随机选择函数
-│   ├── world-utils.js         #   时间/天气/玩家状态修饰计算
-│   ├── npc-utils.js           #   NPC 对话节点查询
-│   └── ending-utils.js        #   结局检查
+│   ├── state.ts               #   响应式状态管理 (Vue reactive)
+│   ├── engine.ts              #   核心：事件生成、选项解析、战斗、对话、叙事
+│   ├── utils.ts               #   工具：随机、加权选择、格式化
+│   ├── item-utils.ts          #   物品查询/筛选/随机选择函数
+│   ├── world-utils.ts         #   时间/天气/玩家状态修饰计算
+│   ├── npc-utils.ts           #   NPC 对话节点查询
+│   └── ending-utils.ts        #   结局检查
 └── components/                # ─── 组件层（Vue SFC）───
     ├── StartScreen.vue        #   开始画面 + 模式选择
     ├── StatusBar.vue          #   5 指标状态栏 + 时段/疲劳显示（响应式）
@@ -85,7 +87,7 @@ src/
 
 ## Data Format
 
-### 物品 (items.js)
+### 物品 (items.ts)
 
 ```js
 itemDB = {
@@ -112,7 +114,7 @@ itemDB = {
 
 **战斗中的武器**：无需装备，只要在背包中即可在战斗中使用。每回合随机提供 ≤2 件武器作为攻击选项，伤害 = d6 + weapon.effects.damage。
 
-### 场景 (scenes.js)
+### 场景 (scenes.ts)
 
 ```js
 scenes = {
@@ -127,7 +129,7 @@ scenes = {
 }
 ```
 
-### 情况 (situations.js)
+### 情况 (situations.ts)
 
 ```js
 situations = {
@@ -161,7 +163,7 @@ situations = {
 - 全部不可用时引擎自动注入 `fallback_move_on` 兜底选项
 - 背包满时，`['搜索', '采集']` 标签的选项自动标记为不可用，显示"背包已满"
 
-### NPC (data/npcs/ — 独立文件，通过 npcs/index.js 聚合为 npcDB)
+### NPC (data/npcs/ — 独立文件，通过 npcs/index.ts 聚合为 npcDB)
 
 ```js
 npcDB = {
@@ -190,7 +192,7 @@ npcDB = {
 
 NPC 不再随机遭遇，仅通过固定剧情事件触发。
 
-### 结局 (endings.js)
+### 结局 (endings.ts)
 
 ```js
 endingChecks = [{
@@ -220,7 +222,7 @@ endingChecks = [{
 
 ## State
 
-`gameState` 由 `src/game/state.js` 的 `createGameState()` 创建，是一个 Vue `reactive` 对象。
+`gameState` 由 `src/game/state.ts` 的 `createGameState()` 创建，是一个 Vue `reactive` 对象。
 
 **核心字段：**
 ```js
@@ -280,33 +282,33 @@ endingChecks = [{
 ## How to Extend
 
 ### 添加新物品
-在 `src/data/items.js` 的 `itemDB` 中添加新条目，遵循上方 Data Format。物品 id 自动可用于 `requireItems` 判定。type 为 `weapon` 的物品会自动出现在战斗武器选项中。
+在 `src/data/items.ts` 的 `itemDB` 中添加新条目，遵循上方 Data Format。物品 id 自动可用于 `requireItems` 判定。type 为 `weapon` 的物品会自动出现在战斗武器选项中。
 
 ### 添加新场景
-在 `src/data/scenes.js` 的 `scenes` 对象中添加。如需按区域分组（如"医院剧情组"包含多个相关场景），可创建 `src/data/scenes/hospital.js` 等文件，然后在 `src/data/scenes.js` 中 `import` 并合并。
+在 `src/data/scenes.ts` 的 `scenes` 对象中添加。如需按区域分组（如"医院剧情组"包含多个相关场景），可创建 `src/data/scenes/hospital.ts` 等文件，然后在 `src/data/scenes.ts` 中 `import` 并合并。
 
 ### 添加新情况
-在 `src/data/situations.js` 的 `situations` 对象中添加。选项 id 会被 `buildResultText` 的路由逻辑识别——如需新的叙事类型，在 `engine.js` 的 `buildResultText` 中追加对应分支。
+在 `src/data/situations.ts` 的 `situations` 对象中添加。选项 id 会被 `buildResultText` 的路由逻辑识别——如需新的叙事类型，在 `engine.ts` 的 `buildResultText` 中追加对应分支。
 
 ### 添加新 NPC
-1. 在 `src/data/npcs/` 下新建角色文件（如 `dr_smith.js`），导出完整 NPC 对象（含 `dialogueTree`）。
-2. 在 `src/data/npcs/index.js` 中 `import` 并加入 `npcDB`。
+1. 在 `src/data/npcs/` 下新建角色文件（如 `dr_smith.ts`），导出完整 NPC 对象（含 `dialogueTree`）。
+2. 在 `src/data/npcs/index.ts` 中 `import` 并加入 `npcDB`。
 无需修改引擎层或组件层。NPC 通过固定剧情事件触发，不再随机遭遇。
 
 ### 添加新结局
-在 `src/data/endings.js` 的 `endingChecks` 数组中追加。`check(state)` 在每次行动后调用。
+在 `src/data/endings.ts` 的 `endingChecks` 数组中追加。`check(state)` 在每次行动后调用。
 
 ### 添加新选项类型叙事
-`engine.js` 的 `buildResultText` 函数按 `option.id` 和 `option.tags` 路由到不同叙事模板。新增类型时在此处追加分支。
+`engine.ts` 的 `buildResultText` 函数按 `option.id` 和 `option.tags` 路由到不同叙事模板。新增类型时在此处追加分支。
 
 ### 添加全新数据类别
 若需全新的数据类别（如"帮派势力"、"派系声望"等）：
-1. 在 `src/data/` 下创建纯数据文件（如 `factions.js`）
-2. 在 `src/data/index.js` 中添加一行 `export { factionDB } from './factions.js'`
-3. 在 `src/game/` 下创建对应的工具函数文件（如 `faction-utils.js`）
+1. 在 `src/data/` 下创建纯数据文件（如 `factions.ts`）
+2. 在 `src/data/index.ts` 中添加一行 `export { factionDB } from './factions.ts'`（Vite 将 `.ts` 解析为实际文件）
+3. 在 `src/game/` 下创建对应的工具函数文件（如 `faction-utils.ts`）
 
 ### 添加新战斗策略
-在 `engine.js` 的 `combatStrategies` 数组中追加策略对象，包含：
+在 `engine.ts` 的 `combatStrategies` 数组中追加策略对象，包含：
 - `id` / `name` / `desc` 
 - `defMod`（受伤倍率）
 - `sanityCost` / `sanityReq`
@@ -314,7 +316,7 @@ endingChecks = [{
 - `highRisk`（d6≥4 翻倍）
 
 ### 添加新敌人类型
-在 `engine.js` 的 `generateCombat` 的 `enemies` 数组中追加，包含：
+在 `engine.ts` 的 `generateCombat` 的 `enemies` 数组中追加，包含：
 - `name` / `hp` / `damage` / `noise` / `lootChance`
 - `traits`（数组，匹配策略的 `counterBonus`）
 - `desc`（简短描述，显示在战斗界面顶部）
@@ -332,6 +334,10 @@ endingChecks = [{
 
 ## Notes
 
+- 所有源文件使用 `.ts` 扩展名（`data/` 和 `game/` 目录），Vue SFC 的 `<script setup>` 带有 `lang="ts"`
+- 核心类型定义在 `src/types.ts`（Item, Scene, Situation, NPC, GameState, Combat 等）
+- 引擎函数可引入类型：`import type { GameState, Item } from '../types'`
+- 导入路径可保留 `.js` 后缀（Vite 自动解析 `.js` → `.ts`），也可省略扩展名
 - 日志条目使用自增 `_journalEntryId` 保证唯一 key，`turnId` 字段标记所属回合
 - `rebuildCurrentOptions()` 用于在背包变更后刷新选项状态
 - 使用 `getCombatStrategies(state, enemy)` 获取当前回合战斗选项
