@@ -4,6 +4,7 @@
  */
 import type { Opportunity } from '../types'
 import { opportunities_extras } from './extensions/opportunities-extras'
+import { opportunities_medical_sleep } from './extensions/opportunities-medical-sleep'
 
 export const opportunities: Opportunity[] = [
 
@@ -165,4 +166,7 @@ export const opportunities: Opportunity[] = [
 
   // ==================== 来自 extensions/opportunities-extras.ts ====================
   ...opportunities_extras,
+
+  // ==================== 来自 extensions/opportunities-medical-sleep.ts ====================
+  ...opportunities_medical_sleep,
 ]
