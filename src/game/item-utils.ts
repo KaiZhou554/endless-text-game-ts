@@ -34,12 +34,28 @@ export function getLootPool(count = 3, inventory: any[] = []) {
   const loot: any[] = []
   const types = ['food', 'drink', 'medical', 'misc', 'tool']
 
+  // 类型内物品权重（默认 1，越高越常见）
+  const typeWeights: Record<string, Record<string, number>> = {
+    tool: { sleeping_bag: 4 },
+  }
+
   // 收集玩家已有的枪械需要的弹药类型
   const gunAmmos: string[] = []
   for (const item of inventory) {
     if (item.type === 'weapon' && item.effects?.ammo) {
       gunAmmos.push(item.effects.ammo)
     }
+  }
+
+  // 加权随机从类型池中选一个物品
+  function weightedPickFromPool(pool: any[], weights: Record<string, number> = {}): any {
+    const total = pool.reduce((sum, item) => sum + (weights[item.id] || 1), 0)
+    let r = Math.random() * total
+    for (const item of pool) {
+      r -= weights[item.id] || 1
+      if (r <= 0) return item
+    }
+    return pool[pool.length - 1]
   }
 
   for (let i = 0; i < count; i++) {
@@ -53,7 +69,8 @@ export function getLootPool(count = 3, inventory: any[] = []) {
         continue
       }
     }
-    loot.push(getRandomItem(type))
+    const pool = getItemsByType(type)
+    loot.push(weightedPickFromPool(pool, typeWeights[type]))
   }
   return loot
 }
