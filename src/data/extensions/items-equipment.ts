@@ -16,6 +16,7 @@ export const equipment: ItemDB = {
     effects: { damageReduction: 0.2, durability: 3 },
     stackable: false,
     reusable: true,
+    slots: 2,
   },
   helmet: {
     id: 'helmet',
@@ -26,6 +27,7 @@ export const equipment: ItemDB = {
     effects: { headProtection: true, durability: 2 },
     stackable: false,
     reusable: true,
+    slots: 2,
   },
   riot_shield: {
     id: 'riot_shield',
@@ -36,6 +38,7 @@ export const equipment: ItemDB = {
     effects: { damageReduction: 0.15, durability: 5 },
     stackable: false,
     reusable: true,
+    slots: 2,
   },
   leather_jacket: {
     id: 'leather_jacket',
@@ -46,6 +49,7 @@ export const equipment: ItemDB = {
     effects: { damageReduction: 0.1, durability: 6 },
     stackable: false,
     reusable: true,
+    slots: 2,
   },
   gas_mask: {
     id: 'gas_mask',
@@ -56,6 +60,7 @@ export const equipment: ItemDB = {
     effects: { gasProtection: true, durability: 4 },
     stackable: false,
     reusable: true,
+    slots: 2,
   },
 
   // ==================== 工具 (Tools) ====================
@@ -69,6 +74,7 @@ export const equipment: ItemDB = {
     effects: {},
     stackable: false,
     reusable: true,
+    slots: 1,
   },
   batteries: {
     id: 'batteries',
@@ -79,6 +85,7 @@ export const equipment: ItemDB = {
     effects: {},
     stackable: true,
     reusable: false,
+    slots: 1,
   },
   radio: {
     id: 'radio',
@@ -89,6 +96,7 @@ export const equipment: ItemDB = {
     effects: {},
     stackable: false,
     reusable: true,
+    slots: 1,
   },
   lockpick: {
     id: 'lockpick',
@@ -99,6 +107,7 @@ export const equipment: ItemDB = {
     effects: {},
     stackable: false,
     reusable: true,
+    slots: 1,
   },
   rope: {
     id: 'rope',
@@ -109,6 +118,7 @@ export const equipment: ItemDB = {
     effects: {},
     stackable: false,
     reusable: true,
+    slots: 1,
   },
   lighter: {
     id: 'lighter',
@@ -119,6 +129,7 @@ export const equipment: ItemDB = {
     effects: {},
     stackable: false,
     reusable: true,
+    slots: 1,
   },
   binoculars: {
     id: 'binoculars',
@@ -129,6 +140,7 @@ export const equipment: ItemDB = {
     effects: {},
     stackable: false,
     reusable: true,
+    slots: 1,
   },
   compass: {
     id: 'compass',
@@ -139,6 +151,7 @@ export const equipment: ItemDB = {
     effects: {},
     stackable: false,
     reusable: true,
+    slots: 1,
   },
   duct_tape: {
     id: 'duct_tape',
@@ -149,6 +162,7 @@ export const equipment: ItemDB = {
     effects: {},
     stackable: true,
     reusable: false,
+    slots: 1,
   },
   multitool: {
     id: 'multitool',
@@ -159,6 +173,7 @@ export const equipment: ItemDB = {
     effects: {},
     stackable: false,
     reusable: true,
+    slots: 1,
   },
   gas_can: {
     id: 'gas_can',
@@ -169,6 +184,7 @@ export const equipment: ItemDB = {
     effects: {},
     stackable: false,
     reusable: true,
+    slots: 1,
   },
   fishing_rod: {
     id: 'fishing_rod',
@@ -179,6 +195,7 @@ export const equipment: ItemDB = {
     effects: {},
     stackable: false,
     reusable: true,
+    slots: 1,
   },
 
   // ==================== 杂项 (Misc) ====================
@@ -192,6 +209,7 @@ export const equipment: ItemDB = {
     effects: { capacityBonus: 5 },
     stackable: false,
     reusable: true,
+    slots: 1,
   },
   sleeping_bag: {
     id: 'sleeping_bag',
@@ -202,6 +220,7 @@ export const equipment: ItemDB = {
     effects: {},
     stackable: false,
     reusable: true,
+    slots: 1,
   },
   matches: {
     id: 'matches',
@@ -212,6 +231,7 @@ export const equipment: ItemDB = {
     effects: {},
     stackable: true,
     reusable: false,
+    slots: 1,
   },
   flare: {
     id: 'flare',
@@ -222,6 +242,7 @@ export const equipment: ItemDB = {
     effects: {},
     stackable: true,
     reusable: false,
+    slots: 1,
   },
   mints: {
     id: 'mints',
@@ -232,6 +253,7 @@ export const equipment: ItemDB = {
     effects: { sanity: 3 },
     stackable: true,
     reusable: false,
+    slots: 1,
   },
   book: {
     id: 'book',
@@ -242,6 +264,7 @@ export const equipment: ItemDB = {
     effects: { sanity: 5 },
     stackable: false,
     reusable: true,
+    slots: 1,
   },
   watch: {
     id: 'watch',
@@ -252,6 +275,7 @@ export const equipment: ItemDB = {
     effects: {},
     stackable: false,
     reusable: true,
+    slots: 1,
   },
   teddy_bear: {
     id: 'teddy_bear',
@@ -262,6 +286,7 @@ export const equipment: ItemDB = {
     effects: { sanityOneTime: 20 },
     stackable: false,
     reusable: false,
+    slots: 1,
   },
   seeds: {
     id: 'seeds',
@@ -272,6 +297,7 @@ export const equipment: ItemDB = {
     effects: {},
     stackable: true,
     reusable: false,
+    slots: 1,
   },
   walkie_talkie: {
     id: 'walkie_talkie',
@@ -282,6 +308,7 @@ export const equipment: ItemDB = {
     effects: {},
     stackable: false,
     reusable: true,
+    slots: 1,
   },
   syringe_empty: {
     id: 'syringe_empty',
@@ -292,6 +319,7 @@ export const equipment: ItemDB = {
     effects: {},
     stackable: true,
     reusable: false,
+    slots: 1,
   },
   wire: {
     id: 'wire',
@@ -302,6 +330,7 @@ export const equipment: ItemDB = {
     effects: {},
     stackable: true,
     reusable: false,
+    slots: 1,
   },
 
 
@@ -316,6 +345,7 @@ export const equipment: ItemDB = {
     effects: { damageReduction: 0.05, durability: 8 },
     stackable: false,
     reusable: true,
+    slots: 1,
   },
   arm_guards: {
     id: 'arm_guards',
@@ -326,6 +356,7 @@ export const equipment: ItemDB = {
     effects: { damageReduction: 0.1, durability: 5 },
     stackable: false,
     reusable: true,
+    slots: 1,
   },
 
   // ==================== 更多工具 ====================
@@ -339,6 +370,7 @@ export const equipment: ItemDB = {
     effects: {},
     stackable: false,
     reusable: true,
+    slots: 1,
   },
   solar_charger: {
     id: 'solar_charger',
@@ -349,6 +381,7 @@ export const equipment: ItemDB = {
     effects: {},
     stackable: false,
     reusable: true,
+    slots: 1,
   },
   bolt_cutter: {
     id: 'bolt_cutter',
@@ -359,6 +392,7 @@ export const equipment: ItemDB = {
     effects: {},
     stackable: false,
     reusable: true,
+    slots: 1,
   },
 
   // ==================== 更多杂项 ====================
@@ -372,6 +406,7 @@ export const equipment: ItemDB = {
     effects: { sanity: 8 },
     stackable: false,
     reusable: true,
+    slots: 1,
   },
   thermal_blanket: {
     id: 'thermal_blanket',
@@ -382,6 +417,7 @@ export const equipment: ItemDB = {
     effects: {},
     stackable: true,
     reusable: false,
+    slots: 1,
   },
   coffee_beans: {
     id: 'coffee_beans',
@@ -392,6 +428,7 @@ export const equipment: ItemDB = {
     effects: { sanity: 10 },
     stackable: true,
     reusable: false,
+    slots: 1,
   },
 
 };

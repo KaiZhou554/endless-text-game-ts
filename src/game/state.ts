@@ -120,22 +120,32 @@ export function getEffectiveCapacity(state) {
   return capacity
 }
 
+/** 计算当前背包已用格数（基于物品 slots × 数量） */
+export function getUsedSlots(state) {
+  let used = 0
+  for (const item of state.inventory) {
+    used += (item.slots || 2) * (item._count || 1)
+  }
+  return used
+}
+
 /**
- * 添加物品到背包
+ * 添加物品到背包（基于占格数判断）
  */
 export function addToInventory(state, item) {
-  const capacity = getEffectiveCapacity(state)
-  if (state.inventory.length >= capacity) {
-    return false // 背包已满
-  }
+  const slots = item.slots || 2
   // 可堆叠物品尝试堆叠
   if (item.stackable) {
     const existing = state.inventory.find(i => i.id === item.id)
     if (existing) {
+      if (getUsedSlots(state) + slots > getEffectiveCapacity(state)) return false
       existing._count = (existing._count || 1) + 1
       state.itemsCollected++
       return true
     }
+  }
+  if (getUsedSlots(state) + slots > getEffectiveCapacity(state)) {
+    return false
   }
   state.inventory.push({ ...item, _count: 1 })
   state.itemsCollected++

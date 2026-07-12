@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { itemDB } from '../data/index.js'
+import { getUsedSlots, getEffectiveCapacity } from '../game/state.js'
 
 const props = defineProps({
   gameState: { type: Object, required: true },
@@ -116,7 +117,7 @@ function handleEquip(item) {
       <div class="flex justify-between">
         <span style="color: #5a6a7a;">容量:</span>
         <span style="color: #B0C4DE;">
-          {{ inventoryItems.length }}/{{ gameState.maxInventory + (gameState.inventory.find(i => i.id === 'backpack') ? 4 : 0) }}
+          {{ getUsedSlots(gameState) }}/{{ getEffectiveCapacity(gameState) }}
         </span>
       </div>
     </div>

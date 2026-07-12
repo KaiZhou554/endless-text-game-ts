@@ -15,7 +15,7 @@ import {
 } from './utils.js'
 import {
   addToInventory, removeFromInventory, useItem, modifyStat,
-  addJournalEntry, getEffectiveCapacity,
+  addJournalEntry, getEffectiveCapacity, getUsedSlots,
 } from './state.js'
 
 // ==================== 生存衰减 ====================
@@ -288,7 +288,7 @@ function buildOptions(scene, situation, modifiers, state) {
     // 背包满时阻止搜索/采集类行动
     if (available && opt.tags && (opt.tags.includes('搜索') || opt.tags.includes('采集'))) {
       const cap = getEffectiveCapacity(state)
-      if (state.inventory.length >= cap) {
+      if (getUsedSlots(state) >= cap) {
         available = false
         disabledReason = '⚠️ 背包已满，无法携带更多物品' as any
       }

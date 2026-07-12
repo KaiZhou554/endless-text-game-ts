@@ -16,6 +16,7 @@ export const supplies: ItemDB = {
     effects: { hunger: 20 },
     stackable: true,
     reusable: false,
+    slots: 1,
   },
   energy_bar: {
     id: 'energy_bar',
@@ -26,6 +27,7 @@ export const supplies: ItemDB = {
     effects: { hunger: 10 },
     stackable: true,
     reusable: false,
+    slots: 1,
   },
   mre: {
     id: 'mre',
@@ -36,6 +38,7 @@ export const supplies: ItemDB = {
     effects: { hunger: 30, thirst: -5 },
     stackable: true,
     reusable: false,
+    slots: 1,
   },
   dried_meat: {
     id: 'dried_meat',
@@ -46,6 +49,7 @@ export const supplies: ItemDB = {
     effects: { hunger: 15 },
     stackable: true,
     reusable: false,
+    slots: 1,
   },
   chocolate: {
     id: 'chocolate',
@@ -56,6 +60,7 @@ export const supplies: ItemDB = {
     effects: { hunger: 8, sanity: 5 },
     stackable: true,
     reusable: false,
+    slots: 1,
   },
   crackers: {
     id: 'crackers',
@@ -66,6 +71,7 @@ export const supplies: ItemDB = {
     effects: { hunger: 12, thirst: -8 },
     stackable: true,
     reusable: false,
+    slots: 1,
   },
   soup_can: {
     id: 'soup_can',
@@ -76,6 +82,7 @@ export const supplies: ItemDB = {
     effects: { hunger: 14, thirst: 5 },
     stackable: true,
     reusable: false,
+    slots: 1,
   },
 
   // ==================== 饮品 (Drinks) ====================
@@ -89,6 +96,7 @@ export const supplies: ItemDB = {
     effects: { thirst: 25 },
     stackable: false,
     reusable: false,
+    slots: 1,
   },
   soda: {
     id: 'soda',
@@ -99,6 +107,7 @@ export const supplies: ItemDB = {
     effects: { thirst: 10, hunger: 3 },
     stackable: true,
     reusable: false,
+    slots: 1,
   },
   flask: {
     id: 'flask',
@@ -109,6 +118,7 @@ export const supplies: ItemDB = {
     effects: { thirst: 15, sanity: 5 },
     stackable: true,
     reusable: false,
+    slots: 1,
   },
   coffee: {
     id: 'coffee',
@@ -119,6 +129,7 @@ export const supplies: ItemDB = {
     effects: { thirst: 8, sanity: 8 },
     stackable: true,
     reusable: false,
+    slots: 1,
   },
 
   // ==================== 医疗 (Medical) ====================
@@ -132,6 +143,7 @@ export const supplies: ItemDB = {
     effects: { hp: 30, stopBleeding: true },
     stackable: true,
     reusable: false,
+    slots: 1,
   },
   antibiotics: {
     id: 'antibiotics',
@@ -142,6 +154,7 @@ export const supplies: ItemDB = {
     effects: { infection: -35 },
     stackable: true,
     reusable: false,
+    slots: 1,
   },
   sedative: {
     id: 'sedative',
@@ -152,6 +165,7 @@ export const supplies: ItemDB = {
     effects: { sanity: 40 },
     stackable: true,
     reusable: false,
+    slots: 1,
   },
   first_aid_kit: {
     id: 'first_aid_kit',
@@ -162,6 +176,7 @@ export const supplies: ItemDB = {
     effects: { hp: 35, stopBleeding: true },
     stackable: false,
     reusable: false,
+    slots: 1,
   },
   painkillers: {
     id: 'painkillers',
@@ -172,6 +187,7 @@ export const supplies: ItemDB = {
     effects: { hp: 20, sanity: 10 },
     stackable: true,
     reusable: false,
+    slots: 1,
   },
   antidote: {
     id: 'antidote',
@@ -182,6 +198,7 @@ export const supplies: ItemDB = {
     effects: { infection: -50 },
     stackable: true,
     reusable: false,
+    slots: 1,
   },
   herbal_medicine: {
     id: 'herbal_medicine',
@@ -192,6 +209,7 @@ export const supplies: ItemDB = {
     effects: { hp: 15, infection: -10 },
     stackable: true,
     reusable: false,
+    slots: 1,
   },
 
   // ==================== 更多食物 ====================
@@ -205,6 +223,7 @@ export const supplies: ItemDB = {
     effects: { hunger: 15, sanity: 8 },
     stackable: true,
     reusable: false,
+    slots: 1,
   },
   canned_tuna: {
     id: 'canned_tuna',
@@ -215,6 +234,7 @@ export const supplies: ItemDB = {
     effects: { hunger: 18 },
     stackable: true,
     reusable: false,
+    slots: 1,
   },
   trail_mix: {
     id: 'trail_mix',
@@ -225,6 +245,7 @@ export const supplies: ItemDB = {
     effects: { hunger: 10, sanity: 3 },
     stackable: true,
     reusable: false,
+    slots: 1,
   },
 
   // ==================== 更多饮品 ====================
@@ -238,6 +259,7 @@ export const supplies: ItemDB = {
     effects: { thirst: 20, hp: 10 },
     stackable: true,
     reusable: false,
+    slots: 1,
   },
 
   // ==================== 更多医疗 ====================
@@ -251,6 +273,7 @@ export const supplies: ItemDB = {
     effects: { hp: 8, stopBleeding: true },
     stackable: true,
     reusable: false,
+    slots: 1,
   },
   vitamin_pills: {
     id: 'vitamin_pills',
@@ -261,6 +284,7 @@ export const supplies: ItemDB = {
     effects: { hp: 10, infection: -8, sanity: 5 },
     stackable: true,
     reusable: false,
+    slots: 1,
   },
 
 }

@@ -15,7 +15,8 @@ export interface Item {
   stackable: boolean
   reusable: boolean
   _count?: number
-  hitRanges?: HitRange[]  // d20 武器命中区间，留空则按 effects.damage 自动计算
+  slots?: number  // 占位格数（默认 2，小件物品 1）
+  hitRanges?: HitRange[]
 }
 
 export interface HitRange {

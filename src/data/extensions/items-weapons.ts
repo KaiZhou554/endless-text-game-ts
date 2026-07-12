@@ -182,6 +182,7 @@ export const weapons: ItemDB = {
     effects: {},
     stackable: true,
     reusable: false,
+    slots: 1,
   },
   ammo_12gauge: {
     id: 'ammo_12gauge',
@@ -192,6 +193,7 @@ export const weapons: ItemDB = {
     effects: {},
     stackable: true,
     reusable: false,
+    slots: 1,
   },
   ammo_bolt: {
     id: 'ammo_bolt',
@@ -202,6 +204,7 @@ export const weapons: ItemDB = {
     effects: {},
     stackable: true,
     reusable: false,
+    slots: 1,
   },
   ammo_nails: {
     id: 'ammo_nails',
@@ -212,5 +215,6 @@ export const weapons: ItemDB = {
     effects: {},
     stackable: true,
     reusable: false,
+    slots: 1,
   },
 }

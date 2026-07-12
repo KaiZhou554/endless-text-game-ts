@@ -1,18 +1,14 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { getUsedSlots, getEffectiveCapacity } from '../game/state.js'
 const emit = defineEmits(['toggle-inventory', 'toggle-journal', 'toggle-map', 'save-game', 'load-game'])
 
 const props = defineProps({
   gameState: { type: Object, required: true },
 })
 
-const effectiveCapacity = computed(() => {
-  let cap = props.gameState.maxInventory || 6
-  if (props.gameState.inventory.some((i: any) => i.id === 'backpack')) {
-    cap += 2
-  }
-  return cap
-})
+const effectiveCapacity = computed(() => getEffectiveCapacity(props.gameState))
+const usedSlots = computed(() => getUsedSlots(props.gameState))
 
 function hoverBg(e: Event, color: string) {
   const el = e.currentTarget as HTMLElement | null
@@ -35,7 +31,7 @@ function hoverBg(e: Event, color: string) {
       <span v-if="gameState.inventory.length > 0"
             class="text-[10px] px-1 rounded-sm"
             style="background: #1e2a2a; color: #E6C37C;">
-        {{ gameState.inventory.length }}/{{ effectiveCapacity }}
+        {{ usedSlots }}/{{ effectiveCapacity }}
       </span>
     </button>
 
