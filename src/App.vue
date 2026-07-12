@@ -34,6 +34,7 @@ const showCombatUI = ref(false)
 const combatStrategies = ref<any[]>([])  // 可用战斗策略
 const rollingRound = ref<number | null>(null)  // 正在骰子动画的回合索引
 const rollingText = ref('')  // 动画期间的显示文本
+const pendingCombatResult = ref<string | null>(null)  // 动画期间暂存的战斗结果
 
 // ==================== 游戏流程 ====================
 
@@ -153,8 +154,14 @@ function handleCombatAction(strategyId: string) {
   // 骰子动画：对含有 🎲[ 的回合进行摇晃动画
   if (roundIdx >= 0 && combat.rounds[roundIdx].playerText.includes('🎲[')) {
     const realText = combat.rounds[roundIdx].playerText
-    const match = realText.match(/🎲\[(\d+)\]/) || realText.match(/🎲\[(\d+)\]/)
     rollingRound.value = roundIdx
+
+    // 暂存敌人反击文本和战斗结果，动画期间隐藏
+    const realEnemyText = combat.rounds[roundIdx].enemyText
+    const realResult = combat.result
+    combat.rounds[roundIdx].enemyText = ''
+    combat.result = null
+    if (realResult) pendingCombatResult.value = realResult
 
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
     let ticks = 0
@@ -171,6 +178,12 @@ function handleCombatAction(strategyId: string) {
         clearInterval(interval)
         rollingRound.value = null
         rollingText.value = ''
+        // 动画结束，恢复敌人文本和战斗结果
+        combat.rounds[roundIdx].enemyText = realEnemyText
+        if (pendingCombatResult.value) {
+          combat.result = pendingCombatResult.value
+          pendingCombatResult.value = null
+        }
         combatState.value = { ...combat }
       }
     }, 70)
@@ -431,8 +444,8 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
                 <template v-else>{{ round.playerText }}</template>
               </p>
             </div>
-            <!-- 敌人行动（左对齐） -->
-            <div v-if="round.enemyText" class="mt-1" style="color: #c4746e;">
+            <!-- 敌人行动（左对齐）：骰子动画期间隐藏 -->
+            <div v-if="round.enemyText && rollingRound !== idx" class="mt-1" style="color: #c4746e;">
               <span class="text-[10px] font-bold" style="color: #5a6a7a;">
                 {{ combatState.enemy.name }}:
               </span>
@@ -441,8 +454,8 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
           </div>
         </div>
 
-        <!-- 策略选项（类似对话选项） -->
-        <div v-if="!combatState.result" class="border-t px-2 py-2 space-y-1" style="border-color: #2a3a3a;">
+        <!-- 策略选项（骰子动画期间隐藏） -->
+        <div v-if="!combatState.result && rollingRound === null" class="border-t px-2 py-2 space-y-1" style="border-color: #2a3a3a;">
           <button
             v-for="s in combatStrategies"
             :key="s.id"

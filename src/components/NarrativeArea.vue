@@ -163,13 +163,8 @@ const currentTurnId = computed(() => props.gameState.actionCount)
             lineHeight: '1.6',
           }"
         >
-          <!-- 正在打字的条目只显示占位，实际打字在下方 typewriterTarget 中 -->
-          <template v-if="typingEntryId === entry.id">
-            <span style="opacity: 0.3; color: #5a6a7a;">{{ entry.text }}</span>
-          </template>
-          <template v-else>
-            <span>{{ entry.text }}</span>
-          </template>
+          <!-- 正在打字的条目隐藏，由下方 typewriterTarget 显示 -->
+          <span v-if="typingEntryId !== entry.id">{{ entry.text }}</span>
         </div>
 
         <!-- Typewriter 打字区域 -->
