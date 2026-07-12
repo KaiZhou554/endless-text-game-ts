@@ -51,11 +51,25 @@ const combatRewardRoll = ref(0)
 const combatRewardText = ref('')
 let _pendingSceneChange = false  // 机遇打断时暂存的场景切换标记
 
-// 根据物品标签返回带特效的物品名 HTML
-function wrapItemName(item: any): string {
-  if (item.tags && item.tags.includes('极稀有')) return `<span class="item-rare">${item.name}</span>`
-  if (item.tags && item.tags.includes('稀有')) return `<span class="item-epic">${item.name}</span>`
-  return item.name
+// 返回物品稀有度对应的 CSS class
+function itemRarityClass(item: any): string {
+  if (item.tags && item.tags.includes('极稀有')) return 'item-rare'
+  if (item.tags && item.tags.includes('稀有')) return 'item-epic'
+  return ''
+}
+// 根据物品列表返回带特效的日志文本（整行动画）
+function buildLootText(items: any[]): string {
+  const names = items.map(i => i.name).join('、')
+  let cls = ''
+  if (items.some(i => i.tags && i.tags.includes('极稀有'))) cls = 'item-rare'
+  else if (items.some(i => i.tags && i.tags.includes('稀有'))) cls = 'item-epic'
+  return cls ? `<span class="${cls}">✢ 获得了：${names}</span>` : `✢ 获得了：${names}`
+}
+// 包裹单个物品的日志文本（整行动画）
+function wrapRewardText(prefix: string, item: any, suffix: string): string {
+  const cls = itemRarityClass(item)
+  const text = `${prefix}${item.name}${suffix}`
+  return cls ? `<span class="${cls}">${text}</span>` : text
 }
 
 // ==================== 游戏流程 ====================
@@ -113,8 +127,7 @@ function handleSelectOption(option: any) {
   addJournalEntry(gameState, result.narrativeText, 'result')
   if (result.loot && result.loot.length > 0) {
     resultLoot.value = result.loot
-    const lootNames = result.loot.map(i => wrapItemName(i)).join('、')
-    addJournalEntry(gameState, `✢ 获得了：${lootNames}`, 'action')
+    addJournalEntry(gameState, buildLootText(result.loot), 'action')
   }
 
   // 检查结局
@@ -294,7 +307,7 @@ function handleCombatRewardDice() {
     const item = itemDB[itemId]
     if (item && addToInventory(gameState, item)) {
       combatRewardText.value = `${glyph}你在尸体旁发现了一些有用物资：${item.name}。`
-      addJournalEntry(gameState, `${glyph} 搜刮尸体：获得 ${wrapItemName(item)}。`, 'action')
+      addJournalEntry(gameState, wrapRewardText(`${glyph} 搜刮尸体：获得 `, item, '。'), 'action')
     } else {
       combatRewardText.value = `${glyph}你翻找了一番，但背包已经满了。`
       addJournalEntry(gameState, `${glyph} 搜刮尸体：背包满了！`, 'action')
@@ -306,7 +319,7 @@ function handleCombatRewardDice() {
     const item = itemDB[itemId]
     if (item && addToInventory(gameState, item)) {
       combatRewardText.value = `${glyph}你仔细搜索，找到了一件好东西：${item.name}！`
-      addJournalEntry(gameState, `${glyph} 搜刮尸体：获得 ${wrapItemName(item)}！`, 'action')
+      addJournalEntry(gameState, wrapRewardText(`${glyph} 搜刮尸体：获得 `, item, '！'), 'action')
     } else {
       combatRewardText.value = `${glyph}你发现了好东西，但背包已经放不下了！`
       addJournalEntry(gameState, `${glyph} 搜刮尸体：背包满了！`, 'action')
