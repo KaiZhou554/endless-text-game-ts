@@ -211,17 +211,6 @@ export const equipment: ItemDB = {
     stackable: false,
     reusable: true,
   },
-  sleeping_bag: {
-    id: 'sleeping_bag',
-    name: '睡袋',
-    type: 'misc',
-    desc: '一个羽绒填充的睡袋，压缩后只有水壶大小。在寒冷的夜晚能救你一命。',
-    tags: ['生存', '抗寒', '睡眠:安全'],
-    effects: {},
-    stackable: false,
-    reusable: true,
-    slots: 1,
-  },
   matches: {
     id: 'matches',
     name: '防水火柴 (x20)',
