@@ -194,4 +194,73 @@ export const supplies: ItemDB = {
     reusable: false,
   },
 
+  // ==================== 更多食物 ====================
+
+  honey_jar: {
+    id: 'honey_jar',
+    name: '蜂蜜罐',
+    type: 'food',
+    desc: '一小罐纯天然蜂蜜，标签已经看不清了。蜂蜜几乎不会变质，是末日里的奢侈品。',
+    tags: ['食物', '饱腹:+15', '理智:+8', '易腐:否', '稀有'],
+    effects: { hunger: 15, sanity: 8 },
+    stackable: true,
+    reusable: false,
+  },
+  canned_tuna: {
+    id: 'canned_tuna',
+    name: '金枪鱼罐头',
+    type: 'food',
+    desc: '一罐油浸金枪鱼，拉环的设计让它无需开罐器。高蛋白，顶饱。',
+    tags: ['食物', '饱腹:+18', '易腐:否'],
+    effects: { hunger: 18 },
+    stackable: true,
+    reusable: false,
+  },
+  trail_mix: {
+    id: 'trail_mix',
+    name: '坚果混合包',
+    type: 'food',
+    desc: '一袋混装坚果和果干，高热量且便携。登山爱好者的标配口粮。',
+    tags: ['食物', '饱腹:+10', '理智:+3'],
+    effects: { hunger: 10, sanity: 3 },
+    stackable: true,
+    reusable: false,
+  },
+
+  // ==================== 更多饮品 ====================
+
+  sports_drink: {
+    id: 'sports_drink',
+    name: '电解质饮料',
+    type: 'drink',
+    desc: '一瓶蓝色运动饮料，标签上宣传着"快速补水"。在脱水边缘时这可能是救命的东西。',
+    tags: ['饮品', '口渴:+20', '生命:+5'],
+    effects: { thirst: 20, hp: 5 },
+    stackable: true,
+    reusable: false,
+  },
+
+  // ==================== 更多医疗 ====================
+
+  tourniquet: {
+    id: 'tourniquet',
+    name: '止血带',
+    type: 'medical',
+    desc: '一条军用 CAT 止血带，能在几秒内止住大出血。只止血不治伤，但有时这就够了。',
+    tags: ['医疗', '止血', '生命:+5'],
+    effects: { hp: 5, stopBleeding: true },
+    stackable: true,
+    reusable: false,
+  },
+  vitamin_pills: {
+    id: 'vitamin_pills',
+    name: '复合维生素',
+    type: 'medical',
+    desc: '一瓶还没开封的综合维生素片。虽然比不上真正的食物，但能补充一些必须的微量元素。',
+    tags: ['医疗', '生命:+5', '感染:-3', '理智:+3'],
+    effects: { hp: 5, infection: -3, sanity: 3 },
+    stackable: true,
+    reusable: false,
+  },
+
 }

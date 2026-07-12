@@ -109,4 +109,125 @@ export const situations_explore: Situations = {
     ],
     danger: 3,
   },
+
+  // ==================== 更多探索情景 ====================
+
+  dense_fog: {
+    id: 'dense_fog',
+    name: '浓雾弥漫',
+    baseText: '一股异常浓密的雾气从东边涌来，带着淡淡的化学气味。能见度骤降到手臂伸出去都看不清手指。GPS 早没信号了，指南针在雾中奇怪地乱转。',
+    options: [
+      {
+        id: 'follow_sound',
+        text: '跟着远处的水滴声走——水往低处流，总会有出路',
+        risk: '[可能找到水源] [可能迷失方向]',
+        tags: ['探索', '听觉'],
+        successRate: 0.5,
+      },
+      {
+        id: 'wait_fog',
+        text: '原地等雾散，用布蒙住口鼻',
+        risk: '[安全] [消耗时间] [化学雾可能持续数小时]',
+        tags: ['等待'],
+        successRate: 0.9,
+      },
+      {
+        id: 'mask_through',
+        text: '戴上防毒面具直接穿过',
+        risk: '[需要:防毒面具] [安全]',
+        tags: ['前进'],
+        requireItems: ['gas_mask'],
+        successRate: 0.9,
+      },
+    ],
+    danger: 2,
+  },
+  abandoned_playground: {
+    id: 'abandoned_playground',
+    name: '废弃游乐场',
+    baseText: '一个空无一人的游乐场，秋千在无风的空气中轻轻摆动。旋转木马上的彩漆已经剥落，露出下面生锈的铁架。售票亭的窗户被砸碎了，里面堆着一些杂物。',
+    options: [
+      {
+        id: 'search_booth',
+        text: '搜索售票亭和旁边的储物室',
+        risk: '[可能找到物资] [可能有丧尸藏匿]',
+        tags: ['搜索'],
+        successRate: 0.7,
+      },
+      {
+        id: 'climb_ferris',
+        text: '爬上摩天轮顶部俯瞰周围地形',
+        risk: '[获得周边情报] [可能坠落] [高处显眼]',
+        tags: ['侦查', '高风险'],
+        successRate: 0.5,
+      },
+      {
+        id: 'rest_playground',
+        text: '在空旷处休息片刻——视野开阔相对安全',
+        risk: '[恢复理智+5] [露天暴露]',
+        tags: ['休息'],
+        successRate: 0.9,
+      },
+    ],
+    danger: 1,
+  },
+  sewage_plant: {
+    id: 'sewage_plant',
+    name: '污水处理厂',
+    baseText: '一座废弃的污水处理厂，巨大的沉淀池表面结了暗绿色的藻类。处理车间的大门半开着，里面有规律的机械敲击声——某种泵还在运转。空气刺鼻。',
+    options: [
+      {
+        id: 'explore_plant',
+        text: '深入车间寻找可用物资',
+        risk: '[可能找到工业设备] [可能遭遇变异丧尸] [化学危险]',
+        tags: ['探索', '高风险'],
+        successRate: 0.4,
+      },
+      {
+        id: 'collect_water',
+        text: '在净水池收集相对干净的水',
+        risk: '[获得水] [需要容器] [水质存疑]',
+        tags: ['采集'],
+        requireItems: ['water_bottle'],
+        successRate: 0.8,
+      },
+      {
+        id: 'fix_pump',
+        text: '试着关掉那个还在运转的泵——噪音可能吸引丧尸',
+        risk: '[需要:工具] [减少区域危险]',
+        tags: ['技术'],
+        successRate: 0.6,
+      },
+    ],
+    danger: 3,
+  },
+  rail_yard: {
+    id: 'rail_yard',
+    name: '铁路调车场',
+    baseText: '货运火车车厢排成几列停在铁轨上，有些车门已经被撬开。车厢之间堆着集装箱，形成了一道天然的屏障。风穿过车厢缝隙发出呜呜的呼啸声。',
+    options: [
+      {
+        id: 'search_containers',
+        text: '逐个检查未开封的集装箱',
+        risk: '[可能找到大量物资] [可能有丧尸困在里面]',
+        tags: ['搜索', '高风险'],
+        successRate: 0.5,
+      },
+      {
+        id: 'climb_wagon',
+        text: '爬到车厢顶上观察整个调车场布局',
+        risk: '[安全] [了解地形] [可能解锁新区域]',
+        tags: ['侦查'],
+        successRate: 0.8,
+      },
+      {
+        id: 'use_wagon_rest',
+        text: '找一节空车厢关上门休息',
+        risk: '[安全休息] [恢复生命+5 理智+10]',
+        tags: ['休息'],
+        successRate: 0.9,
+      },
+    ],
+    danger: 2,
+  },
 }

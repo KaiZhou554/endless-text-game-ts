@@ -456,7 +456,7 @@ const sceneAtmosphere = {
   supermarket: ['踩烂的食品包装在脚下发出窸窣声', '空气里弥漫着变质水果的甜腻气味', '翻倒的货架投下长长的影子'],
   subway: ['远处隧道传来水滴的回声', '月台上散落着匆忙撤离时留下的行李', '墙壁上蔓延着暗色的霉斑'],
   overpass: ['桥下的废弃车龙在暮色中像金属墓碑', '风吹过桥面发出呜呜的响声', '远处城市的轮廓在雾中若隐若现'],
-  apartment: ['墙上的全家福蒙着厚厚的灰', '某个房间里传来风吹窗帘的声音', '地板上散落着匆忙打包时掉落的衣物'],
+  apartment: ['墙上的挂历蒙着厚厚的灰', '某个房间里传来风吹窗帘的声音', '地板上散落着匆忙打包时掉落的衣物'],
   forest_path: ['松针在脚下发出轻微的碎裂声', '树枝在风中轻轻摇晃', '空气出奇地清新——末日似乎还没蔓延到这里'],
   police_station: ['翻倒的办公桌后面还有未喝完的咖啡', '墙壁上布满了弹孔', '无线电设备还在发出白噪音'],
   default: ['四周一片寂静', '尘埃在微弱的光线中飘浮', '时间仿佛在这里停滞了'],
@@ -670,6 +670,13 @@ export function generateCombat(state) {
     { name: '丧尸犬', hp: 12, damage: 6, noise: 1, lootChance: 0.1, desc: '快速凶猛', traits: ['快速', '灵敏'] },
     { name: '变异丧尸', hp: 50, damage: 15, noise: 3, lootChance: 0.8, desc: '扭曲肢体', traits: ['庞大', '变异'] },
     { name: '邪教徒', hp: 25, damage: 7, noise: 2, lootChance: 0.5, desc: '疯狂活人', traits: ['人型', '狡猾'] },
+    { name: '孢子丧尸', hp: 18, damage: 4, noise: 1, lootChance: 0.4, desc: '身体布满真菌，死后释放毒气', traits: ['集群', '毒气'] },
+    { name: '爬行者', hp: 12, damage: 5, noise: 0, lootChance: 0.2, desc: '下半身已断，在地上无声爬行', traits: ['快速', '灵敏', '隐蔽'] },
+    { name: '自爆者', hp: 8, damage: 20, noise: 9, lootChance: 0.1, desc: '腹部肿胀发光，靠近即爆', traits: ['脆弱', '自爆'] },
+    { name: '潜行者', hp: 14, damage: 7, noise: 0, lootChance: 0.3, desc: '擅长从阴影中突袭', traits: ['隐蔽', '狡猾', '快速'] },
+    { name: '巨臂丧尸', hp: 45, damage: 14, noise: 4, lootChance: 0.5, desc: '右臂肿胀成巨大棍棒', traits: ['庞大', '缓慢', '重击'] },
+    { name: '丧尸乌鸦', hp: 5, damage: 3, noise: 3, lootChance: 0.1, desc: '成群的感染乌鸦，从空中俯冲', traits: ['快速', '飞行', '集群'] },
+    { name: '融合体', hp: 60, damage: 12, noise: 5, lootChance: 0.7, desc: '多具丧尸融为一体的恐怖肉团', traits: ['庞大', '变异', '再生'] },
   ]
   const enemy = randomPick(enemies)
   const count = randInt(1, 3)
@@ -846,7 +853,7 @@ export function selectDialogueOption(state, optionIndex) {
     applySurvivalDecay(state)
   }
   if (option.outcome === 'alliance') { state.npcsHelped++; addJournalEntry(state, `🤝 你与${dlg.npc.name}结成了联盟。`, 'alliance') }
-  if (option.outcome === 'escort_success') { state.npcsHelped++; addJournalEntry(state, `👧 你承诺帮助安娜找到她的父亲。`, 'promise') }
+  if (option.outcome === 'escort_success') { state.npcsHelped++; addJournalEntry(state, `👧 你承诺帮助安娜找到汤姆哥。`, 'promise') }
   if (option.outcome === 'reward' || option.outcome === 'trade') { state.npcsHelped++ }
   return result
 }

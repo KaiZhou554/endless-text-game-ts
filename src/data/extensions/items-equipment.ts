@@ -303,4 +303,95 @@ export const equipment: ItemDB = {
     stackable: true,
     reusable: false,
   },
-}
+
+
+  // ==================== 更多防具 ====================
+
+  steel_toe_boots: {
+    id: 'steel_toe_boots',
+    name: '钢头靴',
+    type: 'armor',
+    desc: '一双加固钢头工装靴，踩丧尸脚趾或者踢开障碍物都很靠谱。',
+    tags: ['防具', '减伤:5%', '耐久:8', '防滑'],
+    effects: { damageReduction: 0.05, durability: 8 },
+    stackable: false,
+    reusable: true,
+  },
+  arm_guards: {
+    id: 'arm_guards',
+    name: '防割护臂',
+    type: 'armor',
+    desc: '一对凯夫拉纤维护臂，原本是伐木工的装备。能有效防止抓伤和咬伤。',
+    tags: ['防具', '减伤:10%', '耐久:5', '防抓咬'],
+    effects: { damageReduction: 0.1, durability: 5 },
+    stackable: false,
+    reusable: true,
+  },
+
+  // ==================== 更多工具 ====================
+
+  water_filter: {
+    id: 'water_filter',
+    name: '便携净水器',
+    type: 'tool',
+    desc: '一个手泵式净水器，过滤精度 0.1 微米。能把雨水和河水变成饮用水。',
+    tags: ['工具', '净水', '生存', '稀有'],
+    effects: {},
+    stackable: false,
+    reusable: true,
+  },
+  solar_charger: {
+    id: 'solar_charger',
+    name: '折叠太阳能板',
+    type: 'tool',
+    desc: '一块可折叠的太阳能充电板，带 USB 输出口。只要有阳光，就能给电子设备充电。',
+    tags: ['工具', '充电', '稀有'],
+    effects: {},
+    stackable: false,
+    reusable: true,
+  },
+  bolt_cutter: {
+    id: 'bolt_cutter',
+    name: '断线钳',
+    type: 'tool',
+    desc: '一把重型断线钳，钳口能剪断挂锁和铁丝网。比撬棍更安静，但用途也更专一。',
+    tags: ['工具', '破锁', '隐蔽'],
+    effects: {},
+    stackable: false,
+    reusable: true,
+  },
+
+  // ==================== 更多杂项 ====================
+
+  harmonica: {
+    id: 'harmonica',
+    name: '口琴',
+    type: 'misc',
+    desc: '一把旧口琴，C 调的。吹一首曲子能让你暂时忘记外面的世界。',
+    tags: ['情感', '理智:+8(反复)'],
+    effects: { sanity: 8 },
+    stackable: false,
+    reusable: true,
+  },
+  thermal_blanket: {
+    id: 'thermal_blanket',
+    name: '应急保温毯',
+    type: 'misc',
+    desc: '一张铝箔急救毯，折叠后只有巴掌大。能反射身体热量，在寒冷夜晚维持体温。',
+    tags: ['生存', '抗寒', '一次性'],
+    effects: {},
+    stackable: true,
+    reusable: false,
+  },
+  coffee_beans: {
+    id: 'coffee_beans',
+    name: '咖啡豆',
+    type: 'misc',
+    desc: '一小袋烘焙好的阿拉比卡咖啡豆，散发着浓郁的香气。研磨冲泡后能让任何人精神一振。',
+    tags: ['饮品原料', '理智:+10(需研磨)', '稀有'],
+    effects: { sanity: 10 },
+    stackable: true,
+    reusable: false,
+  },
+
+};

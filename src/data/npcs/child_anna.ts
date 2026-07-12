@@ -6,16 +6,16 @@ export const child_anna = {
   id: 'child_anna',
   name: '安娜',
   title: '一个九岁的女孩',
-  desc: '一个瘦小的女孩，抱着一个同样脏兮兮的泰迪熊。她的眼睛很大，充满了不属于这个年纪的恐惧。',
+  desc: '一个瘦小的女孩，抱着一只同样脏兮兮的泰迪熊。她的眼睛很大，充满了不属于这个年纪的恐惧。',
   trust: 60,
   dialogueTree: {
     start: {
       id: 'start',
-      npcText: '（小女孩躲在翻倒的沙发后面，只露出半张脸。）"你……你是来救我的吗？我爸爸说会有救援队来……他说让我在这里等。"',
+      npcText: '（小女孩躲在翻倒的沙发后面，只露出半张脸。）"你……你是来救我的吗？汤姆哥说会有救援队来……他让我在这里等。"',
       options: [
         {
           id: 'gentle',
-          text: '"你爸爸在哪里？你一个人多久了？"',
+          text: '"汤姆哥在哪里？你一个人多久了？"',
           trustChange: 10,
           nextNode: 'story',
         },
@@ -37,11 +37,11 @@ export const child_anna = {
     },
     story: {
       id: 'story',
-      npcText: '"爸爸两天前出去找食物……然后就没回来。他说如果他不回来，就让我去河边的植物园，那里有好人。但我太害怕了……外面有那些东西。"',
+      npcText: '"汤姆哥两天前出去找食物……然后就没回来。他说如果他不回来，就让我去河边的植物园，那里有好人。但我太害怕了……外面有那些东西。"',
       options: [
         {
           id: 'escort',
-          text: '"我带你去找你爸爸，或者带你去植物园。"',
+          text: '"我带你去找汤姆哥，或者带你去植物园。"',
           trustChange: 15,
           nextNode: 'escort_agree',
         },
@@ -58,7 +58,7 @@ export const child_anna = {
     },
     food_given: {
       id: 'food_given',
-      npcText: '（她接过食物，狼吞虎咽地吃了起来。）"谢谢你！我爸爸说好人有好报。这个给你——是我在沙发底下找到的。"她递给你一个急救包。',
+      npcText: '（她接过食物，狼吞虎咽地吃了起来。）"谢谢你！汤姆哥说好人有好报。这个给你——是我在沙发底下找到的。"她递给你一个急救包。',
       options: [
         {
           id: 'take_gift',
@@ -90,7 +90,7 @@ export const child_anna = {
     },
     escort_agree: {
       id: 'escort_agree',
-      npcText: '"好……我跟你走。但能帮我找找我爸爸吗？他叫汤米，穿着蓝色的工作服。他一定还在哪里活着……"',
+      npcText: '"好……我跟你走。但能帮我找找汤姆哥吗？他穿着蓝色的工作服，很高的个子。他一定还在哪里活着……"',
       options: [
         {
           id: 'promise',

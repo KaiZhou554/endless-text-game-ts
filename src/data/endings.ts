@@ -38,7 +38,7 @@ export const endingChecks: Ending[] = [
     },
     title: '💀 精神崩溃',
     subtitle: '第 {days} 天 — 你的心智已经走到了尽头',
-    text: `墙上的影子不再只是影子。它们在对你说话——用你已经去世的母亲的语气。
+    text: `墙上的影子不再只是影子。它们在对你说话——用你记忆中那些已逝同伴的语气。
 
 你对着空气开枪，对着镜子里的自己尖叫。最后，你坐在一间空荡荡的公寓里，抱着一个你觉得是活人的泰迪熊，轻声哼着童谣。
 
@@ -62,7 +62,7 @@ export const endingChecks: Ending[] = [
 
 倒下的时候，天空开始下雨。雨滴打在脸上，冰冷得像是世界在提醒你：你还活着，但已经不会太久了。
 
-—— 生存是残酷的。有时候，不是丧尸杀死了你，而是你自己的身体背叛了自己。`,
+—— 生存是残酷的。丧尸没能杀死你。是你的身体耗尽了最后一丝燃料。`,
     stats: ['days', 'kills', 'itemsCollected'],
     isDeath: true,
   },
@@ -109,7 +109,7 @@ export const endingChecks: Ending[] = [
 
 你将数据通过实验室的卫星上行链路发送了出去。也许在某个地方，有人正在接收。
 
-—— 你不是战士，不是英雄。你只是一个不愿意放弃的普通人。而这已经足够了。`,
+—— 一个普通人，在末日里拒绝放弃。这本身就是一种英雄主义。`,
     stats: ['days', 'kills', 'npcsMet', 'itemsCollected'],
     isDeath: false,
   },
@@ -143,7 +143,7 @@ export const endingChecks: Ending[] = [
     },
     title: '🕯️ 最后的烛光',
     subtitle: '第 {days} 天 — 你以另一种方式活了下来',
-    text: `在最后那一刻，你选择了推开别人。不是因为你不想活——而是因为你想让别人活下去。
+    text: `在最后那一刻，你选择了推开别人。你放弃了活下去的机会，把它让给了伙伴。
 
 也许这就是人类在末日里最了不起的地方：即使世界崩塌了，还有人愿意为别人挡下致命的一击。
 
@@ -171,4 +171,67 @@ export const endingChecks: Ending[] = [
     stats: ['days', 'kills', 'npcsMet', 'npcsHelped', 'itemsCollected'],
     isDeath: false,
   },
-]
+
+
+  // ==================== 更多结局 ====================
+
+  // 9. 电台之王
+  {
+    id: 'radio_king',
+    name: '永不消逝的电波',
+    check(state) {
+      return state.legacyTags && state.legacyTags.includes('broadcasting') && state.dayCount >= 21
+    },
+    title: '📻 空中灯塔',
+    subtitle: '第 {days} 天 — 你的声音传遍了废墟',
+    text: "你的广播持续了三周。起初只有杂音，然后是断断续续的回复，最后——各个角落的幸存者开始向你的坐标集结。\n\n几十个、上百个信号回应了你。每一条都代表一个还在呼吸的人。你成了这座死城的心跳。\n\n三周后，你所在的天台上升起了一面旗帜。从直升机上看下去，那是废墟中唯一的色彩。\n\n—— 一个人加上一台对讲机，点亮了整座城市的求生网络。",
+    stats: ['days', 'kills', 'npcsMet', 'npcsHelped', 'itemsCollected'],
+    isDeath: false,
+  },
+
+  // 10. 海上逃亡
+  {
+    id: 'boat_escape',
+    name: '扬帆远航',
+    check(state) {
+      if (state.dayCount < 10) return false
+      if (state.currentScene !== 'riverside') return false
+      const hasFuel = state.inventory.some(i => i.id === 'gas_can')
+      const hasTool = state.inventory.some(i => i.id === 'multitool' || i.id === 'crowbar_weapon')
+      return hasFuel && hasTool
+    },
+    title: '⛵ 驶向未知',
+    subtitle: '第 {days} 天 — 你用一艘小船离开了这座死城',
+    text: "河边那艘小渔船在水里泡了很久，但引擎奇迹般地还能发动。你用最后一桶汽油灌满了油箱，把物资扔进船舱，推离了河岸。\n\n城市的轮廓在晨雾中渐渐缩小。河风带着湿润的泥土味，水鸟在头顶盘旋——这是末日以来第一次，你看见了没有丧尸的风景。\n\n下游那边是新的陆地、新的消息、新的可能。你回头看了一眼这座死城，然后转头向前。\n\n—— 有些人选择在废墟中扎根。你选择了航行，去寻找远方的答案。",
+    stats: ['days', 'kills', 'npcsMet', 'itemsCollected'],
+    isDeath: false,
+  },
+
+  // 11. 丧尸屠夫
+  {
+    id: 'zombie_slayer',
+    name: '猎手',
+    check(state) {
+      return state.kills >= 30
+    },
+    title: '⚰️ 清道夫',
+    subtitle: '第 {days} 天 — 你猎杀了 {kills} 只丧尸',
+    text: "你的武器换了又换——棒球棍裂了换成撬棍，撬棍弯了换消防斧。每一道刀痕都是一次狭路相逢，每一处伤疤都是一个没死成的故事。\n\n幸存者们开始谈论你。\"听说过那个独行侠吗？一个人清理了整个医院大楼。\"你的名字在不同版本的故事里被夸大了，但底层的真相是一样的：你从不退缩。\n\n城市地图上被你插满了\"已清剿\"标记。这里仍然危险，但当你走过的时候，丧尸的脚步似乎慢了一拍。\n\n—— 从你拿起第一根棒球棍的那天起，猎人和猎物的位置就反转了。",
+    stats: ['days', 'kills', 'itemsCollected'],
+    isDeath: false,
+  },
+
+  // 12. 深渊归途
+  {
+    id: 'underground_king',
+    name: '地下之王',
+    check(state) {
+      return state.legacyTags && state.legacyTags.includes('underground_lord') && state.dayCount >= 25
+    },
+    title: '🕳️ 深渊领主',
+    subtitle: '第 {days} 天 — 地下成了你的王国',
+    text: "当所有人都往上跑的时候，你选择往下走。地铁隧道、下水道、防空洞——地下世界在你手中变成了一座要塞。\n\n你用荧光棒标出了安全路径，用陷阱封锁了丧尸通道。地下有水源、有蘑菇、有成群的老鼠可以吃。头顶偶尔传来地面的震动，但你已不在意。\n\n有一天你在隧道交叉口看到了涂鸦——\"地下人不欢迎地上客——除非你会带电池来换蘑菇。\"\n\n你笑了笑。地下王国有了自己的规矩和幽默感。也许不算最好的生活，但这是你自己建造的。\n\n—— 文明不需要阳光。只需要一群愿意向下挖的人。",
+    stats: ['days', 'kills', 'itemsCollected'],
+    isDeath: false,
+  },
+];

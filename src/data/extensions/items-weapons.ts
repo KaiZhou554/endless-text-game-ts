@@ -118,6 +118,59 @@ export const weapons: ItemDB = {
     reusable: false,
   },
 
+  // ==================== 更多武器 ====================
+
+  taser: {
+    id: 'taser',
+    name: '电击枪',
+    type: 'weapon',
+    desc: '一把警用泰瑟电击枪，发射带电飞镖。近距离能让目标短暂麻痹。',
+    tags: ['远程', '噪音:低', '电击', '耐久:4', '稀有'],
+    effects: { damage: 3, noise: 1, durability: 4 },
+    stackable: false,
+    reusable: true,
+  },
+  katana: {
+    id: 'katana',
+    name: '武士刀',
+    type: 'weapon',
+    desc: '一把保养精良的武士刀，刀刃在光线下泛着冷冽的寒光。轻巧而致命的艺术品。',
+    tags: ['近战', '噪音:极低', '耐久:18', '极稀有'],
+    effects: { damage: 7, noise: 0, durability: 18 },
+    stackable: false,
+    reusable: true,
+  },
+  nail_gun: {
+    id: 'nail_gun',
+    name: '改装钉枪',
+    type: 'weapon',
+    desc: '一把改装过的工地钉枪，拆掉了安全开关，可以当射钉武器用。射速快但威力有限。',
+    tags: ['远程', '噪音:中', '需钉枪钉', '快速', '工具:修理'],
+    effects: { damage: 4, noise: 3, ammo: 'nails' },
+    stackable: false,
+    reusable: true,
+  },
+  flare_gun: {
+    id: 'flare_gun',
+    name: '信号枪',
+    type: 'weapon',
+    desc: '一把橙色塑料信号枪，配有三发信号弹。可以发信号求救，也可以近距离当武器。',
+    tags: ['远程', '噪音:极高', '一次性', '信号', '范围:火焰'],
+    effects: { damage: 8, noise: 9 },
+    stackable: false,
+    reusable: true,
+  },
+  pipe: {
+    id: 'pipe',
+    name: '铁管',
+    type: 'weapon',
+    desc: '一根拆下来的镀锌水管，一头还带着锈迹斑斑的螺纹。随手可得但足够结实。',
+    tags: ['近战', '噪音:中', '耐久:6', '常见'],
+    effects: { damage: 3, noise: 2, durability: 6 },
+    stackable: false,
+    reusable: true,
+  },
+
   // ==================== 弹药 (Ammo) ====================
 
   ammo_9mm: {
@@ -146,6 +199,16 @@ export const weapons: ItemDB = {
     type: 'misc',
     desc: '五支碳纤维弩箭，箭头锋利。用完后可以尝试回收。',
     tags: ['弹药:bolt'],
+    effects: {},
+    stackable: true,
+    reusable: false,
+  },
+  ammo_nails: {
+    id: 'ammo_nails',
+    name: '钉枪钉 (x30)',
+    type: 'misc',
+    desc: '一盒 30 发的镀锌排钉，适配大多数改装钉枪。',
+    tags: ['弹药:nails'],
     effects: {},
     stackable: true,
     reusable: false,

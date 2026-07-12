@@ -200,7 +200,7 @@ export const situations_social: Situations = {
       },
       {
         id: 'ignore_beacon',
-        text: '一个没电的手机没什么用，继续赶路',
+        text: '一个信标而已，不值得浪费时间',
         risk: '[安全]',
         tags: ['回避'],
         successRate: 1.0,
@@ -230,4 +230,121 @@ export const situations_social: Situations = {
     ],
     danger: 3,
   },
-}
+
+
+  // ==================== 更多社交情景 ====================
+
+  checkpoint_graffiti: {
+    id: 'checkpoint_graffiti',
+    name: '墙上的留言',
+    baseText: '一堵混凝土墙上喷满了荧光漆："补给点在第五大道消防站——还有人在。"旁边画了一个箭头。字迹看起来很新，不超过两天。',
+    options: [
+      {
+        id: 'follow_arrow',
+        text: '按照箭头方向去寻找消防站',
+        risk: '[可能找到幸存者] [可能遇到陷阱]',
+        tags: ['探索', '社交'],
+        successRate: 0.6,
+      },
+      {
+        id: 'add_message',
+        text: '在墙上追加留言和联系方式',
+        risk: '[安全] [可能获得未来帮助]',
+        tags: ['通讯', '社交'],
+        successRate: 0.9,
+      },
+      {
+        id: 'ignore_graffiti',
+        text: '不轻信墙上的匿名留言',
+        risk: '[安全] [错失机会]',
+        tags: ['谨慎'],
+        successRate: 1.0,
+      },
+    ],
+    danger: 1,
+  },
+  dockside_ship: {
+    id: 'dockside_ship',
+    name: '码头货船',
+    baseText: '码头上停着一艘锈迹斑斑的货船，跳板还放了下来。船上飘出炊烟——有人在上面生活。甲板上能看到晾晒的衣物和几个水桶。',
+    options: [
+      {
+        id: 'hail_ship',
+        text: '站在码头上挥手喊话',
+        risk: '[可能获得友善回应] [可能被驱逐]',
+        tags: ['社交'],
+        successRate: 0.5,
+      },
+      {
+        id: 'sneak_aboard',
+        text: '悄悄上船侦察',
+        risk: '[可能被发现] [高风险]',
+        tags: ['隐蔽', '潜行'],
+        successRate: 0.4,
+      },
+      {
+        id: 'trade_offer',
+        text: '把一些物资放在跳板上表示善意，然后退后等待',
+        risk: '[消耗物资] [高概率建立信任]',
+        tags: ['社交', '交易'],
+        successRate: 0.8,
+      },
+    ],
+    danger: 2,
+  },
+  signal_fire: {
+    id: 'signal_fire',
+    name: '远处的火光',
+    baseText: '夜幕中，远处一座小山的山顶有规律地闪烁着火光——三短、三长、三短。SOS。有人在求救，也可能是陷阱。',
+    options: [
+      {
+        id: 'head_toward',
+        text: '朝火光方向前进',
+        risk: '[可能遭遇幸存者或伏击者]',
+        tags: ['救援', '高风险'],
+        successRate: 0.5,
+      },
+      {
+        id: 'signal_back',
+        text: '用手电或信号弹回应',
+        risk: '[需要:手电或信号弹] [暴露自己位置]',
+        tags: ['通讯'],
+        requireItems: ['flashlight', 'flare'],
+        successRate: 0.6,
+      },
+      {
+        id: 'observe_fire',
+        text: '用望远镜观察再决定',
+        risk: '[需要:望远镜] [安全]',
+        tags: ['侦查'],
+        requireItems: ['binoculars'],
+        successRate: 0.9,
+      },
+    ],
+    danger: 3,
+  },
+  radio_reply: {
+    id: 'radio_reply',
+    name: '对讲机传来回复',
+    baseText: '你一直在用的对讲机突然发出了清晰的人声："……这里是前哨站阿尔法，收到请回复。我们需要确认幸存者坐标。重复，请回复。"信号异常清晰，仿佛对方就在几公里内。',
+    options: [
+      {
+        id: 'respond_honest',
+        text: '如实报告你的位置和状况',
+        risk: '[需要:对讲机] [可能获得救援] [可能暴露位置]',
+        tags: ['通讯'],
+        requireItems: ['radio'],
+        successRate: 0.5,
+      },
+      {
+        id: 'listen_only',
+        text: '只收听不回复，先判断对方身份',
+        risk: '[需要:对讲机] [安全] [消耗时间]',
+        tags: ['谨慎'],
+        requireItems: ['radio'],
+        successRate: 0.9,
+      },
+    ],
+    danger: 2,
+  },
+};
