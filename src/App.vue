@@ -44,6 +44,7 @@ const oppDiceRolled = ref(false)  // 已掷骰
 const oppDiceResult = ref(0)
 const oppQueue = ref<any[]>([])
 const oppIndex = ref(0)
+const oppWaiting = ref(false)  // 机遇等待中
 
 // ==================== 游戏流程 ====================
 
