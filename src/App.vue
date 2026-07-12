@@ -691,8 +691,8 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
           <div class="h-16"></div>
         </div>
 
-        <!-- 策略选项（骰子动画期间隐藏，用 v-show 保留占位） -->
-        <div v-show="!combatState.result && rollingRound === null" class="border-t px-2 py-2 space-y-1" style="border-color: #2a3a3a;">
+        <!-- 策略选项（骰子动画期间隐藏，保留占位） -->
+        <div :class="{ 'invisible': combatState.result || rollingRound !== null }" class="border-t px-2 py-2 space-y-1" style="border-color: #2a3a3a;">
           <button
             v-for="s in combatStrategies"
             :key="s.id"
@@ -732,7 +732,7 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
         </div>
 
         <!-- 战斗结果 -->
-        <div v-show="combatState.result || rollingRound !== null" class="border-t px-4 py-3 text-center" style="border-color: #2a3a3a;">
+        <div :class="{ 'invisible': !combatState.result && rollingRound === null }" class="border-t px-4 py-3 text-center" style="border-color: #2a3a3a;">
           <p v-if="combatState.result === 'victory' && !combatRewardActive" class="text-sm font-bold" style="color: #9ACD9D;">💀 战斗胜利！</p>
           <p v-else-if="combatState.result === 'fled'" class="text-sm" style="color: #E6C37C;">🏃 你脱离了战斗。</p>
           <p v-else-if="combatState.result === 'death'" class="text-sm font-bold" style="color: #c4746e;">💀 你倒下了……</p>
