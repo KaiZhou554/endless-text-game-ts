@@ -10,9 +10,14 @@ const scrollContainer = ref<HTMLElement | null>(null)
 const isNearBottom = ref(true)
 const showScrollButton = ref(false)
 const typewriterTarget = ref<HTMLElement | null>(null)
-const typingText = ref('')
-const typingEntryId = ref<number | null>(null)  // 当前正在打字的日志条目 id
+
+// 显示队列管理
+const revealedIds = ref(new Set<number>())  // 已显示完成的条目 id
+const processingQueue = ref<any[]>([])      // 待处理队列
+const isProcessing = ref(false)             // 是否正在处理
+let currentTypingEntry: any = null          // 当前正在打字机显示的条目
 let typewriterInstance: any = null
+let _lastJournalLen = 0                     // 上次处理的日志长度
 
 // 检查是否在底部附近（100px 内）
 function checkScrollPosition() {
@@ -29,41 +34,85 @@ function scrollToBottom() {
   scrollContainer.value.scrollTop = scrollContainer.value.scrollHeight
 }
 
-// 监听日志新增，对叙事类消息启动打字机效果
+function isTypewriterEligible(type: string): boolean {
+  return ['narrative', 'location', 'discovery', 'result', 'alliance'].includes(type)
+}
+
+// 监听日志新增，将新条目加入队列
 watch(
   () => props.gameState.journal.length,
-  async (newLen, oldLen) => {
+  async (newLen) => {
     await nextTick()
     if (scrollContainer.value && isNearBottom.value) {
       scrollToBottom()
     }
-    // 检查是否有新的叙事类条目需要打字
-    if (newLen > (oldLen || 0)) {
-      const journal = props.gameState.journal
-      const newest = journal[journal.length - 1]
-      if (newest && isTypewriterEligible(newest.type) && typingEntryId.value !== newest.id) {
-        startTyping(newest)
+    const journal = props.gameState.journal
+    // 将自上次处理后新增的条目加入队列
+    for (let i = _lastJournalLen; i < journal.length; i++) {
+      const entry = journal[i]
+      if (entry && !revealedIds.value.has(entry.id)) {
+        processingQueue.value.push(entry)
       }
     }
-  },
-  { immediate: false }
+    _lastJournalLen = journal.length
+    processQueue()
+  }
 )
 
-function isTypewriterEligible(type: string): boolean {
-  // 仅对叙事/地点/发现类消息使用打字机，排除 action/combat/warning/danger
-  return ['narrative', 'location', 'discovery', 'result', 'alliance'].includes(type)
+function processQueue() {
+  if (isProcessing.value || processingQueue.value.length === 0) return
+  isProcessing.value = true
+
+  const entry = processingQueue.value[0]
+  if (!entry) {
+    isProcessing.value = false
+    return
+  }
+
+  if (isTypewriterEligible(entry.type)) {
+    // 打字机类：逐字动画显示
+    startTyping(entry, () => {
+      finishEntry(entry)
+    })
+  } else {
+    // 非打字机类（action/combat/warning）：短暂延迟后直接显示
+    finishEntry(entry)
+  }
 }
 
-function startTyping(entry: any) {
+function finishEntry(entry: any) {
+  revealedIds.value = new Set([...revealedIds.value, entry.id])
+  processingQueue.value.shift()
+  isProcessing.value = false
+
+  // 自动滚动
+  nextTick(() => {
+    if (scrollContainer.value && isNearBottom.value) {
+      scrollToBottom()
+    }
+  })
+
+  // 非打字机条目之间也留一点间隔
+  if (!isTypewriterEligible(entry.type)) {
+    setTimeout(() => processQueue(), 200)
+  } else {
+    // 打字机完成后，给一点停顿再处理下一条
+    setTimeout(() => processQueue(), 400)
+  }
+}
+
+function startTyping(entry: any, onDone: () => void) {
   if (typewriterInstance) {
     typewriterInstance.stop()
     typewriterInstance = null
   }
-  typingEntryId.value = entry.id
-  typingText.value = entry.text
+  currentTypingEntry = entry
 
   nextTick(() => {
-    if (!typewriterTarget.value) return
+    if (!typewriterTarget.value) {
+      onDone()
+      return
+    }
     typewriterTarget.value.innerHTML = ''
     typewriterInstance = new Typewriter(typewriterTarget.value, {
       delay: 20,
@@ -74,15 +123,9 @@ function startTyping(entry: any) {
     typewriterInstance
       .typeString(entry.text)
       .callFunction(() => {
-        // 打字完成，清除打字状态
-        typingText.value = ''
-        typingEntryId.value = null
+        currentTypingEntry = null
         typewriterInstance = null
-        nextTick(() => {
-          if (scrollContainer.value && isNearBottom.value) {
-            scrollToBottom()
-          }
-        })
+        onDone()
       })
       .start()
   })
@@ -95,14 +138,13 @@ onMounted(async () => {
   if (scrollContainer.value) {
     scrollContainer.value.addEventListener('scroll', checkScrollPosition)
   }
-  // 处理初始已有的叙事条目
+  // 处理已有日志
   const journal = props.gameState.journal
-  if (journal.length > 0) {
-    const last = journal[journal.length - 1]
-    if (last && isTypewriterEligible(last.type)) {
-      startTyping(last)
-    }
+  _lastJournalLen = journal.length
+  for (const entry of journal) {
+    processingQueue.value.push(entry)
   }
+  processQueue()
 })
 
 function getTextStyle(entry: any, total: any[], currentTurnId: number) {
@@ -145,13 +187,13 @@ const currentTurnId = computed(() => props.gameState.actionCount)
       style="background: #0D1117;"
     >
       <!-- 空状态 -->
-      <div v-if="gameState.journal.length === 0 && !typingText" class="flex items-center justify-center h-full">
+      <div v-if="gameState.journal.length === 0" class="flex items-center justify-center h-full">
         <p class="text-sm cursor-blink" style="color: #5a6a7a;">
           等待游戏开始...
         </p>
       </div>
 
-      <!-- 日志条目 -->
+      <!-- 日志条目：仅显示已 reveal 的条目（正在打字的条目由 typewriterTarget 显示） -->
       <div v-else class="space-y-2 pb-6">
         <div
           v-for="(entry, idx) in gameState.journal"
@@ -163,13 +205,13 @@ const currentTurnId = computed(() => props.gameState.actionCount)
             lineHeight: '1.6',
           }"
         >
-          <!-- 正在打字的条目隐藏，由下方 typewriterTarget 显示 -->
-          <span v-if="typingEntryId !== entry.id">{{ entry.text }}</span>
+          <!-- 已揭示的条目正常显示；正在打字的和未处理的隐藏 -->
+          <span v-if="revealedIds.has(entry.id)">{{ entry.text }}</span>
         </div>
 
         <!-- Typewriter 打字区域 -->
         <div
-          v-if="typingText"
+          v-if="currentTypingEntry && !revealedIds.has(currentTypingEntry.id)"
           ref="typewriterTarget"
           class="px-3 py-2 -mx-2"
           style="font-size: 15px; line-height: 1.6; color: #B0C4DE; min-height: 1.5em;"
