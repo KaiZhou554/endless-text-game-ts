@@ -300,7 +300,7 @@ function handleOppDice() {
   if (effects.sanity) out += ` 理智${effects.sanity}`
   if (effects.infection) out += ` 感染${effects.infection}`
 
-  addJournalEntry(gameState, out, 'action')
+  addJournalEntry(gameState, `<span class="dim">${out}</span>`, 'action')
 
   // Apply effects
   for (const [k, v] of Object.entries(effects)) {
@@ -658,6 +658,14 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
           <p v-if="combatState.result === 'victory'" class="text-sm font-bold" style="color: #9ACD9D;">💀 战斗胜利！</p>
           <p v-else-if="combatState.result === 'fled'" class="text-sm" style="color: #E6C37C;">🏃 你脱离了战斗。</p>
           <p v-else-if="combatState.result === 'death'" class="text-sm font-bold" style="color: #c4746e;">💀 你倒下了……</p>
+        </div>
+      </div>
+
+      <!-- 机遇等待指示器 -->
+      <div v-if="oppWaiting" class="border-t px-4 py-3 text-center" style="border-color: #2a3a3a;">
+        <div class="text-xs" style="color: #4a5a5a;">➤ 等待下一回合</div>
+        <div class="mt-1.5 h-0.5 rounded-full overflow-hidden mx-auto" style="background: #1e2a2a; max-width: 200px;">
+          <div class="h-full rounded-full animate-progress" style="background: #4a5a5a;"></div>
         </div>
       </div>
 
