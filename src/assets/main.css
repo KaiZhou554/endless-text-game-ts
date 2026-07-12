@@ -180,14 +180,14 @@ html, body {
   100% { color: inherit; text-shadow: none; background: transparent; }
 }
 .item-rare {
-  display: inline-block;
-  padding: 0 4px;
+  display: block;
+  padding: 2px 4px;
   border-radius: 2px;
   animation: item-rare 1.2s ease-out forwards;
 }
 .item-epic {
-  display: inline-block;
-  padding: 0 4px;
+  display: block;
+  padding: 2px 4px;
   border-radius: 2px;
   animation: item-epic 1.2s ease-out forwards;
 }
