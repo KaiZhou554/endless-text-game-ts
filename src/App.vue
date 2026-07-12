@@ -42,6 +42,7 @@ const opportunityMode = ref(false)  // 机遇模式
 const currentOpp = ref<any>(null)  // 当前机遇
 const oppDiceRolled = ref(false)  // 已掷骰
 const oppDiceResult = ref(0)
+const oppRollReady = ref(true)  // 骰子按钮可用
 const oppQueue = ref<any[]>([])
 const oppIndex = ref(0)
 
@@ -310,7 +311,7 @@ function handleOppDice() {
   }
 
   const nextIdx = oppQueue.value.indexOf(opp) + 1
-  setTimeout(() => showOpportunity(nextIdx), 3000)
+  setTimeout(() => showOpportunity(nextIdx), 2000)
 }
 
 function finishOpportunities() {
@@ -670,6 +671,8 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
             style="border-color: #E6C37C; color: #E6C37C; background: #0D1117;"
             @mouseenter="hoverBg($event, '#1e2a2a')"
             @mouseleave="hoverBg($event, '#0D1117')"
+          :disabled="!oppRollReady"
+          :style="{ borderColor: oppRollReady ? '#E6C37C' : '#2a3a3a', color: oppRollReady ? '#E6C37C' : '#5a6a7a', background: '#0D1117' }"
           >🎲 掷骰子</button>
         </div>
       </div>
