@@ -300,7 +300,7 @@ function handleOppDice() {
   if (effects.sanity) out += ` 理智${effects.sanity}`
   if (effects.infection) out += ` 感染${effects.infection}`
 
-  addJournalEntry(gameState, `<span class="dim">${out}</span>`, 'action')
+  addJournalEntry(gameState, out, 'action')
 
   // Apply effects
   for (const [k, v] of Object.entries(effects)) {
@@ -542,7 +542,7 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
       />
 
       <!-- 叙事区（始终挂载，战斗中隐藏） -->
-      <NarrativeArea v-show="!showCombatUI" :gameState="gameState" />
+      <NarrativeArea v-show="!showCombatUI" :gameState="gameState" :oppActive="oppWaiting" />
 
       <!-- 战斗模式 -->
       <div
