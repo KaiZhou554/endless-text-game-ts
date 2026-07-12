@@ -32,7 +32,7 @@ export function getRandomItem(type: any = null) {
  */
 export function getLootPool(count = 3, inventory: any[] = []) {
   const loot: any[] = []
-  const types = ['food', 'drink', 'medical', 'misc']
+  const types = ['food', 'drink', 'medical', 'misc', 'tool']
 
   // 收集玩家已有的枪械需要的弹药类型
   const gunAmmos: string[] = []

@@ -635,11 +635,13 @@ export const situations_extras: Situations = {
         successRate: 0.6,
       },
       {
-        id: 'rest_here',
+    id: 'rest_here',
         text: '在发电机底座旁休息——这里地势高视野好',
         risk: '[安全休息] [恢复理智+8]',
         tags: ['休息'],
         successRate: 0.9,
+        successText: '你靠着风力发电机的混凝土底座坐下，背靠着嗡嗡作响的金属塔身。山风从你头顶吹过，视野开阔——如果有东西靠近，你很远就能看到。虽然不能完全放松，但至少在发电机规律的嗡鸣声中，你闭上眼睛休息了一会儿。醒來时精神状态好了很多。',
+        failText: '你刚坐下不到十分钟，远处的山路上传来引擎声——有人在靠近。你立刻收拾东西转移到更隐蔽的位置。',
       },
       {
         id: 'salvage_parts',
