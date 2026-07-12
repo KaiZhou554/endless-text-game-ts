@@ -905,10 +905,6 @@ export function autoResolveCombat(state) {
     combat.result = 'victory'; state.inCombat = false; state.kills += combat.enemy.count
     const d = randInt(3,8)*rounds; state.hp = clamp(state.hp-d,0,state.maxHp)
     addJournalEntry(state, `✽ 自动战斗！使用${weapon.name} ${rounds}回合击败${combat.enemy.count}只${combat.enemy.name}，损失${d}HP。`, 'combat')
-    if (chance(combat.enemy.lootChance)) {
-      const li = getRandomItem()
-      if (addToInventory(state, li)) addJournalEntry(state, `👜 获得：${li.name}`, 'action')
-    }
   } else {
     const d = randInt(8,15)*rounds; state.hp = clamp(state.hp-d,0,state.maxHp)
     if (state.hp <= 0) { combat.result='death';state.inCombat=false;addJournalEntry(state,`💀 自动战斗失败！倒下了。`,'danger') }
