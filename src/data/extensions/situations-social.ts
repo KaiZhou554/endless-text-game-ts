@@ -193,8 +193,8 @@ export const situations_social: Situations = {
       {
         id: 'take_beacon',
         text: '把信标拆下来带走，也许能改装成报警器',
-        risk: '[安全] [获得物品]',
-        tags: ['搜索'],
+        risk: '[安全]',
+        tags: ['工具'],
         successRate: 0.8,
       },
       {
