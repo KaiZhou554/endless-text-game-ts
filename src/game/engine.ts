@@ -364,7 +364,7 @@ export function resolveOption(state, option) {
     result.combat = generateCombat(state)
   }
 
-  if (option.combat && success && chance(0.7)) {
+  if (option.combat && success) {
     result.combat = generateCombat(state)
   }
 
@@ -800,10 +800,6 @@ export function resolveCombatRound(state, actionId) {
     const pool = deathTexts[name] || defaults
     const deathDesc = pool[Math.floor(Math.random() * pool.length)]
     enemyText = `${deathDesc}`
-    if (chance(combat.enemy.lootChance)) {
-      const li = getRandomItem()
-      if (addToInventory(state, li)) enemyText += ` 尸体旁找到：${li.name}。`
-    }
     round = { action: actionId, playerDmg, enemyDmg: 0, playerText, enemyText, isCrit: isCritRound }
     combat.rounds.push(round)
     addJournalEntry(state, `✽ 战斗胜利！击败了 ${combat.enemy.count} 只${combat.enemy.name}。`, 'combat')

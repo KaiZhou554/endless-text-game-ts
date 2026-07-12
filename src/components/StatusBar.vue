@@ -103,7 +103,7 @@ function formatTimeOfDay(dayCount) {
           D{{ Math.floor(gameState.dayCount) + 1 }} {{ formatTimeOfDay(gameState.dayCount) }}
         </span>
         <span v-if="(gameState.hoursAwake || 0) >= 12" class="text-[10px]" :style="{ color: (gameState.hoursAwake || 0) >= 20 ? '#c4746e' : '#E6C37C' }">
-          🕐 {{ Math.floor(gameState.hoursAwake || 0) }}h
+          😪 {{ Math.floor(gameState.hoursAwake || 0) }}h
         </span>
       </div>
     </div>
@@ -134,7 +134,7 @@ function formatTimeOfDay(dayCount) {
         D{{ Math.floor(gameState.dayCount) + 1 }}
       </span>
       <span v-if="(gameState.hoursAwake || 0) >= 12" class="text-[9px]" :style="{ color: (gameState.hoursAwake || 0) >= 20 ? '#c4746e' : '#E6C37C' }">
-        🕐{{ Math.floor(gameState.hoursAwake || 0) }}h
+        😪{{ Math.floor(gameState.hoursAwake || 0) }}h
       </span>
     </div>
   </div>
