@@ -728,12 +728,12 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
         </div>
 
         <!-- 策略选项（骰子动画期间隐藏，保留占位） -->
-        <div :class="{ 'invisible': combatState.result || rollingRound !== null }" class="border-t px-2 py-2 space-y-1" style="border-color: #2a3a3a;">
+        <div :class="{ 'invisible': combatState.result || rollingRound !== null }" class="border-t" style="border-color: #2a3a3a;">
           <button
             v-for="s in combatStrategies"
             :key="s.id"
             @click="handleCombatAction(s.id)"
-            class="w-full text-left px-3 py-2 text-xs border min-h-[44px] rounded-sm transition-colors"
+            class="w-full text-left text-xs border min-h-[44px] rounded-sm transition-colors"
             :style="{
               borderColor: '#2a3a3a',
               color: '#B0C4DE',
@@ -752,14 +752,14 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
           <div class="flex gap-2">
             <button
               @click="handleCombatAction('flee')"
-              class="flex-1 px-2.5 py-2 text-xs border rounded-sm min-h-[44px] transition-colors text-center"
+              class="flex-1 text-xs border rounded-sm min-h-[44px] transition-colors text-center"
               style="border-color: #E6C37C; color: #E6C37C; background: #0D1117;"
               @mouseenter="hoverBg($event, '#1e2a2a')"
               @mouseleave="hoverBg($event, '#0D1117')"
             >🏃 逃跑</button>
             <button
               @click="handleCombatAction('auto')"
-              class="flex-1 px-2.5 py-2 text-xs border rounded-sm min-h-[44px] transition-colors text-center"
+              class="flex-1 text-xs border rounded-sm min-h-[44px] transition-colors text-center"
               style="border-color: #2a3a3a; color: #5a6a7a; background: #0D1117;"
               @mouseenter="hoverBg($event, '#1e2a2a')"
               @mouseleave="hoverBg($event, '#0D1117')"
