@@ -87,6 +87,18 @@ html, body {
   opacity: 0;
 }
 
+/* Prompt fade (300ms delay) */
+.prompt-fade-enter-active {
+  transition: opacity 0.3s ease 0.3s;
+}
+.prompt-fade-leave-active {
+  transition: opacity 0.15s ease;
+}
+.prompt-fade-enter-from,
+.prompt-fade-leave-to {
+  opacity: 0;
+}
+
 /* Slide drawer */
 .slide-enter-active,
 .slide-leave-active {

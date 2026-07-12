@@ -255,11 +255,13 @@ const currentTurnId = computed(() => props.gameState.actionCount)
           style="font-size: 15px; line-height: 1.6; color: #B0C4DE; min-height: 1.5em;"
         ></div>
 
-        <!-- 剧情输出结束提示 -->
-        <div v-if="gameState.journal.length > 0 && !isProcessing"
-             class="text-center py-3" style="color: #4a5a5a; font-size: 12px;">
-          ➤ 选择你的行动
-        </div>
+        <!-- 剧情输出结束提示（延迟 0.3s 淡入） -->
+        <transition name="prompt-fade">
+          <div v-if="gameState.journal.length > 0 && !isProcessing"
+               class="pl-3 py-2" style="color: #4a5a5a; font-size: 13px;">
+            ➤ 选择你的行动
+          </div>
+        </transition>
       </div>
     </div>
 
