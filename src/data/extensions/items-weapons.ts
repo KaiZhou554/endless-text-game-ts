@@ -175,9 +175,9 @@ export const weapons: ItemDB = {
 
   ammo_9mm: {
     id: 'ammo_9mm',
-    name: '9mm 子弹 (x24)',
+    name: '9mm 子弹',
     type: 'misc',
-    desc: '一盒 9mm 帕拉贝鲁姆手枪弹，共 24 发。',
+    desc: '一颗 9mm 帕拉贝鲁姆手枪弹。',
     tags: ['弹药:9mm'],
     effects: {},
     stackable: true,

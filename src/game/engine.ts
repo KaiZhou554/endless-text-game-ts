@@ -717,10 +717,10 @@ function getHitRanges(wd: number): Array<{min: number, max: number, dmg: number}
   if (wd <= 5) return [{min:2, max:6, dmg:6}, {min:7, max:16, dmg:11}, {min:17, max:19, dmg:14}]
   if (wd <= 6) return [{min:2, max:6, dmg:7}, {min:7, max:15, dmg:12}, {min:16, max:19, dmg:15}]
   if (wd <= 7) return [{min:2, max:6, dmg:7}, {min:7, max:15, dmg:12}, {min:16, max:19, dmg:16}]
-  if (wd <= 8) return [{min:2, max:5, dmg:8}, {min:6, max:14, dmg:13}, {min:15, max:19, dmg:17}]
-  if (wd <= 10) return [{min:2, max:5, dmg:8}, {min:6, max:14, dmg:14}, {min:15, max:19, dmg:18}]
+  if (wd <= 8) return [{min:2, max:4, dmg:10}, {min:5, max:13, dmg:18}, {min:14, max:19, dmg:24}]
+  if (wd <= 10) return [{min:2, max:4, dmg:12}, {min:5, max:12, dmg:20}, {min:13, max:19, dmg:26}]
   // 12+ — 极端武器（霰弹枪、手榴弹等）
-  return [{min:2, max:4, dmg:10}, {min:5, max:12, dmg:16}, {min:13, max:19, dmg:22}]
+  return [{min:2, max:3, dmg:14}, {min:4, max:10, dmg:22}, {min:11, max:19, dmg:30}]
 }
 
 export function getCombatStrategies(state, enemy) {
