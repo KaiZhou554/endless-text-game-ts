@@ -97,6 +97,7 @@ export const keyItems: ItemDB = {
     desc: '一张防水战术地图，标注了城市内的重要军事设施、补给点和安全屋。角落盖着"机密"的红章。',
     tags: ['关键', '提示:军事设施', '可合并'],
     effects: {},
+    events: ['unlock_all_scenes'],
     stackable: false,
     reusable: true,
   },

@@ -5,6 +5,7 @@
 
 import { reactive, computed } from 'vue'
 import { clamp } from './utils.js'
+import { scenes } from '../data/index.js'
 import type { GameState, Item } from '../types'
 
 /**
@@ -195,6 +196,11 @@ export function useItem(state, itemId) {
         const heal = Math.ceil(missing * 0.4)
         state.hp = clamp(state.hp + heal, 0, state.maxHp)
         effects.hp = heal  // 记录实际治疗量供日志显示
+      }
+      if (evt === 'unlock_all_scenes') {
+        for (const id of Object.keys(scenes)) {
+          if (!state.scenesVisited.includes(id)) state.scenesVisited.push(id)
+        }
       }
     }
   }
