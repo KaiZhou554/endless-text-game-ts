@@ -99,8 +99,7 @@ function handleSelectOption(option: any) {
 
   // 检查战斗
   if (result.combat) {
-    const hasWarning = result.narrativeText && result.narrativeText.includes('惊动了附近的丧尸')
-    if (hasWarning) {
+    if (result._zombieWarn) {
       // 先显示警告文本，延迟 1.5 秒再进入战斗
       setTimeout(() => {
         combatState.value = result.combat
