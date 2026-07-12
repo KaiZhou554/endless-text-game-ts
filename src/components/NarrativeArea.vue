@@ -190,7 +190,7 @@ function getTextStyle(entry: any, total: any[], currentTurnId: number) {
   let baseColor = '#B0C4DE'
   switch (entry.type) {
     case 'warning': baseColor = '#E6C37C'; break
-    case 'danger':
+    case 'danger': baseColor = '#c4746e'; break
     case 'combat': baseColor = '#5a6a7a'; break
     case 'location': baseColor = '#9ACD9D'; break
     case 'dialogue': baseColor = '#7ab8d4'; break
@@ -200,7 +200,7 @@ function getTextStyle(entry: any, total: any[], currentTurnId: number) {
   }
 
   let color = baseColor
-  if (entry.type === 'action') {
+  if (entry.type === 'action' || entry.type === 'combat') {
     color = baseColor  // 保持暗淡
   } else if (isRecent) {
     color = isNewest ? '#d0dce8' : '#c0d0e0'

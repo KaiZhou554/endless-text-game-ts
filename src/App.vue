@@ -120,10 +120,13 @@ function handleSelectOption(option: any) {
         showCombatUI.value = true
       }, 4000)
     } else {
-      combatState.value = result.combat
-      const enemy = result.combat?.enemy
-      combatStrategies.value = getCombatStrategies(gameState, enemy)
-      showCombatUI.value = true
+      // 非丧尸触发也有短暂延迟，让玩家看到日志
+      setTimeout(() => {
+        combatState.value = result.combat
+        const enemy = result.combat?.enemy
+        combatStrategies.value = getCombatStrategies(gameState, enemy)
+        showCombatUI.value = true
+      }, 1500)
     }
     isResolving.value = false
     return
