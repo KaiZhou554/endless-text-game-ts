@@ -51,6 +51,13 @@ const combatRewardRoll = ref(0)
 const combatRewardText = ref('')
 let _pendingSceneChange = false  // 机遇打断时暂存的场景切换标记
 
+// 根据物品标签返回带特效的物品名 HTML
+function wrapItemName(item: any): string {
+  if (item.tags && item.tags.includes('极稀有')) return `<span class="item-rare">${item.name}</span>`
+  if (item.tags && item.tags.includes('稀有')) return `<span class="item-epic">${item.name}</span>`
+  return item.name
+}
+
 // ==================== 游戏流程 ====================
 
 function handleStartGame(mode: string) {
@@ -105,7 +112,7 @@ function handleSelectOption(option: any) {
   addJournalEntry(gameState, result.narrativeText, 'result')
   if (result.loot && result.loot.length > 0) {
     resultLoot.value = result.loot
-    const lootNames = result.loot.map(i => i.name).join('、')
+    const lootNames = result.loot.map(i => wrapItemName(i)).join('、')
     addJournalEntry(gameState, `✢ 获得了：${lootNames}`, 'action')
   }
 
@@ -285,7 +292,7 @@ function handleCombatRewardDice() {
     const item = itemDB[itemId]
     if (item && addToInventory(gameState, item)) {
       combatRewardText.value = `${glyph}你在尸体旁发现了一些有用物资：${item.name}。`
-      addJournalEntry(gameState, `${glyph} 搜刮尸体：获得 ${item.name}。`, 'action')
+      addJournalEntry(gameState, `${glyph} 搜刮尸体：获得 ${wrapItemName(item)}。`, 'action')
     } else {
       combatRewardText.value = `${glyph}你翻找了一番，但背包已经满了。`
       addJournalEntry(gameState, `${glyph} 搜刮尸体：背包满了！`, 'action')
@@ -297,7 +304,7 @@ function handleCombatRewardDice() {
     const item = itemDB[itemId]
     if (item && addToInventory(gameState, item)) {
       combatRewardText.value = `${glyph}你仔细搜索，找到了一件好东西：${item.name}！`
-      addJournalEntry(gameState, `${glyph} 搜刮尸体：获得 ${item.name}！`, 'action')
+      addJournalEntry(gameState, `${glyph} 搜刮尸体：获得 ${wrapItemName(item)}！`, 'action')
     } else {
       combatRewardText.value = `${glyph}你发现了好东西，但背包已经放不下了！`
       addJournalEntry(gameState, `${glyph} 搜刮尸体：背包满了！`, 'action')
@@ -761,9 +768,7 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
               >🎲 搜刮战利品</button>
             </template>
             <template v-else>
-              <p class="text-sm leading-relaxed"
-                 :class="combatRewardRoll === 6 ? 'item-epic' : (combatRewardRoll >= 4 ? 'item-rare' : '')"
-                 style="color: #B0C4DE;">{{ combatRewardText }}</p>
+              <p class="text-sm leading-relaxed" style="color: #B0C4DE;">{{ combatRewardText }}</p>
             </template>
           </div>
         </div>
