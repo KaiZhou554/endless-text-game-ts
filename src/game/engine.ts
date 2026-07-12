@@ -50,7 +50,7 @@ export function applySurvivalDecay(state) {
     state.sanity = clamp(state.sanity - fatiguePenalty, 0, state.maxSanity)
     state.hp = clamp(state.hp - 2, 0, state.maxHp)
     if (state.hoursAwake >= 12 && state.hoursAwake <= 12.5) {
-      addJournalEntry(state, '⚠️ 你已经超过12小时没休息了，视线开始模糊，脚步踉跄。再不休息你会垮掉的。', 'warning')
+      addJournalEntry(state, '<span class="dim">⚠️ 你已经超过12小时没休息了，视线开始模糊，脚步踉跄。再不休息你会垮掉的。</span>', 'warning')
     }
   } else if (state.hoursAwake >= 10) {
     const fatiguePenalty = 4
@@ -60,14 +60,14 @@ export function applySurvivalDecay(state) {
     const fatiguePenalty = 2
     state.sanity = clamp(state.sanity - fatiguePenalty, 0, state.maxSanity)
     if (state.hoursAwake >= 8 && state.hoursAwake <= 8.5) {
-      addJournalEntry(state, '⚠️ 你已经连续行动8小时了，体力开始下降。最好找个地方休息一下。', 'warning')
+      addJournalEntry(state, '<span class="dim">⚠️ 你已经连续行动8小时了，体力开始下降。最好找个地方休息一下。</span>', 'warning')
     }
   }
 
   if (state.hunger <= 0) {
     state.hp = clamp(state.hp - randInt(3, 6), 0, state.maxHp)
     if (!state.journal.find(j => j.text.includes('饥饿') && j.id > state.actionCount - 5)) {
-      addJournalEntry(state, '⚠️ 你感到极度的饥饿，身体开始消耗自己。', 'warning')
+      addJournalEntry(state, '<span class="dim">⚠️ 你感到极度的饥饿，身体开始消耗自己。</span>', 'warning')
     }
   } else if (state.hunger < 20 && chance(0.3)) {
     state.hp = clamp(state.hp - 1, 0, state.maxHp)
@@ -75,7 +75,7 @@ export function applySurvivalDecay(state) {
   if (state.thirst <= 0) {
     state.hp = clamp(state.hp - randInt(4, 8), 0, state.maxHp)
     if (!state.journal.find(j => j.text.includes('脱水') && j.id > state.actionCount - 5)) {
-      addJournalEntry(state, '⚠️ 严重脱水！你的嘴唇开裂，视野模糊。', 'warning')
+      addJournalEntry(state, '<span class="dim">⚠️ 严重脱水！你的嘴唇开裂，视野模糊。</span>', 'warning')
     }
   } else if (state.thirst < 20 && chance(0.3)) {
     state.hp = clamp(state.hp - 2, 0, state.maxHp)
