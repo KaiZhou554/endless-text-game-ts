@@ -391,7 +391,14 @@ function checkCombatScroll() {
   const threshold = 80
   showCombatScrollBtn.value = el.scrollHeight - el.scrollTop - el.clientHeight > threshold
 }
-function scrollCombatLog() {
+function scrollCombatNow() {
+    nextTick(() => {
+      if (combatLogRef.value) {
+        combatLogRef.value.scrollTop = combatLogRef.value.scrollHeight
+      }
+    })
+  }
+  function scrollCombatLog() {
   if (combatLogRef.value) {
     combatLogRef.value.scrollTop = combatLogRef.value.scrollHeight
     showCombatScrollBtn.value = false

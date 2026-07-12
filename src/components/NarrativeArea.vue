@@ -191,7 +191,7 @@ function getTextStyle(entry: any, total: any[], currentTurnId: number) {
   switch (entry.type) {
     case 'warning': baseColor = '#E6C37C'; break
     case 'danger':
-    case 'combat': baseColor = '#c4746e'; break
+    case 'combat': baseColor = '#5a6a7a'; break
     case 'location': baseColor = '#9ACD9D'; break
     case 'dialogue': baseColor = '#7ab8d4'; break
     case 'discovery': baseColor = '#E6C37C'; break
