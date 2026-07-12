@@ -112,7 +112,7 @@ export const situations_social: Situations = {
         id: 'take_bike',
         text: '扶起自行车，也许能骑一段路节省体力',
         risk: '[获得代步工具] [需要检查轮胎]',
-        tags: ['搜索'],
+        tags: ['工具'],
         successRate: 0.6,
       },
       {
@@ -222,8 +222,8 @@ export const situations_social: Situations = {
       {
         id: 'take_radio',
         text: '把收音机拆下来带走，也许能收到其他信号',
-        risk: '[搜索] [获得物品]',
-        tags: ['搜索'],
+        risk: '[获得改装零件]',
+        tags: ['工具'],
         successRate: 0.6,
       },
       {

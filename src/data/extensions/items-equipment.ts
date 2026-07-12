@@ -277,15 +277,15 @@ export const equipment: ItemDB = {
     reusable: true,
     slots: 1,
   },
-  teddy_bear: {
-    id: 'teddy_bear',
-    name: '破旧泰迪熊',
+  multi_tool_card: {
+    id: 'multi_tool_card',
+    name: '多功能工具卡',
     type: 'misc',
-    desc: '一个脏兮兮的泰迪熊，少了一只眼睛。抱着它让你想起更简单的时光。',
-    tags: ['情感', '理智:+20(一次性)'],
-    effects: { sanityOneTime: 20 },
+    desc: '一张信用卡大小的不锈钢工具卡，集成了微型螺丝刀、开瓶器、小刀和六角扳手。塞在钱包里不占地方。',
+    tags: ['工具', '维修', '便携'],
+    effects: {},
     stackable: false,
-    reusable: false,
+    reusable: true,
     slots: 1,
   },
   seeds: {
