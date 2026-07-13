@@ -147,16 +147,18 @@ defineExpose({ toggle, open, close })
       style="pointer-events: none;"
     >
       <div
-        class="w-full max-w-lg mx-4 mt-4 border rounded-sm p-3 space-y-1.5"
-        style="background: #0D1117; border-color: #2a3a3a; pointer-events: auto;"
+        class="w-full max-w-lg mx-4 mt-4 border rounded-sm p-3 space-y-1.5
+               bg-bg border-border"
+        style="pointer-events: auto;"
       >
         <!-- Header -->
         <div class="flex items-center justify-between">
           <span class="text-sm font-bold text-white">⌘ 命令面板</span>
           <button
             @click="close"
-            class="text-xs px-2 py-1 border rounded-sm transition-colors border-[#c4746e] text-[#c4746e] hover:bg-[#1e1a1a] active:bg-[#2a1515]"
-            style="background: none;"
+            class="text-xs px-2 py-1 border rounded-sm transition-colors
+                   text-danger border-danger bg-transparent
+                   hover:bg-close-hover active:bg-[#2a1515]"
           >
             ✕
           </button>
@@ -169,13 +171,14 @@ defineExpose({ toggle, open, close })
             v-model="input"
             @keydown.enter="handleCmd"
             placeholder="输入命令"
-            class="flex-1 px-2 py-1.5 text-sm border rounded-sm outline-none placeholder-gray-600"
-            style="background: #1a1f1f; border-color: #2a3a3a; color: #B0C4DE;"
+            class="flex-1 px-2 py-1.5 text-sm border rounded-sm outline-none
+                   bg-input-bg border-border text-fore placeholder-gray-600"
           />
           <button
             @click="handleCmd"
-            class="text-xs px-2 py-1 border rounded-sm transition-colors border-[#B0C4DE] text-[#B0C4DE] hover:bg-[#1e2a2a] active:bg-[#253535]"
-            style="background: none;"
+            class="text-xs px-2 py-1 border rounded-sm transition-colors
+                   text-fore border-fore bg-transparent
+                   hover:bg-hover active:bg-[#253535]"
           >
             ⏎
           </button>
@@ -184,8 +187,7 @@ defineExpose({ toggle, open, close })
         <!-- Result -->
         <div
           v-if="result"
-          class="text-sm leading-relaxed"
-          style="color: #9ACD9D;"
+          class="text-sm leading-relaxed text-success"
         >
           {{ result }}
         </div>

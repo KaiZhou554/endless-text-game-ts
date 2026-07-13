@@ -95,19 +95,19 @@ const optionLabels = ['A', 'B', 'C', 'D']
 </script>
 
 <template>
-  <div class="flex-1 flex flex-col overflow-hidden" style="background: #0D1117;">
+  <div class="flex-1 flex flex-col overflow-hidden bg-bg">
     <!-- NPC 信息头部 -->
-    <div class="border-b px-4 py-2" style="border-color: #2a3a3a;">
+    <div class="border-b border-border px-4 py-2">
       <div class="flex items-center justify-between">
         <div>
-          <span class="text-sm font-bold" style="color: #E6C37C;">
+          <span class="text-sm font-bold text-accent">
             💬 {{ dialogue?.npc?.name || '???' }}
           </span>
-          <span class="text-xs ml-2" style="color: #5a6a7a;">
+          <span class="text-xs ml-2 text-muted">
             {{ dialogue?.npc?.title || '' }}
           </span>
         </div>
-        <span class="text-[10px]" style="color: #5a6a7a;">
+        <span class="text-[10px] text-muted">
           信任: {{ Math.round(props.gameState.npcRelations[dialogue?.npcId] || 50) }}
         </span>
       </div>
@@ -116,7 +116,7 @@ const optionLabels = ['A', 'B', 'C', 'D']
     <!-- 对话历史 + 当前NPC文本 -->
     <div class="flex-1 overflow-y-auto px-4 py-3 space-y-3">
       <!-- NPC描述 -->
-      <div v-if="dialogue?.npc?.desc" class="text-xs italic" style="color: #5a6a7a;">
+      <div v-if="dialogue?.npc?.desc" class="text-xs italic text-muted">
         {{ dialogue.npc.desc }}
       </div>
 
@@ -126,22 +126,22 @@ const optionLabels = ['A', 'B', 'C', 'D']
         :key="idx"
         class="text-sm leading-relaxed"
       >
-        <div v-if="msg.speaker === 'npc'" style="color: #7ab8d4;">
-          <span class="text-[10px] font-bold" style="color: #5a6a7a;">
+        <div v-if="msg.speaker === 'npc'" class="text-info">
+          <span class="text-[10px] font-bold text-muted">
             {{ dialogue?.npc?.name || 'NPC' }}:
           </span>
           <p class="mt-0.5">{{ msg.text }}</p>
         </div>
-        <div v-else class="text-right" style="color: #9ACD9D;">
-          <span class="text-[10px]" style="color: #5a6a7a;">你:</span>
+        <div v-else class="text-right text-success">
+          <span class="text-[10px] text-muted">你:</span>
           <p class="mt-0.5">{{ msg.text }}</p>
         </div>
       </div>
 
       <!-- 当前NPC文本（如果不在历史中） -->
       <div v-if="dialogueHistory.length === 0 || dialogueHistory[dialogueHistory.length - 1]?.text !== npcText"
-           class="text-sm leading-relaxed" style="color: #7ab8d4;">
-        <span class="text-[10px] font-bold" style="color: #5a6a7a;">
+           class="text-sm leading-relaxed text-info">
+        <span class="text-[10px] font-bold text-muted">
           {{ dialogue?.npc?.name || 'NPC' }}:
         </span>
         <p class="mt-0.5">{{ npcText }}</p>
@@ -149,7 +149,7 @@ const optionLabels = ['A', 'B', 'C', 'D']
     </div>
 
     <!-- 选项 -->
-    <div class="border-t px-2 py-2 space-y-1" style="border-color: #2a3a3a;">
+    <div class="border-t border-border px-2 py-2 space-y-1">
       <div
         v-for="(option, idx) in playerOptions"
         :key="idx"
@@ -159,15 +159,11 @@ const optionLabels = ['A', 'B', 'C', 'D']
           :disabled="!option.available || isProcessing"
           class="w-full text-left px-3 py-2 text-sm border transition-colors duration-150
                  min-h-[44px] rounded-sm flex items-start gap-2"
-          :style="{
-            borderColor: option.available ? '#2a3a3a' : '#1e2a2a',
-            color: option.available ? '#B0C4DE' : '#5a6a7a',
-            background: '#0D1117',
-            opacity: option.available ? 1 : 0.5,
-            cursor: option.available ? 'pointer' : 'not-allowed',
-          }"
-          @mouseenter="e => { if (option.available && !isProcessing) (e.target as HTMLElement).style.background = '#1e2a2a' }"
-          @mouseleave="e => { (e.target as HTMLElement).style.background = '#0D1117' }"
+          :class="[
+            option.available
+              ? 'border-border text-fore bg-bg hover:bg-hover'
+              : 'border-[#1e2a2a] text-muted bg-bg opacity-50 cursor-not-allowed'
+          ]"
         >
           <span class="font-bold shrink-0 mt-px">{{ optionLabels[idx] }}.</span>
           <span class="flex-1">{{ option.text }}</span>

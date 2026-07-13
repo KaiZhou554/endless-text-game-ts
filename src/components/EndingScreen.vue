@@ -51,36 +51,35 @@ const subtitle = computed(() => {
       <div class="text-4xl select-none">
         {{ ending.isDeath ? '💀' : '🌟' }}
       </div>
-      <h2 class="text-xl font-bold" style="color: #E6C37C;">
+      <h2 class="text-xl font-bold text-accent">
         {{ ending.title }}
       </h2>
-      <p class="text-xs" style="color: #5a6a7a;">
+      <p class="text-xs text-muted">
         {{ subtitle }}
       </p>
     </div>
 
-    <div class="w-full border-t" style="border-color: #2a3a3a;"></div>
+    <div class="w-full border-t border-border"></div>
 
     <!-- 结局文本 -->
     <div class="w-full">
-      <pre class="text-sm leading-relaxed whitespace-pre-wrap font-mono"
-           style="color: #B0C4DE; font-family: inherit;">{{ ending.text }}</pre>
+      <pre class="text-sm leading-relaxed whitespace-pre-wrap text-fore"
+           style="font-family: inherit;">{{ ending.text }}</pre>
     </div>
 
-    <div class="w-full border-t" style="border-color: #2a3a3a;"></div>
+    <div class="w-full border-t border-border"></div>
 
     <!-- 统计 -->
     <div v-if="statsList.length > 0" class="w-full">
-      <h3 class="text-sm font-bold" style="color: #9ACD9D;">📊 生存统计</h3>
+      <h3 class="text-sm font-bold text-success">📊 生存统计</h3>
       <div class="space-y-1">
         <div
           v-for="stat in statsList"
           :key="stat.label"
-          class="flex justify-between text-sm border-b"
-          style="border-color: #1e2a2a;"
+          class="flex justify-between text-sm border-b border-hover"
         >
-          <span style="color: #5a6a7a;">{{ stat.label }}</span>
-          <span class="font-bold tabular-nums" style="color: #E6C37C;">{{ stat.value }}</span>
+          <span class="text-muted">{{ stat.label }}</span>
+          <span class="font-bold tabular-nums text-accent">{{ stat.value }}</span>
         </div>
       </div>
     </div>
@@ -89,15 +88,14 @@ const subtitle = computed(() => {
     <button
       @click="emit('restart')"
       class="w-full text-center text-sm border transition-colors duration-150
-             min-h-[44px] rounded-sm font-bold"
-      style="background: #0D1117; border-color: #E6C37C; color: #E6C37C;"
-      @mouseenter="e => (e.target as HTMLElement).style.background = '#1e2a2a'"
-      @mouseleave="e => (e.target as HTMLElement).style.background = '#0D1117'"
+             min-h-[44px] rounded-sm font-bold
+             bg-bg border-accent text-accent
+             hover:bg-hover"
     >
       🔄 重新开始
     </button>
 
-    <p class="text-xs text-center" style="color: #5a6a7a;">
+    <p class="text-xs text-center text-muted">
       {{ ending.isDeath ? '死亡是终点，也是新的开始。' : '你的故事告一段落，但世界还在继续。' }}
     </p>
   </div>

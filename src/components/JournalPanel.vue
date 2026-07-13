@@ -15,15 +15,15 @@ const reversedJournal = computed(() => {
 
 function getTextStyle(entry) {
   switch (entry.type) {
-    case 'warning': return { color: '#E6C37C' }
-    case 'danger': return { color: '#c4746e' }
-    case 'combat': return { color: '#c4746e' }
-    case 'location': return { color: '#9ACD9D' }
-    case 'dialogue': return { color: '#7ab8d4' }
-    case 'discovery': return { color: '#E6C37C' }
-    case 'alliance': return { color: '#9ACD9D' }
-    case 'action': return { color: '#5a6a7a' }
-    default: return { color: '#B0C4DE' }
+    case 'warning': return { color: 'var(--color-accent)' }
+    case 'danger': return { color: 'var(--color-danger)' }
+    case 'combat': return { color: 'var(--color-danger)' }
+    case 'location': return { color: 'var(--color-success)' }
+    case 'dialogue': return { color: 'var(--color-info)' }
+    case 'discovery': return { color: 'var(--color-accent)' }
+    case 'alliance': return { color: 'var(--color-success)' }
+    case 'action': return { color: 'var(--color-muted)' }
+    default: return { color: 'var(--color-fore)' }
   }
 }
 
@@ -38,43 +38,39 @@ function formatTime(dayCount) {
   <!-- 遮罩 -->
   <div
     @click="emit('close')"
-    class="fixed inset-0 z-40"
-    style="background: rgba(0,0,0,0.5);"
+    class="fixed inset-0 z-40 bg-overlay"
   ></div>
 
   <!-- 抽屉 -->
   <div
     class="fixed top-0 bottom-0 z-50 flex flex-col overflow-hidden
-           w-full sm:w-80 right-0"
-    style="background: #0D1117; border-left: 1px solid #2a3a3a; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);"
+           w-full sm:w-80 right-0 bg-bg border-l border-border
+           pt-[env(safe-area-inset-top,0px)] pb-[env(safe-area-inset-bottom,0px)]"
   >
-    <div class="flex items-center justify-between border-b"
-         style="border-color: #2a3a3a;">
-      <h2 class="text-sm font-bold" style="color: #E6C37C;">📖 日志</h2>
+    <div class="flex items-center justify-between border-b border-border">
+      <h2 class="text-sm font-bold text-accent">📖 日志</h2>
       <button
         @click="emit('close')"
-        class="text-sm min-h-[44px] border rounded-sm"
-        style="color: #c4746e; background: none; border-color: #c4746e; cursor: pointer;"
-        @mouseenter="e => { (e.target as HTMLElement).style.background = '#1e1a1a'; (e.target as HTMLElement).style.borderColor = '#d08070' }"
-        @mouseleave="e => { (e.target as HTMLElement).style.background = 'none'; (e.target as HTMLElement).style.borderColor = '#c4746e' }"
+        class="text-sm min-h-[44px] border rounded-sm
+               text-danger bg-transparent border-danger cursor-pointer
+               hover:bg-close-hover hover:border-close-hover-border"
       >✕ 关闭</button>
     </div>
 
     <div ref="scrollRef" class="flex-1 overflow-y-auto space-y-2">
       <div v-if="reversedJournal.length === 0" class="text-center">
-        <p class="text-xs" style="color: #5a6a7a;">还没有任何记录</p>
+        <p class="text-xs text-muted">还没有任何记录</p>
       </div>
       <div
         v-for="entry in reversedJournal"
         :key="entry.id"
-        class="text-xs leading-relaxed border-b"
-        style="border-color: #1e2a2a;"
+        class="text-xs leading-relaxed border-b border-hover"
       >
         <div class="flex justify-between">
-          <span class="text-[10px]" style="color: #5a6a7a;">
+          <span class="text-[10px] text-muted">
             {{ formatTime(entry.time) }}
           </span>
-          <span class="text-[10px]" style="color: #3a4a4a;">
+          <span class="text-[10px] text-timestamp">
             #{{ entry.id }}
           </span>
         </div>

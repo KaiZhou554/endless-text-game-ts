@@ -15,16 +15,16 @@ const inventoryItems = computed(() => props.gameState.inventory)
 
 function getItemTypeColor(type) {
   const colors = {
-    weapon: '#c4746e',
-    armor: '#7ab8d4',
-    food: '#E6C37C',
-    drink: '#7ab8d4',
-    medical: '#9ACD9D',
-    tool: '#B0C4DE',
-    key: '#E6C37C',
-    misc: '#5a6a7a',
+    weapon: 'var(--color-danger)',
+    armor: 'var(--color-info)',
+    food: 'var(--color-accent)',
+    drink: 'var(--color-info)',
+    medical: 'var(--color-success)',
+    tool: 'var(--color-fore)',
+    key: 'var(--color-accent)',
+    misc: 'var(--color-muted)',
   }
-  return colors[type] || '#5a6a7a'
+  return colors[type] || 'var(--color-muted)'
 }
 
 function getItemTypeName(type) {
@@ -60,33 +60,30 @@ function handleDrop(item) {
   <!-- 遮罩 -->
   <div
     @click="emit('close')"
-    class="fixed inset-0 z-40"
-    style="background: rgba(0,0,0,0.5);"
+    class="fixed inset-0 z-40 bg-overlay"
   ></div>
 
   <!-- 抽屉 -->
   <div
     class="fixed top-0 bottom-0 z-50 flex flex-col overflow-hidden
-           w-full sm:w-80 right-0"
-    style="background: #0D1117; border-left: 1px solid #2a3a3a; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);"
+           w-full sm:w-80 right-0 bg-bg border-l border-border"
+    style="padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);"
   >
     <!-- 头部 -->
-    <div class="flex items-center justify-between border-b"
-         style="border-color: #2a3a3a;">
-      <h2 class="text-sm font-bold" style="color: #E6C37C;">🎒 背包</h2>
+    <div class="flex items-center justify-between border-b border-border">
+      <h2 class="text-sm font-bold text-accent">🎒 背包</h2>
       <button
         @click="emit('close')"
-        class="text-sm min-h-[44px] border rounded-sm"
-        style="color: #c4746e; background: none; border-color: #c4746e; cursor: pointer;"
-        @mouseenter="e => { (e.target as HTMLElement).style.background = '#1e1a1a'; (e.target as HTMLElement).style.borderColor = '#d08070' }"
-        @mouseleave="e => { (e.target as HTMLElement).style.background = 'none'; (e.target as HTMLElement).style.borderColor = '#c4746e' }"
+        class="text-sm min-h-[44px] border rounded-sm
+               text-danger border-danger bg-transparent cursor-pointer
+               hover:bg-close-hover hover:border-close-hover-border"
       >✕ 关闭</button>
     </div>
 
     <!-- 容量 -->
-    <div class="border-b text-xs flex justify-between" style="border-color: #2a3a3a;">
-      <span style="color: #5a6a7a;">容量:</span>
-      <span style="color: #B0C4DE;">
+    <div class="border-b border-border text-xs flex justify-between">
+      <span class="text-muted">容量:</span>
+      <span class="text-fore">
         {{ getUsedSlots(gameState) }}/{{ getEffectiveCapacity(gameState) }}
       </span>
     </div>
@@ -94,7 +91,7 @@ function handleDrop(item) {
     <!-- 物品列表 -->
     <div class="flex-1 overflow-y-auto">
       <div v-if="inventoryItems.length === 0" class="text-center">
-        <p class="text-sm" style="color: #5a6a7a;">背包是空的</p>
+        <p class="text-sm text-muted">背包是空的</p>
       </div>
       <div v-else class="space-y-1">
         <div
@@ -102,24 +99,24 @@ function handleDrop(item) {
           :key="item.id + '-' + Math.random()"
           @click="selectItem(item)"
           class="border cursor-pointer transition-colors duration-150 rounded-sm"
-          :style="{
-            borderColor: selectedItem === item ? getItemTypeColor(item.type) : '#2a3a3a',
-            background: selectedItem === item ? '#1e2a2a' : '#0D1117',
-          }"
-          @mouseenter="e => { if (selectedItem !== item) (e.target as HTMLElement).style.background = '#111a1a' }"
-          @mouseleave="e => { if (selectedItem !== item) (e.target as HTMLElement).style.background = '#0D1117' }"
+          :class="[
+            selectedItem === item
+              ? 'bg-hover'
+              : 'bg-bg border-border hover:bg-item-hover'
+          ]"
+          :style="selectedItem === item ? { borderColor: getItemTypeColor(item.type) } : {}"
         >
           <div class="flex items-center justify-between">
             <span class="text-xs font-bold" :style="{ color: getItemTypeColor(item.type) }">
               {{ item.name }}
-              <span v-if="item._count > 1" style="color: #5a6a7a;">x{{ item._count }}</span>
+              <span v-if="item._count > 1" class="text-muted">x{{ item._count }}</span>
             </span>
-            <span class="text-[10px] rounded-sm"
-                  :style="{ background: '#1e2a2a', color: getItemTypeColor(item.type) }">
+            <span class="text-[10px] rounded-sm bg-hover"
+                  :style="{ color: getItemTypeColor(item.type) }">
               {{ getItemTypeName(item.type) }}
             </span>
           </div>
-          <p class="text-[11px] leading-relaxed" style="color: #5a6a7a;">
+          <p class="text-[11px] leading-relaxed text-muted">
             {{ item.desc }}
           </p>
           <!-- 标签 -->
@@ -127,8 +124,7 @@ function handleDrop(item) {
             <span
               v-for="tag in item.tags.slice(0, 3)"
               :key="tag"
-              class="text-[9px]"
-              style="color: #5a6a7a; border: 1px solid #2a3a3a;"
+              class="text-[9px] text-muted border border-border"
             >{{ tag }}</span>
           </div>
           <!-- 选中后的操作按钮 -->
@@ -136,17 +132,15 @@ function handleDrop(item) {
             <button
               v-if="item.type === 'food' || item.type === 'drink' || item.type === 'medical' || item.usable"
               @click.stop="handleUse(item)"
-              class="text-[11px] border rounded-sm min-h-[36px] transition-colors flex-1"
-              style="border-color: #9ACD9D; color: #9ACD9D; background: #0D1117;"
-              @mouseenter="e => (e.target as HTMLElement).style.background = '#1e2a2a'"
-              @mouseleave="e => (e.target as HTMLElement).style.background = '#0D1117'"
+              class="text-[11px] border rounded-sm min-h-[36px] flex-1
+                     border-success text-success bg-bg
+                     hover:bg-hover transition-colors"
             >使用</button>
             <button
               @click.stop="handleDrop(item)"
-              class="text-[11px] border rounded-sm min-h-[36px] transition-colors flex-1"
-              style="border-color: #c4746e; color: #c4746e; background: #0D1117;"
-              @mouseenter="e => (e.target as HTMLElement).style.background = '#1e2a2a'"
-              @mouseleave="e => (e.target as HTMLElement).style.background = '#0D1117'"
+              class="text-[11px] border rounded-sm min-h-[36px] flex-1
+                     border-danger text-danger bg-bg
+                     hover:bg-hover transition-colors"
             >丢弃</button>
           </div>
         </div>

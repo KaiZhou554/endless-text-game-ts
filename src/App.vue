@@ -365,91 +365,113 @@ watch(
 
 function showOpportunity(idx) {
   if (idx >= oppQueue.value.length) {
-    finishOpportunities()
-    return
-  }
-  const opp = oppQueue.value[idx]
-  opportunityMode.value = true
-  currentOpp.value = opp
-  oppDiceRolled.value = false
-  oppDiceResult.value = 0
-
-  addJournalEntry(gameState, opp.baseText, 'narrative')
-
-  if (opp.type === 'narrative') {
-    setTimeout(() => showOpportunity(idx + 1), opp.delay * 1000)
-  } else if (opp.type === 'narrative_result') {
-    if (opp.resultEffects) {
-      for (const [k, v] of Object.entries(opp.resultEffects)) {
-        modifyStat(gameState, k, v)
-      }
-    }
-    if (opp.resultItem && itemDB[opp.resultItem]) {
-      const lootItem = itemDB[opp.resultItem]
-      addToInventory(gameState, lootItem)
-      addJournalEntry(gameState, wrapRewardText('✢ 获得了：', lootItem, ''), 'action')
-    }
-    setTimeout(() => showOpportunity(idx + 1), opp.delay * 1000)
-  }
-  // dice type waits for player to click roll
-}
-
-function handleOppDice() {
-  const opp = currentOpp.value
-  if (!opp || opp.type !== 'dice' || !oppRollReady.value) return  // 打字中禁用
-  const roll = Math.floor(Math.random() * 6) + 1
-  oppDiceResult.value = roll
-  oppDiceRolled.value = true
-
-  const diceGlyphs = ['', '⚀', '⚁', '⚂', '⚃', '⚄', '⚅']
-  const range = opp.diceRanges?.find(r => roll >= r.min && roll <= r.max)
-  const resultText = range?.text || '什么都没发生。'
-  const effects = range?.effects || {}
-
-  let out = `${diceGlyphs[roll]} ${resultText}`
-  if (effects.hp) out += ` 生命${effects.hp > 0 ? '+' : ''}${effects.hp}`
-  if (effects.hunger) out += ` 饱腹${effects.hunger > 0 ? '+' : ''}${effects.hunger}`
-  if (effects.thirst) out += ` 口渴${effects.thirst > 0 ? '+' : ''}${effects.thirst}`
-  if (effects.sanity) out += ` 理智${effects.sanity > 0 ? '+' : ''}${effects.sanity}`
-  if (effects.infection) out += ` 感染${effects.infection > 0 ? '+' : ''}${effects.infection}`
-
-  addJournalEntry(gameState, `<span class="dim">${out}</span>`, 'action')
-
-  // Apply effects
-  for (const [k, v] of Object.entries(effects)) {
-    modifyStat(gameState, k, v)
-  }
-  if (range?.lootItem && itemDB[range.lootItem]) {
-    const lootItem = itemDB[range.lootItem]
-    addToInventory(gameState, lootItem)
-    addJournalEntry(gameState, wrapRewardText('✢ 获得了：', lootItem, ''), 'action')
-  }
-  if (range?.events) processEvents(gameState, range.events)
-
-  const nextIdx = oppQueue.value.indexOf(opp) + 1
-  setTimeout(() => showOpportunity(nextIdx), 2000)
-}
-
-function finishOpportunities() {
-  // 机遇推进 1h，但不计疲劳
-  gameState.dayCount += 1 / 24
-  gameState.actionCount++
-  opportunityMode.value = false
-  currentOpp.value = null
-  oppQueue.value = []
-  oppIndex.value = 0
-  isResolving.value = false
-  // 生成下一个事件
-  setTimeout(() => {
+    // 机遇队列完成
+    opportunityMode.value = false
+    currentOpp.value = null
+    oppQueue.value = []
+    applySurvivalDecay(gameState)
+    // 生成下一个事件
     const event = generateEvent(gameState, _pendingSceneChange)
     _pendingSceneChange = false
     currentEventText.value = event.text
     currentOptions.value = event.options
     resultLoot.value = []
-    combatState.value = null
     isResolving.value = false
-  }, 500)
+    return
+  }
+
+  const opp = oppQueue.value[idx]
+  currentOpp.value = opp
+  oppIndex.value = idx
+
+  if (opp.type === 'narrative') {
+    opportunityMode.value = true
+    oppDiceRolled.value = true
+    // 纯剧情机遇：打字机显示后自动继续
+    addJournalEntry(gameState, opp.baseText, 'narrative')
+    setTimeout(() => showOpportunity(idx + 1), (opp.delay || 4) * 1000)
+  } else if (opp.type === 'narrative_result') {
+    opportunityMode.value = true
+    oppDiceRolled.value = true
+    addJournalEntry(gameState, opp.baseText, 'narrative')
+    if (opp.resultEffects) {
+      Object.entries(opp.resultEffects).forEach(([key, val]) => {
+        modifyStat(gameState, key, val as number)
+      })
+    }
+    setTimeout(() => showOpportunity(idx + 1), (opp.delay || 4) * 1000)
+  } else if (opp.type === 'dice') {
+    opportunityMode.value = true
+    currentOpp.value = opp
+    oppIndex.value = idx
+    oppDiceRolled.value = false
+    oppDiceResult.value = 0
+    oppRollReady.value = true
+  }
 }
+
+function handleOppDice() {
+  if (!oppRollReady.value || !currentOpp.value) return
+  oppRollReady.value = false
+  const roll = Math.floor(Math.random() * 6) + 1
+  oppDiceResult.value = roll
+  oppDiceRolled.value = true
+
+  const range = currentOpp.value.diceRanges?.find(
+    r => roll >= r.min && roll <= r.max
+  )
+
+  addJournalEntry(gameState, `🎲 ${roll}`, 'action')
+
+  if (range) {
+    if (range.text) addJournalEntry(gameState, range.text, 'narrative')
+    if (range.effects) {
+      Object.entries(range.effects).forEach(([key, val]) => {
+        modifyStat(gameState, key, val as number)
+      })
+    }
+    if (range.events) processEvents(gameState, range.events)
+    if (range.lootItem) {
+      const item = itemDB[range.lootItem]
+      if (item && addToInventory(gameState, item)) {
+        addJournalEntry(gameState, wrapRewardText('✢ 获得了：', item, ''), 'action')
+      }
+    }
+  }
+
+  applySurvivalDecay(gameState)
+  const delay = currentOpp.value.delay || 3
+  setTimeout(() => showOpportunity(oppIndex.value + 1), delay * 1000)
+}
+
+// ==================== 对话 ====================
+
+function handleDialogueResult(result: any) {
+  if (!result) return
+  if (result.error) return
+
+  // 记录对话文本到日志
+  if (result.npcText) addJournalEntry(gameState, result.npcText, 'dialogue')
+  if (result.playerText) addJournalEntry(gameState, `➤ ${result.playerText}`, 'action')
+
+  if (result.rewardItems) {
+    for (const item of result.rewardItems) {
+      addJournalEntry(gameState, wrapRewardText('✢ 获得：', item, ''), 'action')
+    }
+  }
+
+  // 对话结束，生成下一事件
+  if (result.dialogueEnded) {
+    if (gameState.phase !== 'ending') {
+      const event = generateEvent(gameState)
+      currentEventText.value = event.text
+      currentOptions.value = event.options
+      resultLoot.value = []
+    }
+  }
+}
+
+// ==================== 结局 ====================
 
 function checkAndTriggerEnding() {
   const ending = checkEndings(gameState)
@@ -459,37 +481,7 @@ function checkAndTriggerEnding() {
   }
 }
 
-// ==================== 对话 ====================
-
-let _dialogueEnding = false
-
-function handleDialogueResult(result: any) {
-  if (!result) return
-  // 防止重复触发
-  if (_dialogueEnding) return
-  if (result.dialogueEnded) {
-    _dialogueEnding = true
-    // 强制标记当前情景为已用，避免重复
-    gameState.lastSituationId = gameState.currentSituation
-    // 检查结局并生成新事件
-    checkAndTriggerEnding()
-    if (gameState.phase !== 'ending') {
-      const event = generateEvent(gameState)
-      currentEventText.value = event.text
-      currentOptions.value = event.options
-      resultLoot.value = []
-    }
-    _dialogueEnding = false
-  }
-  if (result.rewardItems) {
-    resultLoot.value = [...(resultLoot.value || []), ...result.rewardItems]
-    for (const item of result.rewardItems) {
-      addJournalEntry(gameState, wrapRewardText('✢ 获得了：', item, ''), 'action')
-    }
-  }
-}
-
-// ==================== 背包操作 ====================
+// ==================== 使用物品 ====================
 
 function handleUseItem(itemId: string) {
   const item = gameState.inventory.find(i => i.id === itemId)
@@ -588,12 +580,6 @@ function handleRestart() {
   gameState.currentEnding = null
 }
 
-
-function hoverBg(e: Event, color: string) {
-  const el = e.currentTarget as HTMLElement | null
-  if (el) el.style.background = color
-}
-
 // 战斗日志滚动
 function checkCombatScroll() {
   if (!combatLogRef.value) return
@@ -621,7 +607,7 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
 </script>
 
 <template>
-  <div class="h-full flex flex-col max-w-lg w-full" style="background: #0D1117;">
+  <div class="h-full flex flex-col max-w-lg w-full bg-bg">
 
     <!-- ========== 开始画面 ========== -->
     <StartScreen
@@ -659,20 +645,19 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
       <!-- 战斗模式 -->
       <div
         v-if="showCombatUI && combatState"
-        class="flex-1 flex flex-col overflow-hidden"
-        style="background: #0D1117;"
+        class="flex-1 flex flex-col overflow-hidden bg-bg"
       >
         <!-- 敌人信息头部 -->
-        <div class="border-b" style="border-color: #2a3a3a;">
+        <div class="border-b border-border">
           <div class="flex items-center justify-between">
             <div>
-              <span class="text-sm font-bold" style="color: #c4746e;">
+              <span class="text-sm font-bold text-danger">
                 ⚔️ {{ combatState.enemy.name }} x{{ combatState.enemy.count }}
               </span>
-              <span class="text-xs ml-2" style="color: #5a6a7a;">
+              <span class="text-xs ml-2 text-muted">
                 HP: {{ Math.max(0, combatState.enemy.actualHp) }}/{{ combatState.enemy.maxHp }}
               </span>
-              <span class="text-[10px] ml-2" style="color: #5a6a7a;">
+              <span class="text-[10px] ml-2 text-muted">
                 {{ combatState.enemy.desc || '' }}
               </span>
           </div>
@@ -684,8 +669,8 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
              ref="combatLogRef"
              @scroll="checkCombatScroll">
           <!-- 丧尸描述（左侧） -->
-          <div v-if="combatState.enemyDesc" class="text-sm leading-relaxed" style="color: #c4746e;">
-            <span class="text-[10px] font-bold" style="color: #5a6a7a;">{{ combatState.enemy.name }}:</span>
+          <div v-if="combatState.enemyDesc" class="text-sm leading-relaxed text-danger">
+            <span class="text-[10px] font-bold text-muted">{{ combatState.enemy.name }}:</span>
             <p class="mt-0.5">{{ combatState.enemyDesc }}</p>
           </div>
           <div
@@ -695,16 +680,16 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
           >
             <!-- 玩家行动（右对齐） -->
             <div v-if="round.playerText" class="text-right"
-                 :style="{ color: rollingRound === idx ? '#5a6a7a' : (round.isCrit ? '#FFD700' : '#9ACD9D') }">
-              <span class="text-[10px]" style="color: #5a6a7a;">你:</span>
+                 :class="rollingRound === idx ? 'text-muted' : (round.isCrit ? 'text-gold' : 'text-success')">
+              <span class="text-[10px] text-muted">你:</span>
               <p class="mt-0.5" :class="{ 'crit-scan': round.isCrit && rollingRound !== idx }">
                 <template v-if="rollingRound === idx">{{ rollingText }}</template>
                 <template v-else>{{ round.playerText }}</template>
               </p>
             </div>
             <!-- 敌人行动（左对齐）：骰子动画期间隐藏 -->
-            <div v-if="round.enemyText && rollingRound !== idx" class="mt-1" style="color: #c4746e;">
-              <span class="text-[10px] font-bold" style="color: #5a6a7a;">
+            <div v-if="round.enemyText && rollingRound !== idx" class="mt-1 text-danger">
+              <span class="text-[10px] font-bold text-muted">
                 {{ combatState.enemy.name }}:
               </span>
               <p class="mt-0.5">{{ round.enemyText }}</p>
@@ -715,10 +700,9 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
           <button
             v-if="showCombatScrollBtn"
             @click="scrollCombatLog"
-            class="sticky bottom-2 z-10 text-xs border rounded-sm mx-auto block"
-            style="background: #1a1f1f; border-color: #E6C37C; color: #E6C37C;"
-            @mouseenter="e => (e.target as HTMLElement).style.background = '#2a3535'"
-            @mouseleave="e => (e.target as HTMLElement).style.background = '#1a1f1f'"
+            class="sticky bottom-2 z-10 text-xs border rounded-sm mx-auto block
+                   bg-input-bg border-accent text-accent
+                   hover:bg-button-hover transition-colors duration-150"
           >↓ 回到底部</button>
 
           <!-- 底部留空避免按钮遮挡日志 -->
@@ -726,65 +710,64 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
         </div>
 
         <!-- 策略选项（骰子动画期间隐藏，保留占位） -->
-        <div :class="{ 'h-0 overflow-hidden': combatState.result, 'invisible': rollingRound !== null && !combatState.result }" class="border-t" :style="{ borderColor: combatState.result ? 'transparent' : '#2a3a3a' }">
+        <div
+          :class="[
+            combatState.result ? 'h-0 overflow-hidden' : '',
+            rollingRound !== null && !combatState.result ? 'invisible' : '',
+            'border-t',
+            combatState.result ? 'border-transparent' : 'border-border',
+          ]">
           <button
             v-for="s in combatStrategies"
             :key="s.id"
             @click="handleCombatAction(s.id)"
-            class="w-full text-left text-xs border min-h-[44px] rounded-sm transition-colors"
-            :style="{
-              borderColor: '#2a3a3a',
-              color: '#B0C4DE',
-              background: '#0D1117',
-            }"
-            @mouseenter="hoverBg($event, '#1e2a2a')"
-            @mouseleave="hoverBg($event, '#0D1117')"
+            class="w-full text-left text-xs border min-h-[44px] rounded-sm
+                   border-border text-fore bg-bg
+                   hover:bg-hover transition-colors duration-150"
           >
             <div class="leading-tight">
               <span>{{ s.name }}</span>
-              <div v-if="s.isWeapon" style="color: #5a6a7a; font-size: 10px;" v-html="s.desc"></div>
-              <div v-else style="color: #5a6a7a; font-size: 10px;">{{ s.desc }}</div>
+              <div v-if="s.isWeapon" class="text-muted text-[10px]" v-html="s.desc"></div>
+              <div v-else class="text-muted text-[10px]">{{ s.desc }}</div>
             </div>
           </button>
           <!-- 逃跑 + 一键 同一行 -->
           <div class="flex gap-2">
             <button
               @click="handleCombatAction('flee')"
-              class="flex-1 text-xs border rounded-sm min-h-[44px] transition-colors text-center"
-              style="border-color: #E6C37C; color: #E6C37C; background: #0D1117;"
-              @mouseenter="hoverBg($event, '#1e2a2a')"
-              @mouseleave="hoverBg($event, '#0D1117')"
+              class="flex-1 text-xs border rounded-sm min-h-[44px]
+                     border-accent text-accent bg-bg
+                     hover:bg-hover transition-colors duration-150 text-center"
             >🏃 逃跑</button>
             <button
               @click="handleCombatAction('auto')"
-              class="flex-1 text-xs border rounded-sm min-h-[44px] transition-colors text-center"
-              style="border-color: #2a3a3a; color: #5a6a7a; background: #0D1117;"
-              @mouseenter="hoverBg($event, '#1e2a2a')"
-              @mouseleave="hoverBg($event, '#0D1117')"
+              class="flex-1 text-xs border rounded-sm min-h-[44px]
+                     border-border text-muted bg-bg
+                     hover:bg-hover transition-colors duration-150 text-center"
             >⚡ 一键</button>
           </div>
         </div>
 
         <!-- 战斗结果 -->
-        <div :class="{ 'invisible': !combatState.result && rollingRound === null }" class="border-t text-center" style="border-color: #2a3a3a;">
-          <p v-if="combatState.result === 'victory' && !combatRewardActive" class="text-sm font-bold" style="color: #9ACD9D;">💀 战斗胜利！</p>
-          <p v-else-if="combatState.result === 'fled'" class="text-sm" style="color: #E6C37C;">🏃 你脱离了战斗。</p>
-          <p v-else-if="combatState.result === 'death'" class="text-sm font-bold" style="color: #c4746e;">💀 你倒下了……</p>
+        <div :class="{ 'invisible': !combatState.result && rollingRound === null }"
+             class="border-t text-center border-border">
+          <p v-if="combatState.result === 'victory' && !combatRewardActive" class="text-sm font-bold text-success">💀 战斗胜利！</p>
+          <p v-else-if="combatState.result === 'fled'" class="text-sm text-accent">🏃 你脱离了战斗。</p>
+          <p v-else-if="combatState.result === 'death'" class="text-sm font-bold text-danger">💀 你倒下了……</p>
 
           <!-- 战后奖励：搜刮尸体 -->
           <div v-if="combatRewardActive" class="mt-1">
             <template v-if="!combatRewardRolled">
-              <p class="text-xs mb-2" style="color: #B0C4DE;">搜索尸体看看有什么可用的……</p>
+              <p class="text-xs mb-2 text-fore">搜索尸体看看有什么可用的……</p>
               <button
                 @click="handleCombatRewardDice"
-                class="w-full text-sm border rounded-sm transition-colors min-h-[44px]"
-                style="border-color: #E6C37C; color: #E6C37C; background: #0D1117;"
-                @mouseenter="hoverBg($event, '#1e2a2a')"
-                @mouseleave="hoverBg($event, '#0D1117')"
+                class="w-full text-sm border rounded-sm min-h-[44px]
+                       border-accent text-accent bg-bg
+                       hover:bg-hover transition-colors duration-150"
               >🎲 搜刮战利品</button>
             </template>
             <template v-else>
-              <p class="text-sm leading-relaxed" style="color: #B0C4DE;">{{ combatRewardText }}</p>
+              <p class="text-sm leading-relaxed text-fore">{{ combatRewardText }}</p>
             </template>
           </div>
         </div>
@@ -792,15 +775,15 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
 
       <!-- 机遇模式（骰子判定） -->
       <div v-if="opportunityMode && currentOpp && currentOpp.type === 'dice' && !oppDiceRolled"
-           class="border-t" style="border-color: #2a3a3a;">
+           class="border-t border-border">
         <div class="text-center">
           <button
             @click="handleOppDice"
-            class="w-full text-sm border rounded-sm transition-colors min-h-[44px]"
+            class="w-full text-sm border rounded-sm min-h-[44px]
+                   bg-bg
+                   hover:bg-hover transition-colors duration-150"
             :disabled="!oppRollReady"
-            :style="{ borderColor: oppRollReady ? '#E6C37C' : '#2a3a3a', color: oppRollReady ? '#E6C37C' : '#5a6a7a', background: '#0D1117' }"
-            @mouseenter="hoverBg($event, '#1e2a2a')"
-            @mouseleave="hoverBg($event, '#0D1117')"
+            :class="oppRollReady ? 'border-accent text-accent' : 'border-border text-muted'"
           >🎲 掷骰子</button>
         </div>
       </div>

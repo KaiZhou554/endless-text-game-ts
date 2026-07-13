@@ -187,30 +187,30 @@ function getTextStyle(entry: any, total: any[], currentTurnId: number) {
   const isRecent = entry.turnId === currentTurnId
   const isNewest = entry.id === total.length > 0 ? total[total.length - 1]?.id : null
 
-  let baseColor = '#B0C4DE'
+  let baseColor = 'var(--color-fore)'
   switch (entry.type) {
-    case 'warning': baseColor = '#E6C37C'; break
-    case 'danger': baseColor = '#c4746e'; break
-    case 'combat': baseColor = '#5a6a7a'; break
-    case 'location': baseColor = '#9ACD9D'; break
-    case 'dialogue': baseColor = '#7ab8d4'; break
-    case 'discovery': baseColor = '#E6C37C'; break
-    case 'alliance': baseColor = '#9ACD9D'; break
-    case 'action': baseColor = '#5a6a7a'; break
+    case 'warning': baseColor = 'var(--color-accent)'; break
+    case 'danger': baseColor = 'var(--color-danger)'; break
+    case 'combat': baseColor = 'var(--color-muted)'; break
+    case 'location': baseColor = 'var(--color-success)'; break
+    case 'dialogue': baseColor = 'var(--color-info)'; break
+    case 'discovery': baseColor = 'var(--color-accent)'; break
+    case 'alliance': baseColor = 'var(--color-success)'; break
+    case 'action': baseColor = 'var(--color-muted)'; break
   }
 
   let color = baseColor
   if (entry.type === 'action' || entry.type === 'combat') {
     color = baseColor  // 保持暗淡
   } else if (isRecent) {
-    color = isNewest ? '#d0dce8' : '#c0d0e0'
+    color = isNewest ? 'var(--color-journal-bright)' : 'var(--color-journal-light)'
   } else if (entry.type !== 'warning' && entry.type !== 'danger' && entry.type !== 'discovery') {
-    color = '#8a9aaa'
+    color = 'var(--color-old-journal)'
   }
 
   return {
     color,
-    background: isRecent ? '#15202a' : 'transparent',
+    background: isRecent ? 'var(--color-panel)' : 'transparent',
   }
 }
 
@@ -218,15 +218,14 @@ const currentTurnId = computed(() => props.gameState.actionCount)
 </script>
 
 <template>
-  <div class="relative flex-1 overflow-hidden" style="background: #0D1117;">
+  <div class="relative flex-1 overflow-hidden bg-bg">
     <div
       ref="scrollContainer"
-      class="absolute inset-0 overflow-y-auto"
-      style="background: #0D1117;"
+      class="absolute inset-0 overflow-y-auto bg-bg"
     >
       <!-- 空状态 -->
       <div v-if="gameState.journal.length === 0" class="flex items-center justify-center h-full">
-        <p class="text-sm cursor-blink" style="color: #5a6a7a;">
+        <p class="text-sm cursor-blink text-muted">
           等待游戏开始...
         </p>
       </div>
@@ -250,13 +249,13 @@ const currentTurnId = computed(() => props.gameState.actionCount)
         <div
           v-if="currentTypingEntry && !revealedIds.has(currentTypingEntry.id)"
           ref="typewriterTarget"
-          style="font-size: 15px; line-height: 1.6; color: #B0C4DE; min-height: 1.5em;"
+          class="text-[15px] leading-[1.6] text-fore min-h-[1.5em]"
         ></div>
 
         <!-- 剧情输出结束提示（延迟 0.3s 淡入） -->
         <transition name="prompt-fade">
           <div v-if="gameState.journal.length > 0 && !isProcessing"
-               style="color: #4a5a5a; font-size: 13px;">
+               class="text-disabled-text text-[13px]">
             ➤ 选择你的行动
           </div>
         </transition>
@@ -267,10 +266,10 @@ const currentTurnId = computed(() => props.gameState.actionCount)
     <button
       v-if="showScrollButton"
       @click="scrollToBottom"
-      class="absolute bottom-3 right-3 z-10 text-xs rounded-sm border transition-colors"
-      style="background: #1a1f1f; border-color: #E6C37C; color: #E6C37C;"
-      @mouseenter="e => { (e.target as HTMLElement).style.background = '#2a3535'; (e.target as HTMLElement).style.borderColor = '#f0d080' }"
-      @mouseleave="e => { (e.target as HTMLElement).style.background = '#1a1f1f'; (e.target as HTMLElement).style.borderColor = '#E6C37C' }"
+      class="absolute bottom-3 right-3 z-10 text-xs rounded-sm border
+             bg-input-bg border-accent text-accent
+             hover:bg-button-hover hover:border-narrative-hover-border
+             transition-colors"
     >
       ↓ 回到底部
     </button>

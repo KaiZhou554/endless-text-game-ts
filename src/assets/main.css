@@ -2,23 +2,42 @@
 
 /* ===== 丧尸末日生存 · 终端护眼风格 ===== */
 
-:root {
-  --bg: #0D1117;
-  --text: #B0C4DE;
-  --text-green: #9ACD9D;
-  --accent: #E6C37C;
-  --border: #2a3a3a;
-  --hover-bg: #1e2a2a;
-  --hover-bg2: #2a3a3a;
-  --danger: #c4746e;
-  --muted: #5a6a7a;
+@theme {
+  --color-bg: #0D1117;
+  --color-fore: #B0C4DE;
+  --color-accent: #E6C37C;
+  --color-border: #2a3a3a;
+  --color-panel: #15202a;
+  --color-hover: #1e2a2a;
+  --color-hover-2: #2a3a3a;
+  --color-dim: #658080;
+  --color-danger: #c4746e;
+  --color-success: #9ACD9D;
+  --color-muted: #5a6a7a;
+  --color-info: #7ab8d4;
+  --color-gold: #FFD700;
+  --color-infection: #8b5cf6;
+  --color-input-bg: #1a1f1f;
+  --color-button-hover: #2a3535;
+  --color-item-hover: #111a1a;
+  --color-close-hover: #1e1a1a;
+  --color-close-hover-border: #d08070;
+  --color-narrative-hover-border: #f0d080;
+  --color-timestamp: #3a4a4a;
+  --color-disabled-text: #4a5a5a;
+  --color-old-journal: #8a9aaa;
+  --color-journal-light: #c0d0e0;
+  --color-journal-bright: #d0dce8;
+  --color-locked-bg: #0a1515;
+  --color-locked-border: #1a2828;
+  --color-overlay: rgba(0, 0, 0, 0.5);
 }
 
 html, body {
   height: 100%;
   overflow: hidden;
-  background-color: var(--bg);
-  color: var(--text);
+  background-color: var(--color-bg);
+  color: var(--color-fore);
   font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Courier New', monospace;
   font-size: 14px;
   line-height: 1.7;
@@ -46,7 +65,7 @@ html, body {
   #app {
     height: calc(100% - 0px);
     max-height: 900px;
-    border: 1px solid var(--border);
+    border: 1px solid var(--color-border);
   }
 }
 
@@ -55,20 +74,20 @@ html, body {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--bg);
+  background: var(--color-bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--border);
+  background: var(--color-border);
   border-radius: 0;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--hover-bg2);
+  background: var(--color-hover-2);
 }
 
 /* Selection */
 ::selection {
   background: rgba(230, 195, 124, 0.3);
-  color: var(--accent);
+  color: var(--color-accent);
 }
 
 /* Transition utility */
@@ -111,12 +130,12 @@ html, body {
 .cursor-blink::after {
   content: '▌';
   animation: blink 1s step-end infinite;
-  color: var(--accent);
+  color: var(--color-accent);
 }
 
 /* Weapon hit range dimmer style */
 .dim {
-  color: #658080;
+  color: var(--color-dim);
 }
 
 /* ===== 必杀一击 ===== */
@@ -185,3 +204,18 @@ html, body {
   border-radius: 2px;
   animation: item-epic 1.2s ease-out forwards;
 }
+
+/* ===== 物品类型颜色 ===== */
+.item-type-weapon { color: var(--color-danger); }
+.item-type-armor { color: var(--color-info); }
+.item-type-food { color: var(--color-accent); }
+.item-type-drink { color: var(--color-info); }
+.item-type-medical { color: var(--color-success); }
+.item-type-tool { color: var(--color-fore); }
+.item-type-key { color: var(--color-accent); }
+.item-type-misc { color: var(--color-muted); }
+
+/* ===== 地图危险度颜色 ===== */
+.danger-low { color: var(--color-success); }
+.danger-mid { color: var(--color-accent); }
+.danger-high { color: var(--color-danger); }

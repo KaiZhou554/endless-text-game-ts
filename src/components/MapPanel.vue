@@ -38,9 +38,9 @@ const mapLocations = [
 ]
 
 function dangerColor(danger) {
-  if (danger <= 1) return '#9ACD9D'
-  if (danger <= 3) return '#E6C37C'
-  return '#c4746e'
+  if (danger <= 1) return 'danger-low'
+  if (danger <= 3) return 'danger-mid'
+  return 'danger-high'
 }
 
 function dangerText(danger) {
@@ -61,35 +61,32 @@ function travelTo(locationId) {
   <!-- 遮罩 -->
   <div
     @click="emit('close')"
-    class="fixed inset-0 z-40"
-    style="background: rgba(0,0,0,0.5);"
+    class="fixed inset-0 z-40 bg-overlay"
   ></div>
 
   <!-- 抽屉 -->
   <div
     class="fixed top-0 bottom-0 z-50 flex flex-col overflow-hidden
-           w-full sm:w-80 right-0"
-    style="background: #0D1117; border-left: 1px solid #2a3a3a; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);"
+           w-full sm:w-80 right-0 bg-bg border-l border-border"
+    style="padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);"
   >
-    <div class="flex items-center justify-between border-b"
-         style="border-color: #2a3a3a;">
-      <h2 class="text-sm font-bold" style="color: #E6C37C;">🗺️ 地图</h2>
+    <div class="flex items-center justify-between border-b border-border">
+      <h2 class="text-sm font-bold text-accent">🗺️ 地图</h2>
       <button
         @click="emit('close')"
-        class="text-sm min-h-[44px] border rounded-sm"
-        style="color: #c4746e; background: none; border-color: #c4746e; cursor: pointer;"
-        @mouseenter="e => { (e.target as HTMLElement).style.background = '#1e1a1a'; (e.target as HTMLElement).style.borderColor = '#d08070' }"
-        @mouseleave="e => { (e.target as HTMLElement).style.background = 'none'; (e.target as HTMLElement).style.borderColor = '#c4746e' }"
+        class="text-sm min-h-[44px] border rounded-sm
+               text-danger border-danger bg-transparent cursor-pointer
+               hover:bg-close-hover hover:border-close-hover-border"
       >✕ 关闭</button>
     </div>
 
     <!-- 当前位置 -->
-    <div class="border-b text-xs" style="border-color: #2a3a3a;">
-      <span style="color: #5a6a7a;">📍 当前位置: </span>
-      <span class="font-bold" style="color: #9ACD9D;">
+    <div class="border-b border-border text-xs">
+      <span class="text-muted">📍 当前位置: </span>
+      <span class="font-bold text-success">
         {{ mapLocations.find(l => l.id === gameState.currentScene)?.name || '未知' }}
       </span>
-      <span class="text-[10px]" style="color: #5a6a7a;">
+      <span class="text-[10px] text-muted">
         · 已探索 {{ gameState.scenesVisited?.length || 0 }}/{{ mapLocations.length }}
       </span>
     </div>
@@ -100,41 +97,37 @@ function travelTo(locationId) {
         v-for="loc in mapLocations"
         :key="loc.id"
         @click="travelTo(loc.id)"
-        class="border transition-colors duration-150 rounded-sm
-               flex items-center gap-3"
-        :style="{
-          borderColor: isUnlocked(loc.id) ? (gameState.currentScene === loc.id ? '#E6C37C' : '#2a3a3a') : '#1a2828',
-          background: gameState.currentScene === loc.id ? '#1e2a2a' : (isUnlocked(loc.id) ? '#0D1117' : '#0a1515'),
-          cursor: isUnlocked(loc.id) && gameState.currentScene !== loc.id ? 'pointer' : 'default',
+        class="border transition-colors duration-150 rounded-sm flex items-center gap-3"
+        :class="{
+          'border-accent bg-hover': gameState.currentScene === loc.id,
+          'border-border bg-bg hover:bg-item-hover cursor-pointer': isUnlocked(loc.id) && gameState.currentScene !== loc.id,
+          'border-locked-border bg-locked-bg cursor-default': !isUnlocked(loc.id) && gameState.currentScene !== loc.id,
         }"
-        @mouseenter="e => { if (isUnlocked(loc.id) && gameState.currentScene !== loc.id) (e.target as HTMLElement).style.background = '#111a1a' }"
-        @mouseleave="e => { if (isUnlocked(loc.id) && gameState.currentScene !== loc.id) (e.target as HTMLElement).style.background = '#0D1117' }"
       >
         <template v-if="isUnlocked(loc.id) || gameState.currentScene === loc.id">
           <span class="text-lg">{{ loc.icon }}</span>
           <div class="flex-1 min-w-0">
             <div class="flex items-center gap-2">
-              <span class="text-xs font-bold" style="color: #B0C4DE;">{{ loc.name }}</span>
+              <span class="text-xs font-bold text-fore">{{ loc.name }}</span>
               <span
                 v-if="isUnlocked(loc.id)"
-                class="text-[9px] rounded-sm"
-                :style="{ background: '#1e2a2a', color: dangerColor(loc.danger) }"
+                class="text-[9px] rounded-sm bg-hover"
+                :class="dangerColor(loc.danger)"
               >{{ dangerText(loc.danger) }}危</span>
-              <span class="text-[9px]" style="color: #c4746e; opacity: 0.7;">-{{ 3 + loc.danger }}</span>
-              <span class="text-[9px]" style="color: #7ab8d4; opacity: 0.7;">-{{ 2 + Math.floor(loc.danger/2) }}</span>
+              <span class="text-[9px] text-danger/70">-{{ 3 + loc.danger }}</span>
+              <span class="text-[9px] text-info/70">-{{ 2 + Math.floor(loc.danger/2) }}</span>
               <span
                 v-if="gameState.currentScene === loc.id"
-                class="text-[9px]"
-                style="color: #E6C37C; border: 1px solid #E6C37C;"
+                class="text-[9px] text-accent border border-accent"
               >当前</span>
             </div>
-            <p class="text-[10px] truncate" style="color: #5a6a7a;">{{ loc.desc }} · {{ loc.tags.join(', ') }}</p>
+            <p class="text-[10px] truncate text-muted">{{ loc.desc }} · {{ loc.tags.join(', ') }}</p>
           </div>
         </template>
         <template v-else>
-          <span class="text-lg" style="color: #2a3a3a;">?</span>
+          <span class="text-lg text-border">?</span>
           <div class="flex-1 min-w-0">
-            <span class="text-xs font-bold" style="color: #2a3a3a;">???</span>
+            <span class="text-xs font-bold text-border">???</span>
           </div>
         </template>
       </div>

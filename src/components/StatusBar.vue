@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 
 const props = defineProps({
   gameState: { type: Object, required: true },
@@ -28,7 +28,7 @@ const bars = computed(() => [
     icon: '❤️',
     value: props.gameState.hp,
     max: props.gameState.maxHp,
-    color: '#c4746e',
+    color: 'var(--color-danger)',
     shortLabel: 'HP',
   },
   {
@@ -36,7 +36,7 @@ const bars = computed(() => [
     icon: '🍖',
     value: props.gameState.hunger,
     max: props.gameState.maxHunger,
-    color: '#E6C37C',
+    color: 'var(--color-accent)',
     shortLabel: 'HUN',
   },
   {
@@ -44,7 +44,7 @@ const bars = computed(() => [
     icon: '💧',
     value: props.gameState.thirst,
     max: props.gameState.maxThirst,
-    color: '#7ab8d4',
+    color: 'var(--color-info)',
     shortLabel: 'THR',
   },
   {
@@ -52,7 +52,7 @@ const bars = computed(() => [
     icon: '🧠',
     value: props.gameState.sanity,
     max: props.gameState.maxSanity,
-    color: '#9ACD9D',
+    color: 'var(--color-success)',
     shortLabel: 'SAN',
   },
   {
@@ -60,7 +60,7 @@ const bars = computed(() => [
     icon: '🦠',
     value: props.gameState.infection,
     max: props.gameState.maxInfection,
-    color: '#8b5cf6',
+    color: 'var(--color-infection)',
     shortLabel: 'INF',
   },
 ])
@@ -70,8 +70,8 @@ function barWidth(value, max) {
 }
 
 function barColor(value, baseColor) {
-  if (value < 20) return '#c4746e' // 红色警告
-  if (value < 40) return '#E6C37C' // 黄色警告
+  if (value < 20) return 'var(--color-danger)'
+  if (value < 40) return 'var(--color-accent)'
   return baseColor
 }
 
@@ -87,24 +87,23 @@ function formatTimeOfDay(dayCount) {
 </script>
 
 <template>
-  <div class="w-full border-b px-2 sm:px-4 py-1.5 sm:py-2 flex-shrink-0" style="border-color: #2a3a3a; background: #0D1117; padding-top: env(safe-area-inset-top, 0px);">
+  <div class="w-full border-b border-border bg-bg px-2 sm:px-4 py-1.5 sm:py-2 flex-shrink-0" style="padding-top: env(safe-area-inset-top, 0px);">
     <!-- PC 端：完整显示 -->
     <!-- 第一行：生命/饱腹/口渴 -->
     <div class="hidden sm:flex w-full gap-x-4">
       <div
         v-for="bar in bars.slice(0, 3)"
         :key="bar.label"
-        class="flex items-center gap-1.5 min-w-0"
-        style="flex: 1 1 100px;"
+        class="flex items-center gap-1.5 min-w-0 flex-[1_1_100px]"
       >
-        <span class="text-xs whitespace-nowrap" style="color: #5a6a7a;">
+        <span class="text-xs whitespace-nowrap text-muted">
           {{ bar.icon }} {{ bar.label }}
         </span>
         <span class="text-xs font-bold min-w-[2rem] tabular-nums"
               :style="{ color: barColor(bar.value, bar.color) }">
           {{ bar.value }}
         </span>
-        <div class="flex-1 h-1.5 min-w-[30px]" style="background: #1e2a2a;">
+        <div class="flex-1 h-1.5 min-w-[30px] bg-hover">
           <div
             class="h-full transition-all duration-300"
             :style="{
@@ -120,17 +119,16 @@ function formatTimeOfDay(dayCount) {
       <div
         v-for="bar in bars.slice(3)"
         :key="bar.label"
-        class="flex items-center gap-1.5 min-w-0"
-        style="flex: 1 1 100px;"
+        class="flex items-center gap-1.5 min-w-0 flex-[1_1_100px]"
       >
-        <span class="text-xs whitespace-nowrap" style="color: #5a6a7a;">
+        <span class="text-xs whitespace-nowrap text-muted">
           {{ bar.icon }} {{ bar.label }}
         </span>
         <span class="text-xs font-bold min-w-[2rem] tabular-nums"
               :style="{ color: barColor(bar.value, bar.color) }">
           {{ bar.value }}
         </span>
-        <div class="flex-1 h-1.5 min-w-[30px]" style="background: #1e2a2a;">
+        <div class="flex-1 h-1.5 min-w-[30px] bg-hover">
           <div
             class="h-full transition-all duration-300"
             :style="{
@@ -144,12 +142,11 @@ function formatTimeOfDay(dayCount) {
       <div class="flex items-center gap-1 ml-auto">
         <span
           @click="onTimeClick"
-          class="text-xs font-bold tabular-nums cursor-pointer select-none"
-          style="color: #E6C37C;"
+          class="text-xs font-bold tabular-nums cursor-pointer select-none text-accent"
         >
           D{{ Math.floor(gameState.dayCount) + 1 }} {{ formatTimeOfDay(gameState.dayCount) }}
         </span>
-        <span v-if="(gameState.hoursAwake || 0) >= 12" class="text-[10px]" :style="{ color: (gameState.hoursAwake || 0) >= 20 ? '#c4746e' : '#E6C37C' }">
+        <span v-if="(gameState.hoursAwake || 0) >= 12" class="text-[10px]" :style="{ color: (gameState.hoursAwake || 0) >= 20 ? 'var(--color-danger)' : 'var(--color-accent)' }">
           😪 {{ Math.floor(gameState.hoursAwake || 0) }}h
         </span>
       </div>
@@ -162,8 +159,8 @@ function formatTimeOfDay(dayCount) {
         :key="bar.label"
         class="flex-1 flex flex-col items-center min-w-0"
       >
-        <span class="text-[10px]" style="color: #5a6a7a;">{{ bar.shortLabel }}</span>
-        <div class="w-full h-1 mt-0.5" style="background: #1e2a2a;">
+        <span class="text-[10px] text-muted">{{ bar.shortLabel }}</span>
+        <div class="w-full h-1 mt-0.5 bg-hover">
           <div
             class="h-full transition-all duration-300"
             :style="{
@@ -179,12 +176,11 @@ function formatTimeOfDay(dayCount) {
       </div>
       <span
         @click="onTimeClick"
-        class="text-[10px] font-bold ml-1 tabular-nums cursor-pointer select-none"
-        style="color: #E6C37C;"
+        class="text-[10px] font-bold ml-1 tabular-nums cursor-pointer select-none text-accent"
       >
         D{{ Math.floor(gameState.dayCount) + 1 }} {{ formatTimeOfDay(gameState.dayCount) }}
       </span>
-      <span v-if="(gameState.hoursAwake || 0) >= 12" class="text-[9px]" :style="{ color: (gameState.hoursAwake || 0) >= 20 ? '#c4746e' : '#E6C37C' }">
+      <span v-if="(gameState.hoursAwake || 0) >= 12" class="text-[9px]" :style="{ color: (gameState.hoursAwake || 0) >= 20 ? 'var(--color-danger)' : 'var(--color-accent)' }">
         😪{{ Math.floor(gameState.hoursAwake || 0) }}h
       </span>
     </div>
