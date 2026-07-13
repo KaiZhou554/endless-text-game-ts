@@ -68,6 +68,12 @@ export function getLootPool(count = 3, inventory: any[] = [], options: LootOptio
       typeSelectionWeights[t] = options.scene.lootTypes.includes(t) ? 2 : 1
     }
   }
+  // combat 品质：武器和护甲权重 3x，其余类型 1x
+  if (options.quality === 'combat') {
+    for (const t of types) {
+      typeSelectionWeights[t] = (typeSelectionWeights[t] || 1) * (combatTypes.includes(t) ? 3 : 1)
+    }
+  }
 
   // 类型内物品权重（默认 1，越高越常见）
   const typeWeights: Record<string, Record<string, number>> = {
