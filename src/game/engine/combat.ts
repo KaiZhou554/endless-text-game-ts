@@ -111,10 +111,10 @@ export function getCombatStrategies(state, enemy) {
   const weapons = state.inventory.filter(i => i.type === 'weapon')
   for (const w of randomSample(weapons, Math.min(2, weapons.length))) {
     if (w.effects.ammo && !hasItemWithTag(state.inventory, '弹药:' + w.effects.ammo)) continue
+    const ranges = w.hitRanges || getHitRanges(w.effects.damage || 0)
     const wd = w.effects.damage || 0
-    const ranges = getHitRanges(wd)
     const rangeStr = '基础 4| ' + ranges.map(r => `<span class="dim">${r.min}-${r.max}</span> +${r.dmg}`).join('| ')
-    r.push({ id: 'weapon_' + w.id, name: w.name, desc: rangeStr, isWeapon: true, weaponId: w.id, weaponDmg: wd })
+    r.push({ id: 'weapon_' + w.id, name: w.name, desc: rangeStr, isWeapon: true, weaponId: w.id, weaponDmg: wd, hitRanges: ranges })
   }
   const avail = combatStrategies.filter(s => !s.sanityReq || state.sanity >= s.sanityReq)
   for (const s of randomSample(avail, Math.min(2, avail.length))) {
@@ -182,10 +182,10 @@ export function resolveCombatRound(state, actionId) {
   let playerText = '', enemyText = '', playerDmg = 0, enemyDmg = 0
   if (isWeapon) {
     const wid = actionId.replace('weapon_', '')
-    let wd = 0, wn = '拳头'
+    let wd = 0, wn = '拳头', ranges = getHitRanges(0)
     if (wid !== 'fists') {
       const w = state.inventory.find(i => i.id === wid && i.type === 'weapon')
-      if (w) { wd = w.effects.damage||0; wn = w.name }
+      if (w) { wd = w.effects.damage||0; wn = w.name; ranges = w.hitRanges || getHitRanges(wd) }
       else {
         combat.rounds.push({ action: actionId, playerDmg: 0, enemyDmg: 0,
           playerText: '你伸手去拿武器，却发现它已不在背包中……',
@@ -202,7 +202,6 @@ export function resolveCombatRound(state, actionId) {
     if (roll === 1) { playerDmg = 0; playerText = `🎲[${roll}] 你使用${wn}，但攻击落空了！` }
     else if (roll === 20) { playerDmg = 9999; playerText = `🎲[${roll}] 你使用${wn}打出必杀一击！💥`; isCritRound = true }
     else {
-      const ranges = getHitRanges(wd)
       const hit = ranges.find(r => roll >= r.min && roll <= r.max)
       const bonusDmg = hit ? hit.dmg : 5
       playerDmg = 4 + bonusDmg
