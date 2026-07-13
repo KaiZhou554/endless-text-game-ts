@@ -75,7 +75,7 @@ function startNewGame(mode) {
 
     <!-- 底部信息 -->
     <div class="text-xs text-center text-muted">
-      <p>纯文字冒险 · Vue 3 + Tailwind CSS</p>
+      <p>github.com/KaiZhou554/endless-text-game-ts</p>
       <p>推荐使用等宽字体获得最佳体验</p>
     </div>
   </div>
