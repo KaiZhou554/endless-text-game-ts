@@ -1,9 +1,25 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 
 const props = defineProps({
   gameState: { type: Object, required: true },
 })
+
+const emit = defineEmits(['toggle-command'])
+
+// 连续点击5次游戏时间唤出命令面板
+let clickTimer: ReturnType<typeof setTimeout> | null = null
+let clickCount = 0
+function onTimeClick() {
+  clickCount++
+  if (clickTimer) clearTimeout(clickTimer)
+  if (clickCount >= 5) {
+    clickCount = 0
+    emit('toggle-command')
+    return
+  }
+  clickTimer = setTimeout(() => { clickCount = 0 }, 2000)
+}
 
 // 状态条配置
 const bars = computed(() => [
@@ -126,7 +142,11 @@ function formatTimeOfDay(dayCount) {
       </div>
       <!-- 天数 + 时段 + 疲劳 -->
       <div class="flex items-center gap-1 ml-auto">
-        <span class="text-xs font-bold tabular-nums" style="color: #E6C37C;">
+        <span
+          @click="onTimeClick"
+          class="text-xs font-bold tabular-nums cursor-pointer select-none"
+          style="color: #E6C37C;"
+        >
           D{{ Math.floor(gameState.dayCount) + 1 }} {{ formatTimeOfDay(gameState.dayCount) }}
         </span>
         <span v-if="(gameState.hoursAwake || 0) >= 12" class="text-[10px]" :style="{ color: (gameState.hoursAwake || 0) >= 20 ? '#c4746e' : '#E6C37C' }">
@@ -157,7 +177,11 @@ function formatTimeOfDay(dayCount) {
           {{ bar.value }}
         </span>
       </div>
-      <span class="text-[10px] font-bold ml-1 tabular-nums" style="color: #E6C37C;">
+      <span
+        @click="onTimeClick"
+        class="text-[10px] font-bold ml-1 tabular-nums cursor-pointer select-none"
+        style="color: #E6C37C;"
+      >
         D{{ Math.floor(gameState.dayCount) + 1 }} {{ formatTimeOfDay(gameState.dayCount) }}
       </span>
       <span v-if="(gameState.hoursAwake || 0) >= 12" class="text-[9px]" :style="{ color: (gameState.hoursAwake || 0) >= 20 ? '#c4746e' : '#E6C37C' }">
