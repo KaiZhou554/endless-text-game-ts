@@ -9,6 +9,7 @@ import { opportunities_generic_medical } from './extensions/opportunities-generi
 import { opportunities_endings } from './extensions/opportunities-endings'
 import { opportunities_guns } from './extensions/opportunities-guns'
 import { opportunities_tasks } from './extensions/opportunities-for-tasks'
+import { opportunities_atmosphere } from './extensions/opportunities-atmosphere'
 
 export const opportunities: Opportunity[] = [
 
@@ -185,4 +186,7 @@ export const opportunities: Opportunity[] = [
 
   // ==================== 来自 extensions/opportunities-for-tasks.ts（装备获取 + 安全区） ====================
   ...opportunities_tasks,
+
+  // ==================== 来自 extensions/opportunities-atmosphere.ts（纯旁白·环境叙事） ====================
+  ...opportunities_atmosphere,
 ]
