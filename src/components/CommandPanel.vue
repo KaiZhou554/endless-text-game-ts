@@ -81,12 +81,14 @@ function handleCmd() {
       result.value = '✔ 触发事件: ' + args.join(', ')
     }
   } else if (cmd === 'effect') {
+    const alias: Record<string, string> = { sm: 'hp', bf: 'hunger', kk: 'thirst', lz: 'sanity', gr: 'infection' }
     const applied: string[] = []
     for (const arg of args) {
-      const m = arg.match(/^(hp|hunger|thirst|sanity|infection)[:：]?([+-]?\d+)$/)
+      const m = arg.match(/^(hp|hunger|thirst|sanity|infection|sm|bf|kk|lz|gr)[:：]?([+-]?\d+)$/)
       if (m) {
-        modifyStat(props.gameState, m[1], parseInt(m[2]))
-        applied.push(m[1] + m[2])
+        const stat = alias[m[1]] || m[1]
+        modifyStat(props.gameState, stat, parseInt(m[2]))
+        applied.push(stat + m[2])
       } else {
         applied.push('✘' + arg)
       }
