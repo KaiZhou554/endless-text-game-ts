@@ -82,7 +82,7 @@ export const opportunities_extras: Opportunity[] = [
 
   {
     id: 'newspaper_stack',
-    baseText: '一摞旧报纸被压在石墩下面，纸张已经泛黄，边角卷了起来。最上面那张的头版标题写着"紧急状态：全国进入宵禁"，日期是三个月前。',
+    baseText: '一摞旧报纸被压在石墩下面，纸张已经泛黄，边角卷了起来。最上面那张的头版标题赫然写着"紧急状态……"，日期是三个月前。',
     type: 'dice',
     delay: 4,
     diceRanges: [
@@ -96,7 +96,7 @@ export const opportunities_extras: Opportunity[] = [
 
   {
     id: 'torn_banner',
-    baseText: '一栋商场外墙上挂着巨大的横幅，已经被风雨撕成了布条，在风中啪啪作响。只能看清最后几个字："……坚持住。"横幅下方的地面上积了一层碎玻璃，在阳光下闪闪发光。',
+    baseText: '一栋商场外墙上挂着巨大的横幅，已经被风雨撕成了布条，在风中啪啪作响。上面的促销文字有些模糊。横幅下方的地面上积了一层碎玻璃。',
     type: 'narrative',
     delay: 4,
   },

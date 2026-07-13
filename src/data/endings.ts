@@ -62,7 +62,7 @@ export const endingChecks: Ending[] = [
 
 倒下的时候，天空开始下雨。雨滴打在脸上，冰冷得像是世界在提醒你：你还活着，但已经不会太久了。
 
-—— 生存是残酷的。丧尸没能杀死你。是你的身体耗尽了最后一丝燃料。`,
+—— 死亡是残酷的。这在末世里对于每一个人都稀松平常。`,
     stats: ['days', 'kills', 'itemsCollected'],
     isDeath: true,
   },
