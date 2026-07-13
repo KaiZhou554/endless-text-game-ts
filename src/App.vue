@@ -22,6 +22,7 @@ import JournalPanel from './components/JournalPanel.vue'
 import DialogPanel from './components/DialogPanel.vue'
 import MapPanel from './components/MapPanel.vue'
 import CommandPanel from './components/CommandPanel.vue'
+import type { ComponentPublicInstance } from 'vue'
 
 // ==================== 游戏状态 ====================
 const gameState: GameState = createGameState()
@@ -50,6 +51,7 @@ const combatRewardActive = ref(false)  // 战后奖励掷骰
 const combatRewardRolled = ref(false)
 const combatRewardRoll = ref(0)
 const combatRewardText = ref('')
+const commandPanelRef = ref<ComponentPublicInstance<{ toggle: () => void }> | null>(null)
 let _pendingSceneChange = false  // 机遇打断时暂存的场景切换标记
 
 // 返回物品稀有度对应的 CSS class
@@ -821,13 +823,14 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
         @toggle-inventory="toggleInventory"
         @toggle-journal="toggleJournal"
         @toggle-map="toggleMap"
+        @toggle-command="commandPanelRef?.toggle()"
         @save-game="handleSave"
         @load-game="handleLoad"
       />
     </template>
 
     <!-- ========== 命令面板 ========== -->
-    <CommandPanel :gameState="gameState" />
+    <CommandPanel ref="commandPanelRef" :gameState="gameState" />
 
     <!-- ========== 面板覆盖层 ========== -->
     <InventoryDrawer
