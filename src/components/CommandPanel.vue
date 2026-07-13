@@ -5,6 +5,7 @@
 - `/give [-b|-m] <itemId...>` — 获得物品。`-b` 逐条广播到叙事面板，`-m` 合并为一条（测试稀有度扫描）
 - `/effect <stat><value>...` — 修改属性。支持缩写 sm/bf/kk/lz/gr
 - `/event <eventId...>` — 触发事件
+- `/fullheal` 或 `/fh` — 五项数值全满
 
 -->
 
@@ -104,8 +105,16 @@ function handleCmd() {
       }
     }
     result.value = applied.join(' ')
+  } else if (cmd === 'fullheal' || cmd === 'fh') {
+    const s = props.gameState
+    s.hp = s.maxHp
+    s.hunger = s.maxHunger
+    s.thirst = s.maxThirst
+    s.sanity = s.maxSanity
+    s.infection = 0
+    result.value = '✔ 五项数值已全满'
   } else {
-    result.value = '未知命令: /' + cmd + '  (支持: give, effect, event)'
+    result.value = '未知命令: /' + cmd + '  (支持: give, effect, event, fullheal)'
   }
 }
 
