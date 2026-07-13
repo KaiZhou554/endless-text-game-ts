@@ -98,6 +98,7 @@ function selectScene(state, forceNewScene = false) {
 
 function selectSituation(scene, state) {
   const situationList = Object.values(situations)
+    .filter(sit => !sit.sceneTags || sit.sceneTags.some(t => scene.tags.includes(t)))
   const weights = situationList.map(sit => {
     let w = 5
     const st = scene.tags || []
@@ -112,14 +113,6 @@ function selectSituation(scene, state) {
     if (st.includes('关键地点') && sit.id.includes('satellite')) w += 10
     if (st.includes('自然') && sit.id.includes('garden')) w += 8
     if (st.includes('自然') && sit.id.includes('plant')) w += 6
-    // 安全区情景：在安全/避难所场景大幅加权，在其他场景基本不出
-    if (sit.id.includes('safe_zone')) {
-      if (st.includes('安全') || st.includes('避难所')) {
-        w += 14
-      } else {
-        w = Math.max(1, w - 10)
-      }
-    }
     // 取水情景：在水源场景加权，口渴时加权
     if ((st.includes('水源') || st.includes('自然') || st.includes('室外')) && (sit.id.includes('puddle') || sit.id.includes('rain') || sit.id.includes('river'))) w += 8
     if (state.thirst < 30 && (sit.id.includes('puddle') || sit.id.includes('rain') || sit.id.includes('river'))) w += 6

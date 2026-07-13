@@ -151,6 +151,7 @@ export const situations_tasks: Situations = {
         },
       },
     ],
+    sceneTags: ['社区'],
     danger: 0,
   },
 
@@ -190,6 +191,7 @@ export const situations_tasks: Situations = {
         },
       },
     ],
+    sceneTags: ['社区'],
     danger: 0,
   },
 
@@ -230,6 +232,7 @@ export const situations_tasks: Situations = {
         },
       },
     ],
+    sceneTags: ['社区'],
     danger: 0,
   },
 
@@ -270,6 +273,7 @@ export const situations_tasks: Situations = {
         },
       },
     ],
+    sceneTags: ['社区'],
     danger: 3,
   },
 
@@ -301,6 +305,7 @@ export const situations_tasks: Situations = {
         },
       },
     ],
+    sceneTags: ['安全', '避难所'],
     danger: 0,
   },
 }

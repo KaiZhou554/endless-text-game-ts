@@ -128,6 +128,7 @@ export interface Situation {
   baseText: string
   options: SituationOption[]
   danger: number
+  sceneTags?: string[]  // 若设置，仅限至少匹配一个标签的场景中出现
 }
 
 export interface Situations {
