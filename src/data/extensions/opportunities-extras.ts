@@ -74,7 +74,7 @@ export const opportunities_extras: Opportunity[] = [
     type: 'dice',
     delay: 4,
     diceRanges: [
-      { min: 1, max: 2, text: '你捧起水尝了一口——一股铁锈味。水管内部可能已经腐蚀了。喝下去胃里不舒服。', effects: { hp: -3, thirst: 8 }, lootItem: 'dirty_water' },
+      { min: 1, max: 2, text: '你捧起水尝了一口——一股铁锈味。水管内部可能已经腐蚀了。喝下去胃里不舒服。', effects: { hp: -3, thirst: 8 } },
       { min: 3, max: 5, text: '水很凉也很清。你洗了把脸，精神好了不少。', nothing: true },
       { min: 6, max: 6, text: '你在水洼旁发现了一个被人遗落的不锈钢水壶，里面还装着大半壶干净的水。', lootItem: 'water_bottle' },
     ],

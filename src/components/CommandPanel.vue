@@ -174,13 +174,13 @@ defineExpose({ toggle, open, close })
         <div class="flex items-center justify-between">
           <button
             @click="close"
-            class="text-xs px-2 py-1 border rounded-sm transition-colors
+            class="text-xs px-2 py-1 border rounded-sm transition-colors select-none
                    text-danger border-danger bg-transparent
                    hover:bg-close-hover active:bg-[#2a1515]"
           >
             ✕
           </button>
-          <span class="text-sm font-bold text-white">⌘ 命令面板</span>
+          <span class="text-sm font-bold text-white select-none">⌘ 命令面板</span>
         </div>
 
         <!-- Input row -->
@@ -195,7 +195,7 @@ defineExpose({ toggle, open, close })
           />
           <button
             @click="handleCmd"
-            class="text-xs px-2 py-1 border rounded-sm transition-colors
+            class="text-xs px-2 py-1 border rounded-sm transition-colors select-none
                    text-fore border-fore bg-transparent
                    hover:bg-hover active:bg-[#253535]"
           >

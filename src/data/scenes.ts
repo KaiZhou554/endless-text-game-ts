@@ -174,4 +174,12 @@ export const scenes: Scenes = {
     danger: 1,
     lootTypes: ['misc', 'key'],
   },
+  safe_zone: {
+    id: 'safe_zone',
+    name: '社区避难所',
+    desc: '一所被围墙和铁丝网环绕的小学校园，现在是幸存者们的定居点。操场改成了菜园，教室里住着人，食堂的烟囱一天两次冒出炊烟。这里不是天堂，但它是这片废墟中最接近文明的地方。',
+    tags: ['室内', '安全', '避难所', '社区'],
+    danger: 0,
+    lootTypes: ['misc', 'food'],
+  },
 }

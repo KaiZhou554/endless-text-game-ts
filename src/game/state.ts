@@ -207,6 +207,11 @@ export function processEvents(state, events: string[], effects?: Record<string, 
   for (const evt of events) {
     if (evt === 'clear_fatigue') state.hoursAwake = 0
     if (evt === 'trigger_sacrifice') state.sacrificeTriggered = true
+    if (evt === 'join_safe_zone') {
+      state.safeZoneJoined = true
+      if (!state.scenesVisited.includes('safe_zone')) state.scenesVisited.push('safe_zone')
+      state._pendingScene = 'safe_zone'
+    }
     if (evt === 'heal_40_percent_missing') {
       const missing = state.maxHp - state.hp
       const heal = Math.ceil(missing * 0.4)
@@ -215,6 +220,7 @@ export function processEvents(state, events: string[], effects?: Record<string, 
     }
     if (evt === 'unlock_all_scenes') {
       for (const id of Object.keys(scenes)) {
+        if (id === 'safe_zone') continue  // 安全区需通过剧情发现
         if (!state.scenesVisited.includes(id)) state.scenesVisited.push(id)
       }
     }

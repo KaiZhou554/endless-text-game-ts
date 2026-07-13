@@ -82,6 +82,10 @@ function selectScene(state, forceNewScene = false) {
   if (forceNewScene && state.currentScene) {
     candidates = candidates.filter(s => s.id !== state.currentScene)
   }
+  // 安全区场景仅在加入后开放随机出现
+  if (!state.safeZoneJoined) {
+    candidates = candidates.filter(s => s.id !== 'safe_zone')
+  }
   const weights = candidates.map(s => {
     let w = 10 - s.danger
     if (state._targetScene && s.id === state._targetScene) w += 20
@@ -97,6 +101,8 @@ function selectSituation(scene, state) {
   const weights = situationList.map(sit => {
     let w = 5
     const st = scene.tags || []
+    // 安全区（社区标签）过滤不适情景：战斗/丧尸/陷阱等高危情景不出现在定居点
+    if (st.includes('社区') && sit.danger >= 3) w = Math.max(1, w - 10)
     if (st.includes('医疗') && sit.id.includes('pharmacy')) w += 8
     if (st.includes('医疗') && sit.id.includes('injured')) w += 6
     if (st.includes('食物') && sit.id.includes('food')) w += 8
@@ -106,6 +112,17 @@ function selectSituation(scene, state) {
     if (st.includes('关键地点') && sit.id.includes('satellite')) w += 10
     if (st.includes('自然') && sit.id.includes('garden')) w += 8
     if (st.includes('自然') && sit.id.includes('plant')) w += 6
+    // 安全区情景：在安全/避难所场景大幅加权，在其他场景基本不出
+    if (sit.id.includes('safe_zone')) {
+      if (st.includes('安全') || st.includes('避难所')) {
+        w += 14
+      } else {
+        w = Math.max(1, w - 10)
+      }
+    }
+    // 取水情景：在水源场景加权，口渴时加权
+    if ((st.includes('水源') || st.includes('自然') || st.includes('室外')) && (sit.id.includes('puddle') || sit.id.includes('rain') || sit.id.includes('river'))) w += 8
+    if (state.thirst < 30 && (sit.id.includes('puddle') || sit.id.includes('rain') || sit.id.includes('river'))) w += 6
     if (state.hunger < 30 && sit.id.includes('food')) w += 5
     if (state.thirst < 30 && sit.id.includes('water')) w += 5
     if (state.hp < 30 && sit.id.includes('sleep')) w += 5

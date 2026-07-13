@@ -8,6 +8,7 @@ import { opportunities_medical_sleep } from './extensions/opportunities-medical-
 import { opportunities_generic_medical } from './extensions/opportunities-generic-medical'
 import { opportunities_endings } from './extensions/opportunities-endings'
 import { opportunities_guns } from './extensions/opportunities-guns'
+import { opportunities_tasks } from './extensions/opportunities-for-tasks'
 
 export const opportunities: Opportunity[] = [
 
@@ -19,7 +20,7 @@ export const opportunities: Opportunity[] = [
     type: 'dice',
     delay: 4,
     diceRanges: [
-      { min: 1, max: 2, text: '雨水浸透了你的衣服和背包里的东西。你浑身发抖，每一步都变得沉重。', effects: { hp: -5, sanity: -3, hunger: -3 }, lootItem: 'dirty_water' },
+      { min: 1, max: 2, text: '雨水浸透了你的衣服和背包里的东西。你浑身发抖，每一步都变得沉重。', effects: { hp: -5, sanity: -3, hunger: -3 } },
       { min: 3, max: 4, text: '你把外套裹紧了些。虽然淋了雨，但不算太糟。', nothing: true },
       { min: 5, max: 6, text: '你发现雨水冲开了一堆瓦砾，露出了一个被遗忘的储物箱。里面居然还有几样东西没被拿走。', lootItem: 'canned_beans' },
     ],
@@ -79,7 +80,7 @@ export const opportunities: Opportunity[] = [
     delay: 4,
     diceRanges: [
       { min: 1, max: 2, text: '你按照提示往东走了一段，但河岸已经被污染了，水面上漂着油污和杂物。白跑一趟。', effects: { hunger: -3, thirst: -5 } },
-      { min: 3, max: 5, text: '你在河边找到了一个相对干净的取水点。虽然水需要煮沸才能喝，但总算是个好兆头。', nothing: true },
+      { min: 3, max: 5, text: '你在河边找到了一个相对干净的取水点。虽然水需要煮沸才能喝，但总算是个好兆头。', lootItem: 'dirty_water' },
       { min: 6, max: 6, text: '河水冲刷出了一段浅滩，你在一处凹陷的岩石旁发现了一个被人遗忘的防水袋，里面装着一些密封的食物。', lootItem: 'crackers' },
     ],
   },
@@ -181,4 +182,7 @@ export const opportunities: Opportunity[] = [
 
   // ==================== 来自 extensions/opportunities-endings.ts（结局关键道具） ====================
   ...opportunities_endings,
+
+  // ==================== 来自 extensions/opportunities-for-tasks.ts（装备获取 + 安全区） ====================
+  ...opportunities_tasks,
 ]

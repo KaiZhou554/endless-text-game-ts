@@ -244,17 +244,6 @@ export const equipment: ItemDB = {
     reusable: false,
     slots: 1,
   },
-  book: {
-    id: 'book',
-    name: '《末日生存指南》',
-    type: 'misc',
-    desc: '一本印刷粗糙的生存手册，内容涵盖净水、狩猎、急救和基础陷阱制作。虽然大部分你都已经知道了。',
-    tags: ['书籍', '理智:+5(反复)'],
-    effects: { sanity: 5 },
-    stackable: false,
-    reusable: true,
-    slots: 1,
-  },
   watch: {
     id: 'watch',
     name: '太阳能手表',

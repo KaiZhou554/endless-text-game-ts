@@ -160,7 +160,7 @@ export const endingChecks: Ending[] = [
     name: '新家园',
     check(state) {
       if (!state.safeZoneJoined) return false
-      if (state.safeZoneActions < 12) return false
+      if (state.safeZoneActions < 8) return false
       return state.hp > 50 && state.sanity > 50
     },
     title: '🏘️ 避风港',
