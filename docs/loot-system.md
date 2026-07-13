@@ -21,7 +21,8 @@ getLootPool(count, state.inventory, { quality: 'combat' })
 | `count` | 3 | 掉落物品数量 |
 | `inventory` | `[]` | 玩家背包，用于弹药智能掉落（持枪时 50% 概率掉匹配弹药） |
 | `options.scene` | — | 场景对象，`lootTypes` 匹配的类型权重 2x |
-| `options.quality` | `'normal'` | `'normal'` = food / drink / medical / misc / tool；`'combat'` = 再加 weapon / armor |
+| `options.quality` | `'normal'` | `'normal'` = food / drink / medical / misc / tool；`'combat'` = 再加 weapon / armor（weapon/armor 权重 3x） |
+| `options.rarity` | — | `'稀有'` 时忽略类型，直接从全物品稀有+池中抽取（匹配 `'稀有'` / `'极稀有'` 标签） |
 
 ## 排除物品
 
@@ -45,13 +46,13 @@ clean_water: {
 |------|------|------|
 | 搜索（选项 tags 含 `'搜索'`） | `src/game/engine.ts:192` | `getLootPool(lootCount, state.inventory, { scene: currentScene })` |
 | 采集（`option.id === 'harvest'`） | `src/game/engine.ts:207-209` | `getRandomItem('food')` / `getRandomItem('drink')` |
-| 战斗胜利后搜刮 | `src/App.vue:314` | `getLootPool(count, gameState.inventory, { quality })` |
+| 战斗胜利后搜刮 | `src/App.vue:314` | `getLootPool(count, gameState.inventory, { quality, rarity })` |
 
 ## 战斗奖励逻辑
 
 - d6 = 1-3：空手
-- d6 = 4-5：1-2 件，品质取决于 `enemy.lootChance > 0.5` 决定是 `normal` 还是 `combat`
-- d6 = 6：1-2 件，强制 `combat` 品质（可能出武器/护甲）
+- d6 = 4-5：1-2 件，品质取决于 `enemy.lootChance > 0.5`
+- d6 = 6：1-2 件，强制 `rarity: '稀有'`——只从稀有+物品池中抽取（保证至少紫色品质）
 - `enemy.lootChance > 0.5` → 额外多掉 1 件 + 解锁 combat 品质
 
 ## 场景 lootTypes（场景偏好）

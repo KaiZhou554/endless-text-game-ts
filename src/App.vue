@@ -311,7 +311,10 @@ function handleCombatRewardDice() {
     const quality: 'normal' | 'combat' = roll === 6 ? 'combat' : (lootChance > 0.5 ? 'combat' : 'normal')
     const count = lootChance > 0.5 ? 2 : 1
 
-    const loot = getLootPool(count, gameState.inventory, { quality })
+    const loot = getLootPool(count, gameState.inventory, {
+      quality,
+      rarity: roll === 6 ? '稀有' : undefined,
+    })
     if (loot.length > 0) {
       const added: any[] = []
       for (const item of loot) {
