@@ -24,7 +24,7 @@ src/
 ├── data/                      # ─── 纯数据层（无逻辑，仅供引擎引用）───
 │   ├── index.ts               #   顶层桶文件，统一导出所有数据
 │   ├── items.ts               #   桶文件，从 extensions/ 聚合物品
-│   ├── scenes.ts              #   23 场景，按 id 索引
+│   ├── scenes.ts              #   21 场景，按 id 索引
 │   ├── situations.ts          #   桶文件，从 extensions/ 聚合情景
 │   ├── modifiers.ts           #   时间/天气/状态/标签等修饰条件
 │   ├── endings.ts             #   12 个结局条件 + 结局文本
@@ -48,7 +48,10 @@ src/
 │       └── situations-explore.ts  #   探索/环境类遭遇
 ├── game/                      # ─── 引擎层（纯函数，无 Vue 依赖）───
 │   ├── state.ts               #   响应式状态管理 (Vue reactive)，含 slot 占位系统
-│   ├── engine.ts              #   核心：事件生成、选项解析、d20 战斗、对话、叙事、机遇
+│   ├── engine.ts              #   核心：选项解析、生存衰减、叙事文本、对话
+│   ├── engine/                #   ─── engine.ts 子模块 ───
+│   │   ├── combat.ts          #     战斗系统（d20/d6、生成、结算）
+│   │   └── events.ts          #     事件生成（场景/情景选择、选项构建）
 │   ├── utils.ts               #   工具：随机、加权选择、格式化
 │   ├── item-utils.ts          #   物品查询/筛选/随机选择函数
 │   ├── world-utils.ts         #   时间/天气/玩家状态修饰计算
@@ -64,7 +67,8 @@ src/
     ├── InventoryDrawer.vue    #   背包侧边抽屉（slot 占位显示）
     ├── JournalPanel.vue       #   日志独立面板（时间线反转）
     ├── DialogPanel.vue        #   NPC 对话树
-    ├── MapPanel.vue           #   地图快速旅行（逐步解锁）
+    ├── MapPanel.vue           #   地图快速旅行（逐步解锁，21 个地点）
+    ├── CommandPanel.vue       #   命令面板（Ctrl+P，/give /effect /event）
     └── CombatPanel.vue        #   （内嵌在 App.vue）战斗全屏界面
 ```
 
@@ -87,7 +91,7 @@ src/
     → engine.generateEvent() 生成下一事件（sceneChange 100% 换场景）
 
 使用物品（从背包）
-  → handleUseItem() → useItem() 应用效果 + 派发 events
+  → handleUseItem() → useItem() 应用效果 + processEvents() 派发事件
   → rebuildCurrentOptions() 刷新选项（背包满状态变化）
 
 战斗（d20 全屏对话式界面）
@@ -114,9 +118,10 @@ itemDB = {
     tags: ['标签1', '标签2'],   // 用于选项条件判定；'极稀有'/'稀有'触发背景特效
     effects: { damage: 3, noise: 1 },  // 实际效果数值
     events?: ['clear_fatigue'],  // 使用时的特殊事件（events 系统）
+    initialStack?: 15,           // 首次获得时的堆叠数（弹药默认多发）
     stackable: false,           // 可堆叠（同类物品数量叠加）
     reusable: true,             // 使用后不消耗
-    slots: 1,                   // 占位格数（默认 2，小件 1）
+    slots: 1,                   // 占位格数（默认 2，小件 1，弹药 0 不占位）
   }
 }
 ```
@@ -384,7 +389,7 @@ endingChecks = [{
 ### 添加新物品
 在对应扩展文件中添加条目。type 为 `weapon` 的物品自动按 damage 值分配 d20 命中区间。
 需弹药的武器设置 `effects.ammo`（如 `'9mm'`），对应弹药物品 tags 含 `'弹药:9mm'`。
-小型物品（食物/医疗/弹药）需设置 `slots: 1`。
+弹药物品设置 `slots: 0`（不占背包空间）、`initialStack`（首次获得数量，如 9mm 15 发）。
 特殊行为在 `events` 数组中加入事件 ID，并在 `processEvents` 中添加处理分支。
 
 机遇的 `diceRanges[*].events` 和 Situation 选项的 `events` 也支持事件触发，
@@ -404,7 +409,7 @@ endingChecks = [{
 在 `src/data/endings.ts` 的 `endingChecks` 数组中追加。
 
 ### 添加新战斗策略
-在 `engine.ts` 的 `combatStrategies` 数组中追加策略对象，包含：
+在 `engine/combat.ts` 的 `combatStrategies` 数组中追加策略对象，包含：
 - `id` / `name` / `desc` 
 - `defMod`（受伤倍率）
 - `sanityCost` / `sanityReq`
@@ -412,7 +417,18 @@ endingChecks = [{
 - `highRisk`（d6≥4 翻倍）
 
 ### 添加新敌人类型
-在 `engine.ts` 的 `generateCombat` 的 `enemies` 数组中追加，同时可在击杀处添加专属死亡描述。
+在 `engine/combat.ts` 的 `generateCombat` 的 `enemies` 数组中追加，同时可在击杀处添加专属死亡描述。
+
+### 添加新事件
+在 `state.ts` 的 `processEvents()` 中添加 `if (evt === '新事件ID') { ... }` 分支。
+然后在物品的 `events`、机遇的 `diceRanges[*].events` 或 Situation 选项的 `events` 中引用。
+现有事件：`clear_fatigue`、`heal_40_percent_missing`、`unlock_all_scenes`、`rest_sleep_hours`。
+
+### 命令面板
+`Ctrl+P` 打开。支持的命令：
+- `/give [-b|-m] <itemId...>` — 获得物品。`-b` 逐条广播到叙事面板，`-m` 合并为一条（测试稀有度扫描）
+- `/effect <stat><value>...` — 修改属性。支持缩写 sm/bf/kk/lz/gr
+- `/event <eventId...>` — 触发事件
 
 ## Notes
 
@@ -424,6 +440,8 @@ endingChecks = [{
 - `rebuildCurrentOptions()` 用于在背包变更后刷新选项状态
 - 使用 `getCombatStrategies(state, enemy)` 获取当前回合战斗选项
 - 休息事件额外跳过 6-8h（`state.dayCount += sleepHours/24`）
+- 睡袋/保温毯使用 `processEvents` 清疲劳；睡袋额外触发 `rest_sleep_hours` 跳过 8-10h
+- 多个大容量背包可叠加（`getEffectiveCapacity` 使用 `filter` + `reduce`）
 - 无武器时战斗选项只显示策略（不显示"拳头"）
 - NarrativeArea 使用队列系统（`processingQueue` / `revealedIds`）按序显示条目，
   叙事类用 TypewriterJS，非叙事类直接渲染；MutationObserver 监听打字区域实现自动滚动
