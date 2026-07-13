@@ -24,16 +24,50 @@ export function getItemsByTag(tag) {
  * 获取随机物品（可按类型过滤）
  */
 export function getRandomItem(type: any = null) {
-  const pool = type ? getItemsByType(type) : Object.values(itemDB)
+  let pool = type ? getItemsByType(type) : Object.values(itemDB)
+  pool = pool.filter((item: any) => !item.tags.includes('非掉落'))
+  if (pool.length === 0) return null
   return pool[Math.floor(Math.random() * pool.length)]
 }
 
 /**
  * 获取随机战利品池（用于事件奖励）
+ *
+ * @param count    掉落物品数量
+ * @param inventory 玩家背包（用于弹药智能掉落）
+ * @param options  可选：scene（场景类型偏好）、quality（品质层级）
  */
-export function getLootPool(count = 3, inventory: any[] = []) {
+interface LootOptions {
+  scene?: { lootTypes: string[] }
+  quality?: 'normal' | 'combat'
+}
+
+// 加权随机选类型
+function pickWeightedType(types: string[], weights: Record<string, number>): string {
+  const total = types.reduce((sum, t) => sum + (weights[t] || 1), 0)
+  let r = Math.random() * total
+  for (const t of types) {
+    r -= weights[t] || 1
+    if (r <= 0) return t
+  }
+  return types[types.length - 1]
+}
+
+export function getLootPool(count = 3, inventory: any[] = [], options: LootOptions = {}) {
   const loot: any[] = []
-  const types = ['food', 'drink', 'medical', 'misc', 'tool']
+  const baseTypes = ['food', 'drink', 'medical', 'misc', 'tool']
+  const combatTypes = ['weapon', 'armor']
+  const types = options.quality === 'combat'
+    ? [...baseTypes, ...combatTypes]
+    : [...baseTypes]
+
+  // 类型选择权重：场景 lootTypes 匹配的类型权重 x2
+  const typeSelectionWeights: Record<string, number> = {}
+  if (options.scene?.lootTypes) {
+    for (const t of types) {
+      typeSelectionWeights[t] = options.scene.lootTypes.includes(t) ? 2 : 1
+    }
+  }
 
   // 类型内物品权重（默认 1，越高越常见）
   const typeWeights: Record<string, Record<string, number>> = {
@@ -60,17 +94,18 @@ export function getLootPool(count = 3, inventory: any[] = []) {
   }
 
   for (let i = 0; i < count; i++) {
-    const type = types[Math.floor(Math.random() * types.length)]
+    const type = pickWeightedType(types, typeSelectionWeights)
     if (type === 'misc' && gunAmmos.length > 0 && chance(0.5)) {
       // 优先掉落已有枪械的弹药
       const ammoTag = '弹药:' + gunAmmos[Math.floor(Math.random() * gunAmmos.length)]
-      const ammoPool = getItemsByTag(ammoTag)
+      const ammoPool = getItemsByTag(ammoTag).filter((item: any) => !item.tags.includes('非掉落'))
       if (ammoPool.length > 0) {
         loot.push(ammoPool[Math.floor(Math.random() * ammoPool.length)])
         continue
       }
     }
-    const pool = getItemsByType(type)
+    const pool = getItemsByType(type).filter((item: any) => !item.tags.includes('非掉落'))
+    if (pool.length === 0) continue
     loot.push(weightedPickFromPool(pool, typeWeights[type]))
   }
   return loot

@@ -8,6 +8,7 @@ import { generateEvent, resolveOption, applySurvivalDecay, exploreNewArea,
          getCombatStrategies, autoResolveCombat, getOpportunities,
          startDialogue as engineStartDialogue } from './game/engine.js'
 import { scenes, itemDB } from './data/index.js'
+import { getLootPool } from './game/item-utils.js'
 import { checkEndings } from './game/ending-utils.js'
 import type { Opportunity } from './types'
 
@@ -291,11 +292,6 @@ function handleCombatAction(strategyId: string) {
 
 // ==================== 战后奖励 ====================
 
-const combatRewardPools = {
-  small: ['bandage', 'canned_beans', 'energy_bar', 'water_bottle', 'painkillers'],
-  big: ['pistol', 'shotgun', 'first_aid_kit', 'antibiotics', 'antidote', 'military_rations', 'crossbow', 'axe'],
-}
-
 function handleCombatRewardDice() {
   const roll = Math.floor(Math.random() * 6) + 1
   combatRewardRoll.value = roll
@@ -308,30 +304,37 @@ function handleCombatRewardDice() {
     combatRewardText.value = `${glyph}这具丧尸身上空无一物。你叹了口气，准备离开。`
     addJournalEntry(gameState, `${glyph} 搜刮尸体：什么都没有。`, 'action')
     setTimeout(() => finishCombatReward(), 1500)
-  } else if (roll <= 5) {
-    const pool = combatRewardPools.small
-    const itemId = pool[Math.floor(Math.random() * pool.length)]
-    const item = itemDB[itemId]
-    if (item && addToInventory(gameState, item)) {
-      combatRewardText.value = `${glyph}你在尸体旁发现了一些有用物资：${item.name}。`
-      addJournalEntry(gameState, wrapRewardText(`${glyph} 搜刮尸体：获得 `, item, '。'), 'action')
-    } else {
-      combatRewardText.value = `${glyph}你翻找了一番，但背包已经满了。`
-      addJournalEntry(gameState, `${glyph} 搜刮尸体：背包满了！`, 'action')
-    }
-    setTimeout(() => finishCombatReward(), 2000)
   } else {
-    const pool = combatRewardPools.big
-    const itemId = pool[Math.floor(Math.random() * pool.length)]
-    const item = itemDB[itemId]
-    if (item && addToInventory(gameState, item)) {
-      combatRewardText.value = `${glyph}你仔细搜索，找到了一件好东西：${item.name}！`
-      addJournalEntry(gameState, wrapRewardText(`${glyph} 搜刮尸体：获得 `, item, '！'), 'action')
+    // 根据 enemy.lootChance 决定品质和数量
+    const enemy = combatState.value?.enemy
+    const lootChance = enemy?.lootChance ?? 0.3
+    const quality: 'normal' | 'combat' = roll === 6 ? 'combat' : (lootChance > 0.5 ? 'combat' : 'normal')
+    const count = lootChance > 0.5 ? 2 : 1
+
+    const loot = getLootPool(count, gameState.inventory, { quality })
+    if (loot.length > 0) {
+      const added: any[] = []
+      for (const item of loot) {
+        if (addToInventory(gameState, item)) {
+          added.push(item)
+        }
+      }
+      if (added.length > 0) {
+        const itemNames = added.map((i: any) => i.name).join('、')
+        const prefix = roll === 6 ? '你仔细搜索，找到了：' : '你在尸体旁发现了一些物资：'
+        combatRewardText.value = `${glyph}${prefix}${itemNames}。`
+        for (const item of added) {
+          addJournalEntry(gameState, wrapRewardText(`${glyph} 搜刮尸体：获得 `, item, '。'), 'action')
+        }
+      } else {
+        combatRewardText.value = `${glyph}你翻找了一番，但背包已经满了。`
+        addJournalEntry(gameState, `${glyph} 搜刮尸体：背包满了！`, 'action')
+      }
     } else {
-      combatRewardText.value = `${glyph}你发现了好东西，但背包已经放不下了！`
-      addJournalEntry(gameState, `${glyph} 搜刮尸体：背包满了！`, 'action')
+      combatRewardText.value = `${glyph}这具丧尸身上空无一物。`
+      addJournalEntry(gameState, `${glyph} 搜刮尸体：什么都没有。`, 'action')
     }
-    setTimeout(() => finishCombatReward(), 2500)
+    setTimeout(() => finishCombatReward(), roll === 6 ? 2500 : 2000)
   }
 }
 
