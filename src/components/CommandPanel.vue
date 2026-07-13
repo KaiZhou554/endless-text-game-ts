@@ -172,7 +172,6 @@ defineExpose({ toggle, open, close })
       >
         <!-- Header -->
         <div class="flex items-center justify-between">
-          <span class="text-sm font-bold text-white">⌘ 命令面板</span>
           <button
             @click="close"
             class="text-xs px-2 py-1 border rounded-sm transition-colors
@@ -181,6 +180,7 @@ defineExpose({ toggle, open, close })
           >
             ✕
           </button>
+          <span class="text-sm font-bold text-white">⌘ 命令面板</span>
         </div>
 
         <!-- Input row -->
