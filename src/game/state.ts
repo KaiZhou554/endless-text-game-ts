@@ -228,7 +228,10 @@ export function processEvents(state, events: string[], effects?: Record<string, 
       const candidates = gunAmmos.length > 0 ? gunAmmos : ['9mm', '12gauge', 'bolt', 'nails', 'harpoon']
       const ammoType = candidates[Math.floor(Math.random() * candidates.length)]
       const ammoItem = itemDB['ammo_' + ammoType]
-      if (ammoItem) addToInventory(state, ammoItem)
+      if (ammoItem) {
+        addToInventory(state, ammoItem)
+        addJournalEntry(state, `✽ 获得了 ${ammoItem.name}。`, 'action')
+      }
     }
     if (evt === 'rest_light') {
       const heal = 5
