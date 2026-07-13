@@ -34,6 +34,7 @@ const mapLocations = [
   { id: 'library', name: '图书馆', icon: '📚', desc: '市立图书馆', danger: 1, tags: ['安静'] },
   { id: 'rooftop', name: '大楼天台', icon: '🏙️', desc: '写字楼顶', danger: 1, tags: ['安全'] },
   { id: 'parking_garage', name: '地下停车场', icon: '🅿️', desc: '地下车库', danger: 3, tags: ['交通', '黑暗'] },
+  { id: 'overpass', name: '天桥', icon: '🌉', desc: '过街天桥', danger: 2, tags: ['室外', '交通'] },
 ]
 
 function dangerColor(danger) {
