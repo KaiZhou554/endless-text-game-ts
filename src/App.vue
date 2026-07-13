@@ -501,6 +501,7 @@ function handleUseItem(itemId: string) {
     if (effects.thirst) useText += ` 口渴${effects.thirst > 0 ? '+' : ''}${effects.thirst}`
     if (effects.sanity) useText += ` 理智${effects.sanity > 0 ? '+' : ''}${effects.sanity}`
     if (effects.infection) useText += ` 感染${effects.infection > 0 ? '+' : ''}${effects.infection}`
+    if ((effects as any).sleepHours) useText += ` 时间+${(effects as any).sleepHours}h`
     addJournalEntry(gameState, useText, 'action')
   }
   // 刷新选项（背包满状态可能已变）

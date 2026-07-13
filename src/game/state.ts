@@ -4,7 +4,7 @@
  */
 
 import { reactive, computed } from 'vue'
-import { clamp } from './utils.js'
+import { clamp, randInt } from './utils.js'
 import { scenes } from '../data/index.js'
 import type { GameState, Item } from '../types'
 
@@ -109,11 +109,8 @@ export function resetGameState(state) {
  */
 export function getEffectiveCapacity(state) {
   let capacity = state.maxInventory
-  const backpack = state.inventory.find(i => i.id === 'backpack')
-  if (backpack) {
-    capacity += (backpack.effects.capacityBonus || 0)
-    capacity -= 1 // 背包本身占 1 格
-  }
+  const backpacks = state.inventory.filter(i => i.id === 'backpack')
+  capacity += backpacks.reduce((sum, bp) => sum + (bp.effects.capacityBonus || 0) - 1, 0)
   return capacity
 }
 
@@ -185,6 +182,11 @@ export function processEvents(state, events: string[], effects?: Record<string, 
       for (const id of Object.keys(scenes)) {
         if (!state.scenesVisited.includes(id)) state.scenesVisited.push(id)
       }
+    }
+    if (evt === 'rest_sleep_hours') {
+      const sleepHours = randInt(8, 10)
+      state.dayCount += sleepHours / 24
+      if (effects) effects.sleepHours = sleepHours
     }
   }
 }
