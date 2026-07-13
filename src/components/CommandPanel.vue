@@ -157,7 +157,7 @@ defineExpose({ toggle, open, close })
       style="pointer-events: none;"
     >
       <div
-        class="w-full max-w-lg mx-4 mt-4 border rounded-sm p-3 space-y-1.5
+        class="w-full max-w-lg mx-4 mt-12 sm:mt-4 border rounded-sm p-3 space-y-1.5
                bg-bg border-border"
         style="pointer-events: auto;"
       >

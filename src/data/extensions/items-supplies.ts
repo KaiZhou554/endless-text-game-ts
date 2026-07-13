@@ -122,10 +122,10 @@ export const supplies: ItemDB = {
   },
   coffee: {
     id: 'coffee',
-    name: '速溶咖啡包',
+    name: '瓶装咖啡',
     type: 'drink',
-    desc: '一小袋速溶咖啡粉。虽然需要热水，但一杯就能让你清醒好几个小时。',
-    tags: ['饮品', '口渴:+8', '理智:+8', '需要:热水'],
+    desc: '一瓶超市里常见的咖啡。味道还算可以，可以用来提神。',
+    tags: ['饮品', '口渴:+8', '理智:+8'],
     effects: { thirst: 8, sanity: 8 },
     stackable: true,
     reusable: false,

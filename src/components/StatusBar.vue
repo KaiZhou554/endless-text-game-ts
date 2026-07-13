@@ -142,7 +142,7 @@ function formatTimeOfDay(dayCount) {
       <div class="flex items-center gap-1 ml-auto">
         <span
           @click="onTimeClick"
-          class="text-xs font-bold tabular-nums cursor-pointer select-none text-accent"
+          class="text-xs font-bold tabular-nums select-none text-accent"
         >
           D{{ Math.floor(gameState.dayCount) + 1 }} {{ formatTimeOfDay(gameState.dayCount) }}
         </span>
