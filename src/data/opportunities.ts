@@ -6,6 +6,7 @@ import type { Opportunity } from '../types'
 import { opportunities_extras } from './extensions/opportunities-extras'
 import { opportunities_medical_sleep } from './extensions/opportunities-medical-sleep'
 import { opportunities_generic_medical } from './extensions/opportunities-generic-medical'
+import { opportunities_endings } from './extensions/opportunities-endings'
 import { opportunities_guns } from './extensions/opportunities-guns'
 
 export const opportunities: Opportunity[] = [
@@ -177,4 +178,7 @@ export const opportunities: Opportunity[] = [
 
   // ==================== 来自 extensions/opportunities-guns.ts（枪械，低概率） ====================
   ...opportunities_guns,
+
+  // ==================== 来自 extensions/opportunities-endings.ts（结局关键道具） ====================
+  ...opportunities_endings,
 ]
