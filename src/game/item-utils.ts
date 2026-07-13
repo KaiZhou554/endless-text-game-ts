@@ -25,7 +25,7 @@ export function getItemsByTag(tag) {
  */
 export function getRandomItem(type: any = null) {
   let pool = type ? getItemsByType(type) : Object.values(itemDB)
-  pool = pool.filter((item: any) => !item.tags.includes('非掉落'))
+  pool = pool.filter((item: any) => !item.noLoot)
   if (pool.length === 0) return null
   return pool[Math.floor(Math.random() * pool.length)]
 }
@@ -98,13 +98,13 @@ export function getLootPool(count = 3, inventory: any[] = [], options: LootOptio
     if (type === 'misc' && gunAmmos.length > 0 && chance(0.5)) {
       // 优先掉落已有枪械的弹药
       const ammoTag = '弹药:' + gunAmmos[Math.floor(Math.random() * gunAmmos.length)]
-      const ammoPool = getItemsByTag(ammoTag).filter((item: any) => !item.tags.includes('非掉落'))
+      const ammoPool = getItemsByTag(ammoTag).filter((item: any) => !item.noLoot)
       if (ammoPool.length > 0) {
         loot.push(ammoPool[Math.floor(Math.random() * ammoPool.length)])
         continue
       }
     }
-    const pool = getItemsByType(type).filter((item: any) => !item.tags.includes('非掉落'))
+    const pool = getItemsByType(type).filter((item: any) => !item.noLoot)
     if (pool.length === 0) continue
     loot.push(weightedPickFromPool(pool, typeWeights[type]))
   }

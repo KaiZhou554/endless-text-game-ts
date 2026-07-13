@@ -21,10 +21,11 @@ export const taskItems: ItemDB = {
     name: '干净的水',
     type: 'drink',
     desc: '经过处理的水，喝下去让人心情舒畅。',
-    tags: ['饮品', '口渴:+16', '理智:+2', '非掉落'],
+    tags: ['饮品', '口渴:+16', '理智:+2'],
     effects: { thirst: 16, sanity: 2 },
     stackable: true,
     reusable: false,
     slots: 1,
+    noLoot: true,
   },
 }

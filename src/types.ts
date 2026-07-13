@@ -44,6 +44,7 @@ export interface Item {
   hitRanges?: HitRange[]
   events?: string[]  // 使用时的特殊事件（如 clear_fatigue）
   usable?: boolean   // 可在背包中直接使用的物品
+  noLoot?: boolean   // 不进入随机掉落池（如配方制作物品）
 }
 
 export interface HitRange {
