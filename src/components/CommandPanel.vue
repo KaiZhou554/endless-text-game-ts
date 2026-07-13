@@ -17,8 +17,8 @@ import type { GameState } from '../types'
 function wrapItemName(item: any): string {
   if (!item) return ''
   let cls = ''
-  if (item.tags?.includes('极稀有')) cls = 'item-rare'
-  else if (item.tags?.includes('稀有')) cls = 'item-epic'
+  if (item.rarity === 'legendary') cls = 'item-legendary'
+  else if (item.rarity === 'rare') cls = 'item-rare'
   const text = `✢ 获得了：${item.name}`
   return cls ? `<span class="${cls}">${text}</span>` : text
 }
@@ -69,8 +69,8 @@ function handleCmd() {
       if (merge) {
         const names = givenItems.map(i => i.name).join('、')
         let cls = ''
-        if (givenItems.some(i => i.tags?.includes('极稀有'))) cls = 'item-rare'
-        else if (givenItems.some(i => i.tags?.includes('稀有'))) cls = 'item-epic'
+        if (givenItems.some(i => i.rarity === 'legendary')) cls = 'item-legendary'
+        else if (givenItems.some(i => i.rarity === 'rare')) cls = 'item-rare'
         const text = `✢ 获得了：${names}`
         addJournalEntry(props.gameState, cls ? `<span class="${cls}">${text}</span>` : text, 'action')
       } else {

@@ -32,7 +32,7 @@ export const extras: ItemDB = {
     name: '鱼叉枪',
     type: 'weapon',
     desc: '一把改装过的水下鱼叉枪，用压缩气体发射。陆地上也能用，精度不错但只能单发。鱼叉可以回收。',
-    tags: ['远程', '噪音:低', '需鱼叉', '可回收', '极稀有'],
+    tags: ['远程', '噪音:低', '需鱼叉', '可回收'],
     effects: { damage: 6, noise: 1, ammo: 'harpoon' },
     hitRanges: [
       { min: 2, max: 5, dmg: 12 },
@@ -41,6 +41,7 @@ export const extras: ItemDB = {
     ],
     stackable: false,
     reusable: true,
+    rarity: 'legendary',
   },
 
   // ==================== 弹药 ====================
@@ -90,12 +91,13 @@ export const extras: ItemDB = {
     name: '肾上腺素注射器',
     type: 'medical',
     desc: '一支预装肾上腺素的自动注射笔，标签上写着"急救用 — 心脏骤停"。能在短时间内给你超常的爆发力。',
-    tags: ['医疗', '理智:-5', '临时强化', '稀有'],
+    tags: ['医疗', '理智:-5', '临时强化'],
     effects: { sanity: -5 },
     events: ['heal_40_percent_missing'],
     stackable: true,
     reusable: false,
     slots: 1,
+    rarity: 'rare',
   },
 
   // ==================== 防具 ====================

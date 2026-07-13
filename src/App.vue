@@ -57,16 +57,16 @@ let _pendingSceneChange = false  // 机遇打断时暂存的场景切换标记
 
 // 返回物品稀有度对应的 CSS class
 function itemRarityClass(item: any): string {
-  if (item.tags && item.tags.includes('极稀有')) return 'item-rare'
-  if (item.tags && item.tags.includes('稀有')) return 'item-epic'
+  if (item.rarity === 'legendary') return 'item-legendary'
+  if (item.rarity === 'rare') return 'item-rare'
   return ''
 }
 // 根据物品列表返回带特效的日志文本（整行动画）
 function buildLootText(items: any[]): string {
   const names = items.map(i => i.name).join('、')
   let cls = ''
-  if (items.some(i => i.tags && i.tags.includes('极稀有'))) cls = 'item-rare'
-  else if (items.some(i => i.tags && i.tags.includes('稀有'))) cls = 'item-epic'
+  if (items.some(i => i.rarity === 'legendary')) cls = 'item-legendary'
+  else if (items.some(i => i.rarity === 'rare')) cls = 'item-rare'
   return cls ? `<span class="${cls}">✢ 获得了：${names}</span>` : `✢ 获得了：${names}`
 }
 // 包裹单个物品的日志文本（整行动画）

@@ -105,15 +105,12 @@ export function getLootPool(count = 3, inventory: any[] = [], options: LootOptio
     const rarePool = Object.values(itemDB).filter((item: any) =>
       !item.noLoot
       && item.type !== 'key'
-      && (item.tags.includes('极稀有') || item.tags.includes(options.rarity!))
+      && item.rarity
+      && (item.rarity === 'legendary' || item.rarity === options.rarity)
     )
-    // 排除已获得的物品（不重复掉落稀有品）
-    const ownedIds = new Set(inventory.map((i: any) => i.id))
-    const fresh = rarePool.filter((item: any) => !ownedIds.has(item.id))
-    const pool = fresh.length > 0 ? fresh : rarePool
     for (let i = 0; i < count; i++) {
-      if (pool.length === 0) break
-      loot.push(pool[Math.floor(Math.random() * pool.length)])
+      if (rarePool.length === 0) break
+      loot.push(rarePool[Math.floor(Math.random() * rarePool.length)])
     }
     return loot
   }

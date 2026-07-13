@@ -22,7 +22,7 @@ export const weapons: ItemDB = {
     name: 'M9 手枪',
     type: 'weapon',
     desc: '一把军规 M9 手枪，枪身有多处划痕。弹匣里还剩几发子弹。',
-    tags: ['枪械', '噪音:高', '需9mm子弹', '极稀有'],
+    tags: ['枪械', '噪音:高', '需9mm子弹'],
     effects: { damage: 8, noise: 5, ammo: '9mm' },
     hitRanges: [
       { min: 2, max: 5, dmg: 8 },
@@ -31,6 +31,7 @@ export const weapons: ItemDB = {
     ],
     stackable: false,
     reusable: true,
+    rarity: 'legendary',
   },
   knife: {
     id: 'knife',
@@ -47,7 +48,7 @@ export const weapons: ItemDB = {
     name: '双管猎枪',
     type: 'weapon',
     desc: '一把老式双管猎枪，枪托上刻着"R.I.P."。每次只能装两发，但威力惊人。',
-    tags: ['枪械', '噪音:极高', '需12号霰弹', '伤害:范围', '极稀有'],
+    tags: ['枪械', '噪音:极高', '需12号霰弹', '伤害:范围'],
     effects: { damage: 12, noise: 8, ammo: '12gauge' },
     hitRanges: [
       { min: 2, max: 4, dmg: 10 },
@@ -56,6 +57,7 @@ export const weapons: ItemDB = {
     ],
     stackable: false,
     reusable: true,
+    rarity: 'legendary',
   },
   crowbar_weapon: {
     id: 'crowbar_weapon',
@@ -82,7 +84,7 @@ export const weapons: ItemDB = {
     name: '十字弩',
     type: 'weapon',
     desc: '一把现代复合弩，自带瞄准镜。安静、致命，但射速慢。',
-    tags: ['远程', '噪音:极低', '需弩箭', '隐蔽', '极稀有'],
+    tags: ['远程', '噪音:极低', '需弩箭', '隐蔽'],
     effects: { damage: 7, noise: 0, ammo: 'bolt' },
     hitRanges: [
       { min: 2, max: 7, dmg: 10 },
@@ -91,6 +93,7 @@ export const weapons: ItemDB = {
     ],
     stackable: false,
     reusable: true,
+    rarity: 'legendary',
   },
   machete: {
     id: 'machete',
@@ -150,17 +153,18 @@ export const weapons: ItemDB = {
     name: '武士刀',
     type: 'weapon',
     desc: '一把保养精良的武士刀，刀刃在光线下泛着冷冽的寒光。轻巧而致命的艺术品。',
-    tags: ['近战', '噪音:极低', '耐久:18', '极稀有'],
+    tags: ['近战', '噪音:极低', '耐久:18'],
     effects: { damage: 7, noise: 0, durability: 18 },
     stackable: false,
     reusable: true,
+    rarity: 'legendary',
   },
   nail_gun: {
     id: 'nail_gun',
     name: '改装钉枪',
     type: 'weapon',
     desc: '一把改装过的工地钉枪，拆掉了安全开关，可以当射钉武器用。射速快但威力有限。',
-    tags: ['远程', '噪音:中', '需钉枪钉', '快速', '工具:修理', '极稀有'],
+    tags: ['远程', '噪音:中', '需钉枪钉', '快速', '工具:修理'],
     effects: { damage: 4, noise: 3, ammo: 'nails' },
     hitRanges: [
       { min: 2, max: 9, dmg: 8 },
@@ -169,6 +173,7 @@ export const weapons: ItemDB = {
     ],
     stackable: false,
     reusable: true,
+    rarity: 'legendary',
   },
   flare_gun: {
     id: 'flare_gun',

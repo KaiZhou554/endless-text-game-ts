@@ -22,7 +22,7 @@ getLootPool(count, state.inventory, { quality: 'combat' })
 | `inventory` | `[]` | 玩家背包，用于弹药智能掉落（持枪时 50% 概率掉匹配弹药） |
 | `options.scene` | — | 场景对象，`lootTypes` 匹配的类型权重 2x |
 | `options.quality` | `'normal'` | `'normal'` = food / drink / medical / misc / tool；`'combat'` = 再加 weapon / armor（weapon/armor 权重 3x） |
-| `options.rarity` | — | `'稀有'` 时忽略类型，直接从全物品稀有+池中抽取（匹配 `'稀有'` / `'极稀有'` 标签） |
+| `options.rarity` | — | `'稀有'` 时忽略类型，直接从全物品稀有+池中抽取（匹配 `rarity: 'rare'` / `rarity: 'legendary'` 字段） |
 
 ## 排除物品
 
