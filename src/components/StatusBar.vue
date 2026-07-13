@@ -87,7 +87,7 @@ function formatTimeOfDay(dayCount) {
 </script>
 
 <template>
-  <div class="w-full border-b border-border bg-bg px-2 sm:px-4 py-1.5 sm:py-2 flex-shrink-0" style="padding-top: env(safe-area-inset-top, 0px);">
+  <div class="w-full border-b border-border bg-bg px-2 sm:px-4 py-1.5 sm:py-2 shrink-0" style="padding-top: env(safe-area-inset-top, 0px);">
     <!-- PC 端：完整显示 -->
     <!-- 第一行：生命/饱腹/口渴 -->
     <div class="hidden sm:flex w-full gap-x-4">
@@ -99,11 +99,11 @@ function formatTimeOfDay(dayCount) {
         <span class="text-xs whitespace-nowrap text-muted">
           {{ bar.icon }} {{ bar.label }}
         </span>
-        <span class="text-xs font-bold min-w-[2rem] tabular-nums"
+        <span class="text-xs font-bold min-w-8 tabular-nums"
               :style="{ color: barColor(bar.value, bar.color) }">
           {{ bar.value }}
         </span>
-        <div class="flex-1 h-1.5 min-w-[30px] bg-hover">
+        <div class="flex-1 h-1.5 min-w-7.5 bg-hover">
           <div
             class="h-full transition-all duration-300"
             :style="{
@@ -124,11 +124,11 @@ function formatTimeOfDay(dayCount) {
         <span class="text-xs whitespace-nowrap text-muted">
           {{ bar.icon }} {{ bar.label }}
         </span>
-        <span class="text-xs font-bold min-w-[2rem] tabular-nums"
+        <span class="text-xs font-bold min-w-8 tabular-nums"
               :style="{ color: barColor(bar.value, bar.color) }">
           {{ bar.value }}
         </span>
-        <div class="flex-1 h-1.5 min-w-[30px] bg-hover">
+        <div class="flex-1 h-1.5 min-w-7.5 bg-hover">
           <div
             class="h-full transition-all duration-300"
             :style="{

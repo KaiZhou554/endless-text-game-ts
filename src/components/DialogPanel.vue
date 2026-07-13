@@ -158,11 +158,11 @@ const optionLabels = ['A', 'B', 'C', 'D']
           @click="selectOption(idx)"
           :disabled="!option.available || isProcessing"
           class="w-full text-left px-3 py-2 text-sm border transition-colors duration-150
-                 min-h-[44px] rounded-sm flex items-start gap-2"
+                 min-h-11 rounded-sm flex items-start gap-2"
           :class="[
             option.available
               ? 'border-border text-fore bg-bg hover:bg-hover'
-              : 'border-[#1e2a2a] text-muted bg-bg opacity-50 cursor-not-allowed'
+              : 'border-hover text-muted bg-bg opacity-50 cursor-not-allowed'
           ]"
         >
           <span class="font-bold shrink-0 mt-px">{{ optionLabels[idx] }}.</span>

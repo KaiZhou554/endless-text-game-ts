@@ -74,7 +74,7 @@ function handleDrop(item) {
       <h2 class="text-sm font-bold text-accent">🎒 背包</h2>
       <button
         @click="emit('close')"
-        class="text-sm min-h-[44px] border rounded-sm
+        class="text-sm min-h-11 border rounded-sm
                text-danger border-danger bg-transparent cursor-pointer
                hover:bg-close-hover hover:border-close-hover-border"
       >✕ 关闭</button>
@@ -132,13 +132,13 @@ function handleDrop(item) {
             <button
               v-if="item.type === 'food' || item.type === 'drink' || item.type === 'medical' || item.usable"
               @click.stop="handleUse(item)"
-              class="text-[11px] border rounded-sm min-h-[36px] flex-1
+              class="text-[11px] border rounded-sm min-h-9 flex-1
                      border-success text-success bg-bg
                      hover:bg-hover transition-colors"
             >使用</button>
             <button
               @click.stop="handleDrop(item)"
-              class="text-[11px] border rounded-sm min-h-[36px] flex-1
+              class="text-[11px] border rounded-sm min-h-9 flex-1
                      border-danger text-danger bg-bg
                      hover:bg-hover transition-colors"
             >丢弃</button>

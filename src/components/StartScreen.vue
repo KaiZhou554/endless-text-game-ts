@@ -51,7 +51,7 @@ function startNewGame(mode) {
     <!-- 模式选择按钮 -->
     <div class="w-full space-y-3">
       <button @click="startNewGame('roguelike')"
-        class="w-full min-h-[44px] rounded-sm border text-left text-sm
+        class="w-full min-h-11 rounded-sm border text-left text-sm
                bg-bg border-accent text-accent hover:bg-hover
                transition-colors duration-150">
         <span class="font-bold">⚔️ 标准模式</span>
@@ -61,7 +61,7 @@ function startNewGame(mode) {
       </button>
 
       <button @click="startNewGame('easy')"
-        class="w-full min-h-[44px] rounded-sm border text-left text-sm
+        class="w-full min-h-11 rounded-sm border text-left text-sm
                bg-bg border-border text-success hover:bg-hover
                transition-colors duration-150">
         <span class="font-bold">🛡️ 简单模式</span>

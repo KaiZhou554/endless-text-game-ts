@@ -51,7 +51,7 @@ function formatTime(dayCount) {
       <h2 class="text-sm font-bold text-accent">📖 日志</h2>
       <button
         @click="emit('close')"
-        class="text-sm min-h-[44px] border rounded-sm
+        class="text-sm min-h-11 border rounded-sm
                text-danger bg-transparent border-danger cursor-pointer
                hover:bg-close-hover hover:border-close-hover-border"
       >✕ 关闭</button>

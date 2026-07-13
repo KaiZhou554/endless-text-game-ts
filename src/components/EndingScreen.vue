@@ -88,7 +88,7 @@ const subtitle = computed(() => {
     <button
       @click="emit('restart')"
       class="w-full text-center text-sm border transition-colors duration-150
-             min-h-[44px] rounded-sm font-bold
+             min-h-11 rounded-sm font-bold
              bg-bg border-accent text-accent
              hover:bg-hover"
     >

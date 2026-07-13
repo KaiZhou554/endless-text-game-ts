@@ -17,7 +17,7 @@ const usedSlots = computed(() => getUsedSlots(props.gameState))
       @click="emit('toggle-inventory')"
       class="flex-1 flex items-center justify-center gap-1 py-2.5 text-xs
              border-r border-border text-fore bg-bg
-             transition-colors duration-150 min-h-[44px] hover:bg-hover"
+             transition-colors duration-150 min-h-11 hover:bg-hover"
     >
       🎒 背包
       <span v-if="gameState.inventory.length > 0"
@@ -30,7 +30,7 @@ const usedSlots = computed(() => getUsedSlots(props.gameState))
       @click="emit('toggle-journal')"
       class="flex-1 flex items-center justify-center gap-1 py-2.5 text-xs
              border-r border-border text-fore bg-bg
-             transition-colors duration-150 min-h-[44px] hover:bg-hover"
+             transition-colors duration-150 min-h-11 hover:bg-hover"
     >
       📖 日志
     </button>
@@ -39,7 +39,7 @@ const usedSlots = computed(() => getUsedSlots(props.gameState))
       @click="emit('toggle-map')"
       class="flex-1 flex items-center justify-center gap-1 py-2.5 text-xs
              border-r border-border text-fore bg-bg
-             transition-colors duration-150 min-h-[44px] hover:bg-hover"
+             transition-colors duration-150 min-h-11er:bg-hover"
     >
       🗺️ 地图
     </button>
@@ -50,7 +50,7 @@ const usedSlots = computed(() => getUsedSlots(props.gameState))
         @click="emit('save-game')"
         class="flex-1 flex items-center justify-center gap-1 py-2.5 text-xs
                border-r border-border text-success bg-bg
-               transition-colors duration-150 min-h-[44px] hover:bg-hover"
+               transition-colors duration-150 min-h-11 hover:bg-hover"
       >
         💾 存档
       </button>
@@ -59,7 +59,7 @@ const usedSlots = computed(() => getUsedSlots(props.gameState))
         @click="emit('load-game')"
         class="flex-1 flex items-center justify-center gap-1 py-2.5 text-xs
                text-accent bg-bg
-               transition-colors duration-150 min-h-[44px] hover:bg-hover"
+               transition-colors duration-150 min-h-11 hover:bg-hover"
       >
         📂 读档
       </button>

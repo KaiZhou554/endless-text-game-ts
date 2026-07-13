@@ -44,7 +44,7 @@ const optionLabels = ['A', 'B', 'C', 'D', 'E', 'F']
         @click="selectOption(option)"
         :disabled="!(option as any).available || disabled"
         class="w-full text-left text-sm border transition-colors duration-150
-               min-h-[44px] rounded-sm flex items-start gap-2
+               min-h-11 rounded-sm flex items-start gap-2
                hover:bg-hover"
         :class="optionClasses(option)"
       >

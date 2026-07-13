@@ -721,7 +721,7 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
             v-for="s in combatStrategies"
             :key="s.id"
             @click="handleCombatAction(s.id)"
-            class="w-full text-left text-xs border min-h-[44px] rounded-sm
+            class="w-full text-left text-xs border min-h-11 rounded-sm
                    border-border text-fore bg-bg
                    hover:bg-hover transition-colors duration-150"
           >
@@ -735,13 +735,13 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
           <div class="flex gap-2">
             <button
               @click="handleCombatAction('flee')"
-              class="flex-1 text-xs border rounded-sm min-h-[44px]
+              class="flex-1 text-xs border rounded-sm min-h-11
                      border-accent text-accent bg-bg
                      hover:bg-hover transition-colors duration-150 text-center"
             >🏃 逃跑</button>
             <button
               @click="handleCombatAction('auto')"
-              class="flex-1 text-xs border rounded-sm min-h-[44px]
+              class="flex-1 text-xs border rounded-sm min-h-11
                      border-border text-muted bg-bg
                      hover:bg-hover transition-colors duration-150 text-center"
             >⚡ 一键</button>
@@ -761,7 +761,7 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
               <p class="text-xs mb-2 text-fore">搜索尸体看看有什么可用的……</p>
               <button
                 @click="handleCombatRewardDice"
-                class="w-full text-sm border rounded-sm min-h-[44px]
+                class="w-full text-sm border rounded-sm min-h-11
                        border-accent text-accent bg-bg
                        hover:bg-hover transition-colors duration-150"
               >🎲 搜刮战利品</button>
@@ -779,7 +779,7 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
         <div class="text-center">
           <button
             @click="handleOppDice"
-            class="w-full text-sm border rounded-sm min-h-[44px]
+            class="w-full text-sm border rounded-sm min-h-11
                    bg-bg
                    hover:bg-hover transition-colors duration-150"
             :disabled="!oppRollReady"
