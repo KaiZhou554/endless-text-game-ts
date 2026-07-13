@@ -251,6 +251,27 @@ export function processEvents(state, events: string[], effects?: Record<string, 
         removeFromInventory(state, state.inventory[medIdx].id)
       }
     }
+    if (evt === 'purify_water') {
+      // 将背包中所有 dirty_water 替换为 clean_water
+      const dirtyItems = state.inventory.filter(i => i.id === 'dirty_water')
+      if (dirtyItems.length === 0) {
+        addJournalEntry(state, '✽ 背包里没有需要净化的水。', 'action')
+        continue
+      }
+      let purified = 0
+      for (const dirty of dirtyItems) {
+        const count = dirty._count || 1
+        removeFromInventory(state, 'dirty_water', count)
+        const clean = itemDB['clean_water']
+        if (clean) {
+          for (let i = 0; i < count; i++) {
+            addToInventory(state, clean)
+          }
+        }
+        purified += count
+      }
+      addJournalEntry(state, `✽ 净水器过滤了 ${purified} 份浑浊的水 → 获得了 ${purified} 份干净的水。`, 'action')
+    }
   }
 }
 

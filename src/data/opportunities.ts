@@ -19,7 +19,7 @@ export const opportunities: Opportunity[] = [
     type: 'dice',
     delay: 4,
     diceRanges: [
-      { min: 1, max: 2, text: '雨水浸透了你的衣服和背包里的东西。你浑身发抖，每一步都变得沉重。', effects: { hp: -5, sanity: -3, hunger: -3 } },
+      { min: 1, max: 2, text: '雨水浸透了你的衣服和背包里的东西。你浑身发抖，每一步都变得沉重。', effects: { hp: -5, sanity: -3, hunger: -3 }, lootItem: 'dirty_water' },
       { min: 3, max: 4, text: '你把外套裹紧了些。虽然淋了雨，但不算太糟。', nothing: true },
       { min: 5, max: 6, text: '你发现雨水冲开了一堆瓦砾，露出了一个被遗忘的储物箱。里面居然还有几样东西没被拿走。', lootItem: 'canned_beans' },
     ],

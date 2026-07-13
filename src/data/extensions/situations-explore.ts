@@ -193,6 +193,14 @@ export const situations_explore: Situations = {
         tags: ['采集'],
         requireItems: ['water_bottle'],
         successRate: 0.8,
+        onSuccess: {
+          text: '你蹲在净水池边缘把水壶探进水面。处理厂的沉降工序让水看起来还算清澈——至少没有肉眼可见的悬浮物。你灌满了水壶后又用备用的塑料袋多装了一袋。虽然你不太信任这水的纯度，但在煮沸或过滤之后应该问题不大。',
+          effects: { thirst: 10 },
+          loot: ['dirty_water'],
+        },
+        onFailure: {
+          text: '你蹲在池边刚把水壶浸入水中就闻到了一股不对劲的味道——水面下有一层暗色的沉积物被你搅动了，浑浊的颗粒从池底翻涌上来。你把水壶收回来看了一眼，水壶口挂着一丝暗绿色的絮状物。这水就算煮沸了你也不想喝。你甩干水壶换了个地方。',
+        },
       },
       {
         id: 'fix_pump',
