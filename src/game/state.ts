@@ -5,7 +5,7 @@
 
 import { reactive, computed } from 'vue'
 import { clamp, randInt } from './utils.js'
-import { scenes } from '../data/index.js'
+import { scenes, itemDB } from '../data/index.js'
 import type { GameState, Item } from '../types'
 
 /**
@@ -187,6 +187,16 @@ export function processEvents(state, events: string[], effects?: Record<string, 
       const sleepHours = randInt(8, 10)
       state.dayCount += sleepHours / 24
       if (effects) effects.sleepHours = sleepHours
+    }
+    if (evt === 'smart_ammo') {
+      // 优先匹配背包中已有枪械的弹药，无枪则随机一种
+      const gunAmmos = state.inventory
+        .filter(i => i.type === 'weapon' && i.effects?.ammo)
+        .map(i => i.effects.ammo)
+      const candidates = gunAmmos.length > 0 ? gunAmmos : ['9mm', '12gauge', 'bolt', 'nails', 'harpoon']
+      const ammoType = candidates[Math.floor(Math.random() * candidates.length)]
+      const ammoItem = itemDB['ammo_' + ammoType]
+      if (ammoItem) addToInventory(state, ammoItem)
     }
   }
 }

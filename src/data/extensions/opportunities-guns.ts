@@ -18,7 +18,7 @@ export const opportunities_guns: Opportunity[] = [
     delay: 4,
     diceRanges: [
       { min: 1, max: 3, text: '你撬开地砖——下面是一个空的铁盒。早就被人发现了，里面只剩灰尘和一颗生锈的螺丝。', nothing: true },
-      { min: 4, max: 5, text: '铁盒里是一盒12号霰弹，橡胶垫圈密封得很好，子弹没有受潮。可惜枪不在里面。', lootItem: 'ammo_12gauge' },
+      { min: 4, max: 5, text: '铁盒里是一盒12号霰弹，橡胶垫圈密封得很好，子弹没有受潮。可惜枪不在里面。', events: ['smart_ammo'] },
       { min: 6, max: 6, text: '铁盒里用油布裹着一把双管猎枪，枪身上过油，保养得极好。旁边还有一小盒霰弹。这是某个士兵私下藏的个人武器。', lootItem: 'shotgun' },
     ],
   },
@@ -31,7 +31,7 @@ export const opportunities_guns: Opportunity[] = [
     delay: 4,
     diceRanges: [
       { min: 1, max: 3, text: '你在废墟里翻了二十分钟——只有空弹匣和用过的枪套。这里被清理得很彻底。', nothing: true },
-      { min: 4, max: 5, text: '铁柜下面压着一盒没开封的9mm子弹，包装还是军规的牛皮纸。至少弹药进了你的口袋。', lootItem: 'ammo_9mm' },
+      { min: 4, max: 5, text: '铁柜下面压着一盒没开封的9mm子弹，包装还是军规的牛皮纸。至少弹药进了你的口袋。', events: ['smart_ammo'] },
       { min: 6, max: 6, text: '一个翻倒的枪架底下卡着一把M9手枪，弹匣还在枪里。枪身上有划痕但机械结构完好——大概是撤离时掉在地上没人顾上捡。', lootItem: 'pistol' },
     ],
   },
@@ -44,7 +44,7 @@ export const opportunities_guns: Opportunity[] = [
     delay: 4,
     diceRanges: [
       { min: 1, max: 3, text: '枪管连着的是半截被炸断的枪身——剩下的部分不知飞到哪里去了。只是一块废铁。', nothing: true },
-      { min: 4, max: 5, text: '枪管和枪身都在，但枪机卡死了。你在沙袋旁边找到了几发散落的子弹，至少弹药还能用。', lootItem: 'ammo_9mm' },
+      { min: 4, max: 5, text: '枪管和枪身都在，但枪机卡死了。你在沙袋旁边找到了几发散落的子弹，至少弹药还能用。', events: ['smart_ammo'] },
       { min: 6, max: 6, text: '沙袋里藏着一把完好的M9手枪和两个备用弹匣。枪被仔细地用防水布裹了好几层——藏它的人显然是打算回来取的。', lootItem: 'pistol' },
     ],
   },
@@ -57,7 +57,7 @@ export const opportunities_guns: Opportunity[] = [
     delay: 4,
     diceRanges: [
       { min: 1, max: 3, text: '你用石头砸开塑料锁扣——枪箱是空的。只有发霉的海绵内衬和一张过期的狩猎许可证。', nothing: true },
-      { min: 4, max: 5, text: '枪箱里没有枪，但海绵垫下面压着一盒弩箭。碳纤维箭杆，箭头还涂着防锈油。', lootItem: 'ammo_bolt' },
+      { min: 4, max: 5, text: '枪箱里没有枪，但海绵垫下面压着一盒弩箭。碳纤维箭杆，箭头还涂着防锈油。', events: ['smart_ammo'] },
       { min: 6, max: 6, text: '枪箱里是一把现代复合弩，弓弦松开了但完好无损。箱盖内侧贴着保养说明和使用注意事项——前主人是个认真的人。', lootItem: 'crossbow' },
     ],
   },
@@ -70,7 +70,7 @@ export const opportunities_guns: Opportunity[] = [
     delay: 4,
     diceRanges: [
       { min: 1, max: 3, text: '硬塑箱里是一台坏掉的链锯。有趣但不实用——你需要的不是伐木工具。', nothing: true },
-      { min: 4, max: 5, text: '硬塑箱旁边有几盒钉枪专用的排钉，包装完好。如果有钉枪的话这些弹药就太棒了。', lootItem: 'ammo_nails' },
+      { min: 4, max: 5, text: '硬塑箱旁边有几盒钉枪专用的排钉，包装完好。如果有钉枪的话这些弹药就太棒了。', events: ['smart_ammo'] },
       { min: 6, max: 6, text: '硬塑箱里是一把改装过的工地钉枪，安全开关被拆掉了，射速快得出奇。标签上写着"顾客退货——故障品"，但你知道这不是故障。', lootItem: 'nail_gun' },
     ],
   },
@@ -83,7 +83,7 @@ export const opportunities_guns: Opportunity[] = [
     delay: 4,
     diceRanges: [
       { min: 1, max: 3, text: '你撬开木条箱——里面是生锈的水管阀门和几包螺丝。金属碰撞声来自散落的螺母。', nothing: true },
-      { min: 4, max: 5, text: '箱子里的机械零件之间夹着一盒9mm子弹，大概是从别的货物里滑进去的。意外收获。', lootItem: 'ammo_9mm' },
+      { min: 4, max: 5, text: '箱子里的机械零件之间夹着一盒9mm子弹，大概是从别的货物里滑进去的。意外收获。', events: ['smart_ammo'] },
       { min: 6, max: 6, text: '在阀门和管道下面，有人藏了一把猎枪和一小盒霰弹。这显然不是随机的货物——是某个铁路工人偷偷塞进去的私人物品。', lootItem: 'shotgun' },
     ],
   },
@@ -96,7 +96,7 @@ export const opportunities_guns: Opportunity[] = [
     delay: 4,
     diceRanges: [
       { min: 1, max: 3, text: '铁盒里是车主的行车文件和一串没用的钥匙。工具包里只有千斤顶和扳手。', nothing: true },
-      { min: 4, max: 5, text: '铁盒里没有武器，但工具包夹层里有一盒自卫用的9mm子弹。车主显然考虑过安全问题。', lootItem: 'ammo_9mm' },
+      { min: 4, max: 5, text: '铁盒里没有武器，但工具包夹层里有一盒自卫用的9mm子弹。车主显然考虑过安全问题。', events: ['smart_ammo'] },
       { min: 6, max: 6, text: '铁盒里是一把上了油的M9手枪和一个备用弹匣。后备箱藏枪——标准的守法公民行为，但在末日里这意味着你多了一条命。', lootItem: 'pistol' },
     ],
   },
@@ -112,7 +112,7 @@ export const opportunities_guns: Opportunity[] = [
     delay: 4,
     diceRanges: [
       { min: 1, max: 3, text: '墙上挂着的是几把生锈的菜刀和一把断柄的锤子。典当行收的东西本来就良莠不齐。', nothing: true },
-      { min: 4, max: 5, text: '墙上挂着一把旧气枪和几盒铅弹。气枪打丧尸没用，但你拆开枪托时发现里面塞了一小包9mm子弹——前主人大概是在黑市上混的。', lootItem: 'ammo_9mm' },
+      { min: 4, max: 5, text: '墙上挂着一把旧气枪和几盒铅弹。气枪打丧尸没用，但你拆开枪托时发现里面塞了一小包9mm子弹——前主人大概是在黑市上混的。', events: ['smart_ammo'] },
       { min: 6, max: 6, text: '柜台底下的保险柜被撬了一半就放弃了。你补了几锤子——里面是一把典当的M9手枪，当票还贴在上面："贷款金额：$300。赎回期限：已过期。"', lootItem: 'pistol' },
     ],
   },
@@ -124,7 +124,7 @@ export const opportunities_guns: Opportunity[] = [
     delay: 4,
     diceRanges: [
       { min: 1, max: 3, text: '你翻遍了所有口袋——空的。连身份牌都被人摘走了。先来的人清理得很干净。', nothing: true },
-      { min: 4, max: 5, text: '在一个你差点漏掉的腿袋里，你找到了两盒9mm子弹。大概是备用弹药，塞在不容易够到的位置。', lootItem: 'ammo_9mm' },
+      { min: 4, max: 5, text: '在一个你差点漏掉的腿袋里，你找到了两盒9mm子弹。大概是备用弹药，塞在不容易够到的位置。', events: ['smart_ammo'] },
       { min: 6, max: 6, text: '尸体背后压着一个帆布枪袋，因为被身体挡住所以没有被拿走。里面是一把保养过的双管猎枪，枪托上贴了一张写有维护记录的胶带。', lootItem: 'shotgun' },
     ],
   },
@@ -136,7 +136,7 @@ export const opportunities_guns: Opportunity[] = [
     delay: 4,
     diceRanges: [
       { min: 1, max: 2, text: '你趴在泥地里掏了半天，从杂物箱里只摸出了一把生锈的扳手和一个空弹匣。不值得弄一身泥。', nothing: true },
-      { min: 3, max: 5, text: '杂物箱里有一个防水弹药盒，里面整齐码着几十发9mm子弹。车子翻了以后没人愿意趴在地上够这个位置。', lootItem: 'ammo_9mm' },
+      { min: 3, max: 5, text: '杂物箱里有一个防水弹药盒，里面整齐码着几十发9mm子弹。车子翻了以后没人愿意趴在地上够这个位置。', events: ['smart_ammo'] },
       { min: 6, max: 6, text: '杂物箱深处有一个枪套，里面是一把标准配发的M9手枪。枪上配了战术手电和备用弹匣——这是一线作战人员的配置。', lootItem: 'pistol' },
     ],
   },
@@ -148,7 +148,7 @@ export const opportunities_guns: Opportunity[] = [
     delay: 4,
     diceRanges: [
       { min: 1, max: 3, text: '防水袋里是一套干净的换洗衣服和几包过期的零食。大概是无家可归者的个人储物——不是你要找的东西。', nothing: true },
-      { min: 4, max: 5, text: '防水袋里有衣服、零食，还有一盒用塑料袋裹了好几层的弩箭。箭头锋利，保存状态不错。', lootItem: 'ammo_bolt' },
+      { min: 4, max: 5, text: '防水袋里有衣服、零食，还有一盒用塑料袋裹了好几层的弩箭。箭头锋利，保存状态不错。', events: ['smart_ammo'] },
       { min: 6, max: 6, text: '防水袋里有一把拆开的十字弩，弓片和弩身分开放着，都涂了防锈油。还有一张纸条写着组装步骤——显然是为长期储存做的准备。', lootItem: 'crossbow' },
     ],
   },
@@ -160,7 +160,7 @@ export const opportunities_guns: Opportunity[] = [
     delay: 4,
     diceRanges: [
       { min: 1, max: 3, text: '储物柜里只有两把消防斧和一卷消防水带。你在期待什么？消防员又不是警察。', nothing: true },
-      { min: 4, max: 5, text: '储物柜的夹层里有一个上了锁的小型保险箱，撬开后里面是一盒霰弹和一张射击俱乐部的会员卡。看来有消防员业余爱好是打猎。', lootItem: 'ammo_12gauge' },
+      { min: 4, max: 5, text: '储物柜的夹层里有一个上了锁的小型保险箱，撬开后里面是一盒霰弹和一张射击俱乐部的会员卡。看来有消防员业余爱好是打猎。', events: ['smart_ammo'] },
       { min: 6, max: 6, text: '保险箱里不仅有霰弹，还有一把折叠枪托的短管猎枪——这种配置在城市环境里比长枪管实用得多。这是某个消防员自己改装的私人武器。', lootItem: 'shotgun' },
     ],
   },
@@ -172,7 +172,7 @@ export const opportunities_guns: Opportunity[] = [
     delay: 4,
     diceRanges: [
       { min: 1, max: 3, text: '铁柜里是工程图纸和几盒过期的方便面。大概是工地看门人的应急储备，没有任何武器。', nothing: true },
-      { min: 4, max: 5, text: '铁柜最下层有几盒钉枪用的排钉和一卷备用气管。虽然没有枪，但如果你手头有改装钉枪的话弹药就够了。', lootItem: 'ammo_nails' },
+      { min: 4, max: 5, text: '铁柜最下层有几盒钉枪用的排钉和一卷备用气管。虽然没有枪，但如果你手头有改装钉枪的话弹药就够了。', events: ['smart_ammo'] },
       { min: 6, max: 6, text: '在图纸和文件的最底层，你摸到了一个硬塑工具箱——里面是一把改装钉枪，手柄上缠了防滑胶带。工地的安全主管大概没想到这东西在末日里比手枪还实用。', lootItem: 'nail_gun' },
     ],
   },
@@ -184,7 +184,7 @@ export const opportunities_guns: Opportunity[] = [
     delay: 4,
     diceRanges: [
       { min: 1, max: 3, text: '弹药箱里只剩几发散落的子弹——不同的口径混在一起，大概是最后走的人倒进去的。你用不了这些杂弹。', nothing: true },
-      { min: 4, max: 5, text: '你在沙袋缝隙里找到了一个掉落的弹匣，里面压满了9mm子弹。大概是换弹时手滑掉进去的，匆忙中没人顾上捡。', lootItem: 'ammo_9mm' },
+      { min: 4, max: 5, text: '你在沙袋缝隙里找到了一个掉落的弹匣，里面压满了9mm子弹。大概是换弹时手滑掉进去的，匆忙中没人顾上捡。', events: ['smart_ammo'] },
       { min: 6, max: 6, text: '桌子底下有一个被人踢到角落里的枪袋——拉链开着，但里面的手枪还在。大概是撤离时过于混乱，枪从桌上滑到地上后没人注意到。', lootItem: 'pistol' },
     ],
   },
