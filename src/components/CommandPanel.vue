@@ -35,21 +35,38 @@ function handleCmd() {
   const args = parts.slice(1)
 
   if (cmd === 'give') {
-    let broadcast = false
+    let broadcast = false, merge = false
     const ids: string[] = []
     for (const arg of args) {
       if (arg === '-b' || arg === '--broadcast') { broadcast = true; continue }
+      if (arg === '-m' || arg === '--merge') { merge = true; continue }
       ids.push(arg)
     }
+    const givenItems: any[] = []
     const given: string[] = []
     const skipped: string[] = []
     for (const id of ids) {
       const item = itemDB[id]
       if (item && addToInventory(props.gameState, item)) {
         given.push(item.name)
-        if (broadcast) addJournalEntry(props.gameState, wrapItemName(item), 'action')
+        givenItems.push(item)
       } else {
         skipped.push(id)
+      }
+    }
+    // 合并广播：所有物品一条消息，稀有度取最高
+    if ((broadcast || merge) && givenItems.length > 0) {
+      if (merge) {
+        const names = givenItems.map(i => i.name).join('、')
+        let cls = ''
+        if (givenItems.some(i => i.tags?.includes('极稀有'))) cls = 'item-rare'
+        else if (givenItems.some(i => i.tags?.includes('稀有'))) cls = 'item-epic'
+        const text = `✢ 获得了：${names}`
+        addJournalEntry(props.gameState, cls ? `<span class="${cls}">${text}</span>` : text, 'action')
+      } else {
+        for (const item of givenItems) {
+          addJournalEntry(props.gameState, wrapItemName(item), 'action')
+        }
       }
     }
     const msgs: string[] = []
