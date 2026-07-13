@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import { getUsedSlots, getEffectiveCapacity } from '../game/state.js'
-const emit = defineEmits(['toggle-inventory', 'toggle-journal', 'toggle-map', 'toggle-command', 'save-game', 'load-game'])
+const emit = defineEmits(['toggle-inventory', 'toggle-journal', 'toggle-map', 'save-game', 'load-game'])
 
 const props = defineProps({
   gameState: { type: Object, required: true },
@@ -10,36 +10,9 @@ const props = defineProps({
 const effectiveCapacity = computed(() => getEffectiveCapacity(props.gameState))
 const usedSlots = computed(() => getUsedSlots(props.gameState))
 
-// 长按检测（手机触摸唤出命令面板）
-let longPressTimer: ReturnType<typeof setTimeout> | null = null
-const longPressTriggered = ref(false)
-
 function hoverBg(e: Event, color: string) {
   const el = e.currentTarget as HTMLElement | null
   if (el) el.style.background = color
-}
-
-function journalTouchStart() {
-  longPressTriggered.value = false
-  longPressTimer = setTimeout(() => {
-    longPressTriggered.value = true
-    emit('toggle-command')
-  }, 500)
-}
-
-function journalTouchEnd() {
-  if (longPressTimer) {
-    clearTimeout(longPressTimer)
-    longPressTimer = null
-  }
-}
-
-function journalClick() {
-  if (longPressTriggered.value) {
-    longPressTriggered.value = false
-    return
-  }
-  emit('toggle-journal')
 }
 </script>
 
@@ -63,10 +36,7 @@ function journalClick() {
     </button>
 
     <button
-      @click="journalClick"
-      @touchstart.prevent="journalTouchStart"
-      @touchend="journalTouchEnd"
-      @touchmove="journalTouchEnd"
+      @click="emit('toggle-journal')"
       @mouseenter="hoverBg($event, '#1e2a2a')"
       @mouseleave="hoverBg($event, '#0D1117')"
       class="flex-1 flex items-center justify-center gap-1 py-2.5 text-xs
