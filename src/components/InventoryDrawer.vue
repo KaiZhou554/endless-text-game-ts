@@ -7,13 +7,11 @@ const props = defineProps({
   gameState: { type: Object, required: true },
 })
 
-const emit = defineEmits(['close', 'use-item', 'drop-item', 'equip-weapon', 'equip-armor', 'unequip'])
+const emit = defineEmits(['close', 'use-item', 'drop-item'])
 
 const selectedItem = ref(null)
 
 const inventoryItems = computed(() => props.gameState.inventory)
-const equippedWeapon = computed(() => props.gameState.equippedWeapon)
-const equippedArmor = computed(() => props.gameState.equippedArmor)
 
 function getItemTypeColor(type) {
   const colors = {
@@ -56,15 +54,6 @@ function handleDrop(item) {
   emit('drop-item', item.id)
   selectedItem.value = null
 }
-
-function handleEquip(item) {
-  if (item.type === 'weapon') {
-    emit('equip-weapon', item.id)
-  } else if (item.type === 'armor') {
-    emit('equip-armor', item.id)
-  }
-  selectedItem.value = null
-}
 </script>
 
 <template>
@@ -94,32 +83,12 @@ function handleEquip(item) {
       >✕ 关闭</button>
     </div>
 
-    <!-- 装备栏 -->
-    <div class="border-b text-xs space-y-1" style="border-color: #2a3a3a;">
-      <div class="flex justify-between">
-        <span style="color: #5a6a7a;">⚔️ 武器:</span>
-        <span v-if="equippedWeapon" style="color: #c4746e;">
-          {{ equippedWeapon.name }}
-          <button @click="emit('unequip', 'weapon')"
-                  class="text-[10px] hover:underline" style="color: #5a6a7a;">卸下</button>
-        </span>
-        <span v-else style="color: #5a6a7a;">空手</span>
-      </div>
-      <div class="flex justify-between">
-        <span style="color: #5a6a7a;">🛡️ 防具:</span>
-        <span v-if="equippedArmor" style="color: #7ab8d4;">
-          {{ equippedArmor.name }}
-          <button @click="emit('unequip', 'armor')"
-                  class="text-[10px] hover:underline" style="color: #5a6a7a;">卸下</button>
-        </span>
-        <span v-else style="color: #5a6a7a;">无</span>
-      </div>
-      <div class="flex justify-between">
-        <span style="color: #5a6a7a;">容量:</span>
-        <span style="color: #B0C4DE;">
-          {{ getUsedSlots(gameState) }}/{{ getEffectiveCapacity(gameState) }}
-        </span>
-      </div>
+    <!-- 容量 -->
+    <div class="border-b text-xs flex justify-between" style="border-color: #2a3a3a;">
+      <span style="color: #5a6a7a;">容量:</span>
+      <span style="color: #B0C4DE;">
+        {{ getUsedSlots(gameState) }}/{{ getEffectiveCapacity(gameState) }}
+      </span>
     </div>
 
     <!-- 物品列表 -->
@@ -172,14 +141,6 @@ function handleEquip(item) {
               @mouseenter="e => (e.target as HTMLElement).style.background = '#1e2a2a'"
               @mouseleave="e => (e.target as HTMLElement).style.background = '#0D1117'"
             >使用</button>
-            <button
-              v-if="item.type === 'weapon' || item.type === 'armor'"
-              @click.stop="handleEquip(item)"
-              class="text-[11px] border rounded-sm min-h-[36px] transition-colors"
-              style="border-color: #E6C37C; color: #E6C37C; background: #0D1117;"
-              @mouseenter="e => (e.target as HTMLElement).style.background = '#1e2a2a'"
-              @mouseleave="e => (e.target as HTMLElement).style.background = '#0D1117'"
-            >装备</button>
             <button
               @click.stop="handleDrop(item)"
               class="text-[11px] border rounded-sm min-h-[36px] transition-colors"

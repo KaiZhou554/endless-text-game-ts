@@ -239,11 +239,6 @@ export interface GameState {
   inventory: Item[]
   maxInventory: number
 
-  // 装备
-  equippedWeapon: Item | null
-  equippedArmor: Item | null
-  equippedHelmet: Item | null
-
   // 场景
   currentScene: string | null
   currentSituation: string | null

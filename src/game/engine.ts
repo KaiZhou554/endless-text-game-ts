@@ -546,7 +546,7 @@ function buildResultText(option: any, success: any, state: any) {
 
   // 战斗
   if (id === 'fight' || tags.includes('战斗')) {
-    const wn = state.equippedWeapon ? state.equippedWeapon.name : '拳头'
+    const wn = state.inventory.find(i => i.type === 'weapon')?.name || '拳头'
     return success
       ? `你握紧${wn}迎了上去。${atm}。第一个丧尸扑过来的时候你侧身躲过，反手一击——暗色的血液溅在墙上。战斗持续了几分钟，但感觉像过了几个小时。当最后一个丧尸倒下时，你的手臂在发抖，但你站着。你活下来了。`
       : `你冲了上去，但丧尸比你预估的要多。${atm}。你被包围了，每一次挥击都越来越吃力。最终你杀出一条血路冲了出来，但代价让你几乎站立不稳。鲜血从你身上的伤口渗出。`
@@ -885,7 +885,7 @@ export function resolveCombatRound(state, actionId) {
   let defMod = combat._defending ? 0.5 : 1.0
   combat._defending = false
   enemyDmg = Math.round(calcDamage(combat.enemy.damage, 0.2) * defMod)
-  const armor = state.equippedArmor
+  const armor = state.inventory.find(i => i.type === 'armor' && i.effects?.damageReduction)
   if (armor && armor.effects.damageReduction) {
     enemyDmg = Math.floor(enemyDmg * (1 - armor.effects.damageReduction))
     if (armor.effects.durability && --armor.effects.durability <= 0) { removeFromInventory(state, armor.id); enemyText += ` ⚠️${armor.name}损坏！` }
@@ -1006,26 +1006,6 @@ export function exploreNewArea(state) {
   return generateEvent(state)
 }
 
-export function equipWeapon(state, itemId) {
-  const item = findItem(state.inventory, itemId)
-  if (!item || item.type !== 'weapon') return false
-  if (state.equippedWeapon) addToInventory(state, state.equippedWeapon)
-  removeFromInventory(state, itemId)
-  state.equippedWeapon = item
-  addJournalEntry(state, `✽ 装备了 ${item.name}。`, 'action')
-  return true
-}
-
-export function equipArmor(state, itemId) {
-  const item = findItem(state.inventory, itemId)
-  if (!item || item.type !== 'armor') return false
-  if (state.equippedArmor) addToInventory(state, state.equippedArmor)
-  removeFromInventory(state, itemId)
-  state.equippedArmor = item
-  addJournalEntry(state, `🛡️ 装备了 ${item.name}。`, 'action')
-  return true
-}
-
 export function getOpportunities(state) {
   const scene = scenes[state.currentScene]
   if (!scene) return []
@@ -1041,17 +1021,4 @@ export function getOpportunities(state) {
   return shuffled.slice(0, Math.min(3, Math.floor(Math.random() * 4)))
 }
 
-export function unequipItem(state, slot) {
-  if (slot === 'weapon' && state.equippedWeapon) {
-    if (addToInventory(state, state.equippedWeapon)) {
-      addJournalEntry(state, `卸下了 ${state.equippedWeapon.name}。`, 'action')
-      state.equippedWeapon = null
-    }
-  }
-  if (slot === 'armor' && state.equippedArmor) {
-    if (addToInventory(state, state.equippedArmor)) {
-      addJournalEntry(state, `卸下了 ${state.equippedArmor.name}。`, 'action')
-      state.equippedArmor = null
-    }
-  }
-}
+

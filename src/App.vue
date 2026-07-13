@@ -6,7 +6,7 @@ import { createGameState, resetGameState, addToInventory, removeFromInventory,
 import { generateEvent, resolveOption, applySurvivalDecay, exploreNewArea,
          generateCombat, resolveCombatRound, fleeCombat, rebuildCurrentOptions,
          getCombatStrategies, autoResolveCombat, getOpportunities,
-         startDialogue as engineStartDialogue, equipWeapon, equipArmor, unequipItem } from './game/engine.js'
+         startDialogue as engineStartDialogue } from './game/engine.js'
 import { scenes, itemDB } from './data/index.js'
 import { checkEndings } from './game/ending-utils.js'
 import type { Opportunity } from './types'
@@ -511,22 +511,6 @@ function handleDropItem(itemId: string) {
   currentOptions.value = rebuildCurrentOptions(gameState)
 }
 
-function handleEquipWeapon(itemId: string) {
-  if (equipWeapon(gameState, itemId)) {
-    // 装备成功
-  }
-}
-
-function handleEquipArmor(itemId: string) {
-  if (equipArmor(gameState, itemId)) {
-    // 装备成功
-  }
-}
-
-function handleUnequip(slot: string) {
-  unequipItem(gameState, slot)
-}
-
 // ==================== 地图旅行 ====================
 
 function handleTravel(sceneId: string) {
@@ -845,9 +829,6 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
       @close="gameState.showInventory = false"
       @use-item="handleUseItem"
       @drop-item="handleDropItem"
-      @equip-weapon="handleEquipWeapon"
-      @equip-armor="handleEquipArmor"
-      @unequip="handleUnequip"
     />
 
     <JournalPanel

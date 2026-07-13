@@ -38,11 +38,6 @@ export function createInitialState(): GameState {
     inventory: [],          // [{...item}, ...]
     maxInventory: 12,        // 基础容量（背包可额外拓展）
 
-    // === 武器/装备（已装备） ===
-    equippedWeapon: null,   // item 对象 或 null
-    equippedArmor: null,    // item 对象 或 null
-    equippedHelmet: null,   // item 对象 或 null
-
     // === 当前场景 ===
     currentScene: null,     // 当前场景 id
     currentSituation: null, // 当前情况 id
