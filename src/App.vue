@@ -98,7 +98,7 @@ function handleStartGame(mode: string) {
   }
 
   addJournalEntry(gameState, '你在一栋废弃公寓的浴室里醒来。窗外是燃烧的城市，远处传来警笛和尖叫。你必须生存下去。', 'narrative')
-  addJournalEntry(gameState, `✢ 初始物品：水壶、能量棒、${bonusItem ? bonusItem.name : ''}`, 'action')
+  addJournalEntry(gameState, wrapRewardText('✢ 初始物品：水壶、能量棒、', bonusItem, ''), 'action')
 
   // 生成第一个事件
   generateFirstEvent()
@@ -383,7 +383,9 @@ function showOpportunity(idx) {
       }
     }
     if (opp.resultItem && itemDB[opp.resultItem]) {
-      addToInventory(gameState, itemDB[opp.resultItem])
+      const lootItem = itemDB[opp.resultItem]
+      addToInventory(gameState, lootItem)
+      addJournalEntry(gameState, wrapRewardText('✢ 获得了：', lootItem, ''), 'action')
     }
     setTimeout(() => showOpportunity(idx + 1), opp.delay * 1000)
   }
@@ -416,8 +418,9 @@ function handleOppDice() {
     modifyStat(gameState, k, v)
   }
   if (range?.lootItem && itemDB[range.lootItem]) {
-    addToInventory(gameState, itemDB[range.lootItem])
-    addJournalEntry(gameState, `✢ 获得了：${itemDB[range.lootItem].name}`, 'action')
+    const lootItem = itemDB[range.lootItem]
+    addToInventory(gameState, lootItem)
+    addJournalEntry(gameState, wrapRewardText('✢ 获得了：', lootItem, ''), 'action')
   }
   if (range?.events) processEvents(gameState, range.events)
 
@@ -478,6 +481,9 @@ function handleDialogueResult(result: any) {
   }
   if (result.rewardItems) {
     resultLoot.value = [...(resultLoot.value || []), ...result.rewardItems]
+    for (const item of result.rewardItems) {
+      addJournalEntry(gameState, wrapRewardText('✢ 获得了：', item, ''), 'action')
+    }
   }
 }
 
