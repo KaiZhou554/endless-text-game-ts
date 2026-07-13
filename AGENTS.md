@@ -20,14 +20,14 @@ src/
 ├── main.ts                    # Vue 入口，挂载 #app
 ├── types.ts                   # 核心类型定义（Item, GameState, Scene, Opportunity 等）
 ├── App.vue                    # 主组件 — 流程编排、事件循环、面板切换、机遇系统
-├── assets/main.css            # 全局样式：CSS 变量、字体、滚动条、响应式、动画
+├── assets/main.css            # 全局样式：@theme 主题色、字体、滚动条、响应式、动画
 ├── data/                      # ─── 纯数据层（无逻辑，仅供引擎引用）───
 │   ├── index.ts               #   顶层桶文件，统一导出所有数据
 │   ├── items.ts               #   桶文件，从 extensions/ 聚合物品
 │   ├── scenes.ts              #   21 场景，按 id 索引
 │   ├── situations.ts          #   桶文件，从 extensions/ 聚合情景
 │   ├── modifiers.ts           #   时间/天气/状态/标签等修饰条件
-│   ├── endings.ts             #   12 个结局条件 + 结局文本
+│   ├── endings.ts             #   13 个结局条件 + 结局文本
 │   ├── opportunities.ts       #   15+ 机遇（通用 + 场景特有）
 │   ├── world.ts               #   兼容桶文件
 │   ├── npcs.ts                #   兼容桶文件
@@ -42,6 +42,8 @@ src/
 │       ├── items-supplies.ts  #   消耗品（食物/饮品/医疗）
 │       ├── items-equipment.ts #   装备（防具/工具/杂项）
 │       ├── items-key.ts       #   关键道具
+│       ├── items-extras.ts    #   额外物品（鱼叉枪、大锤等）
+│       ├── opportunities-extras.ts  #   额外机遇
 │       ├── situations-combat.ts   #   战斗/危险类遭遇
 │       ├── situations-social.ts   #   社交/剧情类遭遇
 │       ├── situations-scavenge.ts #   搜索/物资类遭遇
@@ -61,14 +63,14 @@ src/
     ├── StartScreen.vue        #   开始画面 + 模式选择
     ├── StatusBar.vue          #   5 指标（两行显示）+ 时段/疲劳（响应式）
     ├── NarrativeArea.vue      #   主叙事滚动区，打字机效果，队列显示
-    ├── OptionsPanel.vue       #   选项按钮列表
+    ├── OptionsPanel.vue       #   选项按钮列表（动态边框颜色，基于标签）
     ├── ActionBar.vue          #   底部快捷栏（背包/日志/地图/存档）
     ├── EndingScreen.vue       #   结局画面 + 统计
     ├── InventoryDrawer.vue    #   背包侧边抽屉（slot 占位显示）
     ├── JournalPanel.vue       #   日志独立面板（时间线反转）
     ├── DialogPanel.vue        #   NPC 对话树
     ├── MapPanel.vue           #   地图快速旅行（逐步解锁，21 个地点）
-    ├── CommandPanel.vue       #   命令面板（Ctrl+P，/give /effect /event）
+    ├── CommandPanel.vue       #   命令面板（Ctrl+P / 连续点击时间5次）
     └── CombatPanel.vue        #   （内嵌在 App.vue）战斗全屏界面
 ```
 
@@ -358,16 +360,41 @@ endingChecks = [{
 
 ## UI Conventions
 
-- **配色**：背景 `#0D1117`，主文字 `#B0C4DE`，强调 `#E6C37C`，边框 `#2a3a3a`
-- **按钮**：`min-h-[44px]`，`rounded-sm`，1px border，hover 变背景色
-- **禁止**：阴影、渐变、模糊效果、纯白文字、高饱和荧光色
+### 主题系统
+
+所有颜色通过全局 CSS 的 `@theme` 统一管理。新增颜色请在 `src/assets/main.css` 的 `@theme` 块中添加，不要在组件中写十六进制颜色。
+
+**核心主题色：**
+- `bg` (`#0D1117`) — 背景
+- `fore` (`#B0C4DE`) — 主文字
+- `accent` (`#E6C37C`) — 强调
+- `border` (`#2a3a3a`) — 边框
+- `panel` (`#15202a`) — 面板/加亮背景
+- `hover` (`#1e2a2a`) — 悬停背景
+- `dim` (`#658080`) — 暗淡文本
+- `danger` (`#c4746e`) — 危险/警告
+- `success` (`#9ACD9D`) — 成功/医疗
+- `muted` (`#5a6a7a`) — 次要文字
+- `info` (`#7ab8d4`) — 信息/NPC 对话
+- `overlay` — 遮罩层 (`rgba(0,0,0,0.5)`)
+
+完整 28 个变量见 `main.css`。使用方式：`bg-bg` `text-fore` `border-border` `hover:bg-hover`。
+
+### 交互风格
+
+- **按钮**：`min-h-[44px]`，`rounded-sm`，1px border，hover 使用 `hover:bg-hover`（禁用 JS 模拟）
+- **禁止**：阴影、渐变、模糊效果（除稀有度动画外）、纯白文字、高饱和荧光色
+- **所有悬停效果**必须使用 Tailwind `hover:*` 实现，禁止 `@mouseenter`/`@mouseleave` JS 写法
+
+### 布局
 - **响应式**：桌面 `max-w-lg mx-auto`（512px），有四周 16px 边距
 - **手机端**：添加 `w-screen` 占位 div 防止宽度收缩；StatusBar 顶部 `safe-area-inset-top`
 - **字体**：`JetBrains Mono, Fira Code, Consolas, monospace`，字号 15px
-- **面板**：右侧抽屉（手机全屏/桌面 320px），黑色半透明遮罩关闭，含 safe-area 内边距
-- **日志**：最近 5 条 `#15202a` 背景加亮，其余略暗，行高 1.6
-- **符号**：`✢` 战利品/初始物品，`✽` 战斗/逃跑/使用物品（均暗淡），`⊗` 疲劳/超重警告，`➤` 行动提示
-- **暗淡文本 (`.dim`)**：状态后缀、幻觉文本、疲劳/超重警告使用 `#658080`
+- **面板**：右侧抽屉（手机全屏/桌面 320px），`bg-overlay` 遮罩关闭，含 safe-area 内边距
+
+### 符号
+- `✢` 战利品/初始物品，`✽` 战斗/逃跑/使用物品（均暗淡），`⊗` 饥饿/脱水/疲劳/超重警告，`➤` 行动提示
+- 暗淡文本使用 `text-dim` class（对应 `.dim` 全局样式）
 - **输出提示**：`➤ 选择你的行动` 在日志队列空闲时显示
 
 ## Typewriter Effect
@@ -425,7 +452,7 @@ endingChecks = [{
 现有事件：`clear_fatigue`、`heal_40_percent_missing`、`unlock_all_scenes`、`rest_sleep_hours`。
 
 ### 命令面板
-`Ctrl+P` 打开。支持的命令：
+`Ctrl+P` 或连续点击右上角游戏时间 **5 次** 打开。支持的命令：
 - `/give [-b|-m] <itemId...>` — 获得物品。`-b` 逐条广播到叙事面板，`-m` 合并为一条（测试稀有度扫描）
 - `/effect <stat><value>...` — 修改属性。支持缩写 sm/bf/kk/lz/gr
 - `/event <eventId...>` — 触发事件
