@@ -71,6 +71,8 @@ export function createInitialState(): GameState {
     itemsCollected: 0,
     npcsHelped: 0,
     distanceTraveled: 0,
+    undergroundActions: 0,  // 地下场景累计行动次数
+    safeZoneActions: 0,     // 安全区累计行动次数
 
     // === 特殊标记 ===
     sacrificeTriggered: false,
@@ -204,6 +206,7 @@ export function removeFromInventory(state, itemId, count = 1) {
 export function processEvents(state, events: string[], effects?: Record<string, any>) {
   for (const evt of events) {
     if (evt === 'clear_fatigue') state.hoursAwake = 0
+    if (evt === 'trigger_sacrifice') state.sacrificeTriggered = true
     if (evt === 'heal_40_percent_missing') {
       const missing = state.maxHp - state.hp
       const heal = Math.ceil(missing * 0.4)

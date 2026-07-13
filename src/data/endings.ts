@@ -154,20 +154,24 @@ export const endingChecks: Ending[] = [
     isDeath: true,
   },
 
-  // 8. 安全区结局（找到安全区并帮助建立社区）
+  // 8. 安全区结局（在安全区累计行动12次以上，状态良好）
   {
     id: 'safe_zone',
     name: '新家园',
     check(state) {
-      return state.safeZoneJoined === true && state.dayCount >= 7
+      if (!state.safeZoneJoined) return false
+      if (state.safeZoneActions < 12) return false
+      return state.hp > 50 && state.sanity > 50
     },
-    title: '🏘️ 希望的种子',
-    subtitle: '第 {days} 天 — 你们一起重建了秩序',
-    text: `安全区不是天堂——它有争执、有分配问题、有争吵和泪水。但它有一样东西是所有废墟都没有的：希望。
+    title: '🏘️ 避风港',
+    subtitle: '第 {days} 天 — 围墙之内，日子安静地叠加',
+    text: `围墙在你到来之后又加高了一截。大家轮流巡逻，十分尽职尽责，有人在院子里种了番茄，竟然真的结出了果实。
 
-你们修复了围墙，清理了附近的丧尸，甚至开始在学校操场上种蔬菜。孩子们在阳光下奔跑的声音，比任何广播信号都更有力量。
+没有人再提起最初几周的事情。那些让你在漫漫长夜里反复推演的问题，如今堆在脑海深处，像褪色的旧报纸，被饱腹感和上锁的房门隔在了触碰不到的距离。
 
-—— 文明的种子在任何土壤里都能发芽。只要有人在的地方，就有未来。`,
+围墙外，世界按自己的节奏继续腐烂，无人打扰。灾难的布局者还在某处呼吸，他们的事业从未中断。
+
+你找到了安宁。安宁和你想象的一模一样。`,
     stats: ['days', 'kills', 'npcsMet', 'npcsHelped', 'itemsCollected'],
     isDeath: false,
   },
@@ -175,12 +179,14 @@ export const endingChecks: Ending[] = [
 
   // ==================== 更多结局 ====================
 
-  // 9. 电台之王
+  // 9. 电台之王（在广播站，第28-29天，拥有对讲机）
   {
     id: 'radio_king',
     name: '永不消逝的电波',
     check(state) {
-      return state.legacyTags && state.legacyTags.includes('broadcasting') && state.dayCount >= 21
+      if (state.currentScene !== 'radio_station') return false
+      if (state.dayCount < 28 || state.dayCount >= 30) return false
+      return state.inventory.some(i => i.id === 'radio')
     },
     title: '📻 空中灯塔',
     subtitle: '第 {days} 天 — 你的声音传遍了废墟',
@@ -221,12 +227,15 @@ export const endingChecks: Ending[] = [
     isDeath: false,
   },
 
-  // 12. 深渊归途
+  // 12. 地下之王（在地铁站或地下停车场累计行动多次，第28-29天，生命良好）
   {
     id: 'underground_king',
     name: '地下之王',
     check(state) {
-      return state.legacyTags && state.legacyTags.includes('underground_lord') && state.dayCount >= 25
+      if (state.currentScene !== 'subway' && state.currentScene !== 'parking_garage') return false
+      if (state.dayCount < 28 || state.dayCount >= 30) return false
+      if (state.hp < 50) return false
+      return state.undergroundActions >= 5
     },
     title: '🕳️ 深渊领主',
     subtitle: '第 {days} 天 — 地下成了你的王国',

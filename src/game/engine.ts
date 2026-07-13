@@ -179,6 +179,16 @@ export function resolveOption(state, option) {
     addJournalEntry(state, '🔬 你发现了基因治疗研究中心。这里可能藏着关于病毒起源的真相。', 'discovery')
   }
 
+  // 地下场景累计行动计数（结局12：地下之王）
+  if (state.currentScene === 'subway' || state.currentScene === 'parking_garage') {
+    state.undergroundActions++
+  }
+
+  // 安全区累计行动计数（结局8：新家园）
+  if (state.safeZoneJoined) {
+    state.safeZoneActions++
+  }
+
   if (option.isMoveOn || option.isFallback || option.id === 'fallback_move_on') {
     result.sceneChange = true
   }

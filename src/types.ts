@@ -310,6 +310,8 @@ export interface GameState {
   itemsCollected: number
   npcsHelped: number
   distanceTraveled: number
+  undergroundActions: number  // 在地下场景（地铁/地下停车场）累计行动次数
+  safeZoneActions: number     // 在安全区累计行动次数
 
   // 特殊标记
   sacrificeTriggered: boolean
