@@ -1,6 +1,6 @@
 /**
  * 游戏引擎 — 丧尸末日生存
- * 事件生成、选项解析、战斗、对话、生存衰减、丰富叙事
+ * 选项解析、叙事生成、生存衰减、对话
  */
 
 import { scenes, situations, itemDB, npcDB } from '../data/index.js'
@@ -10,14 +10,22 @@ import { getNPCDialogue, getDialogueNode } from './npc-utils.js'
 import { checkEndings } from './ending-utils.js'
 import { opportunities } from '../data/opportunities.js'
 import {
-  randInt, randFloat, chance, randomPick, randomSample,
-  weightedPick, rollSuccess, calcDamage, clamp,
-  hasItem, hasItemWithTag, findItem, shuffle, uniqueId, formatDays,
+  randInt, randFloat, chance, randomPick,
+  rollSuccess, clamp,
+  hasItem, hasItemWithTag,
 } from './utils.js'
 import {
-  addToInventory, removeFromInventory, useItem, modifyStat,
+  addToInventory, removeFromInventory, modifyStat,
   addJournalEntry, getEffectiveCapacity, getUsedSlots, processEvents,
 } from './state.js'
+
+// 子模块
+import { generateEvent, rebuildCurrentOptions } from './engine/events.js'
+import { getCombatStrategies, generateCombat, resolveCombatRound, fleeCombat, autoResolveCombat } from './engine/combat.js'
+
+// 重新导出（供 App.vue 使用）
+export { generateEvent, rebuildCurrentOptions }
+export { getCombatStrategies, generateCombat, resolveCombatRound, fleeCombat, autoResolveCombat }
 
 // ==================== 生存衰减 ====================
 
@@ -87,14 +95,11 @@ export function applySurvivalDecay(state) {
   const cap = getEffectiveCapacity(state)
   if (used > cap) {
     if (state._isOverweight) {
-      // 连续第二回合超重 → 背包破损
       let msg = '⊗ 你的背包终于撑不住了！有些东西损坏了。'
-      // 先丢弃所有大容量背包
       const backpacks = state.inventory.filter(i => i.id === 'backpack')
       for (const bp of backpacks) {
         removeFromInventory(state, bp.id)
       }
-      // 随机丢弃物品直到低于容量上限
       let tries = 0
       while (getUsedSlots(state) > cap && tries < 50) {
         const idx = Math.floor(Math.random() * state.inventory.length)
@@ -112,248 +117,6 @@ export function applySurvivalDecay(state) {
   } else {
     state._isOverweight = false
   }
-}
-
-// ==================== 事件生成 ====================
-
-export function generateEvent(state, forceNewScene = false) {
-  const needNewScene = forceNewScene || !state.currentScene || state._pendingScene
-  let scene
-
-  if (needNewScene) {
-    scene = selectScene(state, forceNewScene)
-    state.currentScene = scene.id
-    state.sceneActionCount = 0
-    if (!state.scenesVisited.includes(scene.id)) {
-      state.scenesVisited.push(scene.id)
-    }
-    addJournalEntry(state, `📍 你来到了${scene.name}。`, 'location')
-    addJournalEntry(state, scene.desc, 'narrative')
-  } else {
-    scene = scenes[state.currentScene]
-    if (!scene) {
-      scene = selectScene(state)
-      state.currentScene = scene.id
-      state.sceneActionCount = 0
-    }
-  }
-
-  const situation = selectSituation(scene, state)
-  state.lastSituationId = state.currentSituation  // 记录上次情况，避免重复
-  state.currentSituation = situation.id
-  state.sceneActionCount++
-
-  state.currentModifiers = collectModifiers(state, scene)
-  const eventText = buildEventText(scene, situation, state.currentModifiers, state)
-  state.currentEventText = eventText
-
-  const options = buildOptions(scene, situation, state.currentModifiers, state)
-
-  if (state.sceneActionCount >= 3) {
-    options.push({
-      id: 'move_on',
-      text: randomPick([
-        '收拾行装，前往下一个地点',
-        '这里已经没什么可搜的了，继续赶路',
-        '是时候离开了——天黑前得找到更好的地方',
-        '继续待下去不安全了，转移阵地',
-      ]),
-      risk: '[离开当前场景] [饱腹-3~6] [口渴-2~4]',
-      tags: ['前进', '移动'],
-      available: true,
-      disabledReason: null,
-      situationId: situation.id,
-      successRate: 1.0,
-      isMoveOn: true,
-    })
-  }
-
-  state.currentOptions = options
-  addJournalEntry(state, eventText, 'narrative')
-
-  return { scene, situation, modifiers: state.currentModifiers, options, text: eventText }
-}
-
-function selectScene(state, forceNewScene = false) {
-  if (state._pendingScene) {
-    const pending = state._pendingScene
-    state._pendingScene = null
-    if (scenes[pending]) return scenes[pending]
-  }
-
-  let candidates = Object.values(scenes)
-  // 转移阵地时排除当前场景，确保真的换地方
-  if (forceNewScene && state.currentScene) {
-    candidates = candidates.filter(s => s.id !== state.currentScene)
-  }
-  const weights = candidates.map(s => {
-    let w = 10 - s.danger
-    if (state._targetScene && s.id === state._targetScene) w += 20
-    if (!state.scenesVisited || !state.scenesVisited.includes(s.id)) w += 8
-    if (s.id === state.currentScene) w -= 5
-    return { value: s, weight: Math.max(1, w) }
-  })
-  return weightedPick(weights)
-}
-
-function selectSituation(scene, state) {
-  const situationList = Object.values(situations)
-  const weights = situationList.map(sit => {
-    let w = 5
-    const st = scene.tags || []
-    if (st.includes('医疗') && sit.id.includes('pharmacy')) w += 8
-    if (st.includes('医疗') && sit.id.includes('injured')) w += 6
-    if (st.includes('食物') && sit.id.includes('food')) w += 8
-    if (st.includes('食物') && sit.id.includes('supplies')) w += 5
-    if (st.includes('黑暗') && sit.id.includes('sleep')) w += 4
-    if (st.includes('关键地点') && sit.id.includes('radio')) w += 10
-    if (st.includes('关键地点') && sit.id.includes('satellite')) w += 10
-    if (st.includes('自然') && sit.id.includes('garden')) w += 8
-    if (st.includes('自然') && sit.id.includes('plant')) w += 6
-    if (state.hunger < 30 && sit.id.includes('food')) w += 5
-    if (state.thirst < 30 && sit.id.includes('water')) w += 5
-    if (state.hp < 30 && sit.id.includes('sleep')) w += 5
-    if (state.infection > 40 && sit.id.includes('pharmacy')) w += 5
-    if (state.legacyTags.includes('made_noise') && sit.id.includes('horde')) w += 6
-    if (state.legacyTags.includes('was_stealthy') && sit.id.includes('cache')) w += 4
-    if (scene.danger >= 5 && sit.danger >= 5) w += 3
-    if (sit.id === state.currentSituation || sit.id === state.lastSituationId) {
-      // 刚经历过的情景大幅降权
-      w = Math.max(1, w - 12)
-    }
-    // 夜晚和疲劳时更可能找到休息处
-    if (sit.id.includes('sleep')) {
-      const hour = (state.dayCount * 24) % 24
-      if (hour >= 20 || hour < 6) w += 12
-      const awake = state.hoursAwake || 0
-      if (awake >= 8) w += 8
-      if (awake >= 10) w += 12
-      if (awake >= 12) w += 20
-    }
-    // 夜晚时遭遇危险的概率提升
-    const hour = (state.dayCount * 24) % 24
-    const isNight = hour >= 20 || hour < 6
-    if (isNight) {
-      if (sit.danger >= 4) w += 6   // 高危险情景夜晚更常见
-      if (sit.id.includes('horde') || sit.id.includes('ambush')) w += 8
-    }
-    return { value: sit, weight: Math.max(1, w) }
-  })
-  return weightedPick(weights)
-}
-
-function collectModifiers(state, scene) {
-  const mods: any[] = []
-  const timeMod = getTimeModifier(state.dayCount)
-  mods.push(timeMod)
-  const weatherMod = getRandomWeather()
-  mods.push(weatherMod)
-  const statusMods = getPlayerStatusModifiers(state)
-  mods.push(...statusMods)
-  for (const tag of state.legacyTags) {
-    if (tag === 'made_noise') {
-      mods.push({ id: 'made_noise', name: '发出了巨响', textPrefix: '刚才的响声还在空气中回荡。', dangerMod: 2 })
-    }
-    if (tag === 'was_stealthy') {
-      mods.push({ id: 'was_stealthy', name: '保持了隐蔽', dangerMod: -1 })
-    }
-  }
-  return mods
-}
-
-function buildEventText(scene, situation, modifiers, state) {
-  let text = ''
-  if (state.sceneActionCount <= 1) {
-    text += `你在${scene.name}。`
-    // 修饰条件（时间/天气/遗留标签）只在场景首次展示
-    for (const mod of modifiers) {
-      if (mod.textPrefix) text += ' ' + mod.textPrefix
-    }
-  }
-  text += '\n\n'
-  let sitText = situation.baseText
-  sitText = sitText.replace('{count}', randInt(2, 6))
-  text += sitText + '\n'
-  // 玩家状态后缀始终展示（因为状态会变化）
-  for (const mod of modifiers) {
-    if (mod.textSuffix) text += '\n<span class="dim">' + mod.textSuffix + '</span>'
-  }
-  if (state.sanity < 30 && chance(0.4)) {
-    const hallucinations = [
-      '<span class="dim">\n（墙角的阴影似乎在移动……不，那只是你的幻觉。）</span>',
-      '<span class="dim">\n（你听到有人在叫你的名字——但周围没有人。）</span>',
-      '<span class="dim">\n（那些尸体……它们刚才是不是动了一下？）</span>',
-      '<span class="dim">\n（你觉得有人在背后看着你。你回头，什么都没有。）</span>',
-    ]
-    text += '\n' + randomPick(hallucinations)
-  }
-  return text
-}
-
-export function rebuildCurrentOptions(state) {
-  const scene = scenes[state.currentScene]
-  const situation = state.currentSituation ? situations[state.currentSituation] : null
-  if (!scene || !situation) return []
-  return buildOptions(scene, situation, state.currentModifiers || [], state)
-}
-
-function buildOptions(scene, situation, modifiers, state) {
-  const options: any[] = []
-  for (const opt of situation.options) {
-    let available = true
-    let disabledReason: string | null = null
-    if (opt.requireItems && opt.requireItems.length > 0) {
-      const hasAll = opt.requireItems.every(itemId => hasItem(state.inventory, itemId))
-      if (!hasAll) {
-        const hasAny = opt.requireItems.some(itemId => hasItem(state.inventory, itemId))
-        if (opt.requireItems.length === 1 || !hasAny) {
-          available = false
-          disabledReason = `[需要: ${opt.requireItems.map(id => itemDB[id]?.name || id).join(' 或 ')}]`
-        }
-      }
-    }
-    if (opt.requireTags && opt.requireTags.length > 0 && available) {
-      const hasTag = opt.requireTags.some(tag => hasItemWithTag(state.inventory, tag))
-      if (!hasTag) {
-        available = false
-        disabledReason = `[需要物品标签: ${opt.requireTags.join(' 或 ')}]`
-      }
-    }
-    if (opt.forbidTags && opt.forbidTags.length > 0 && available) {
-      const hasForbidden = opt.forbidTags.some(tag =>
-        hasItemWithTag(state.inventory, tag) || state.legacyTags.includes(tag)
-      )
-      if (hasForbidden) {
-        available = false
-        disabledReason = `[需要安静的环境]` as any
-      }
-    }
-    // 背包满时阻止搜索/采集类行动
-    if (available && opt.tags && (opt.tags.includes('搜索') || opt.tags.includes('采集'))) {
-      const cap = getEffectiveCapacity(state)
-      if (getUsedSlots(state) >= cap) {
-        available = false
-        disabledReason = '⚠️ 背包已满，无法携带更多物品' as any
-      }
-    }
-    options.push({ ...opt, available, disabledReason, situationId: situation.id })
-  }
-
-  const anyAvailable = options.some(o => o.available)
-  if (!anyAvailable) {
-    options.push({
-      id: 'fallback_move_on',
-      text: '这里没什么可做的，继续前进',
-      risk: '[安全] [消耗时间]',
-      tags: ['前进'],
-      available: true,
-      disabledReason: null,
-      situationId: situation.id,
-      successRate: 1.0,
-      isFallback: true,
-    })
-  }
-  return options
 }
 
 // ==================== 选项解析 ====================
@@ -400,7 +163,6 @@ export function resolveOption(state, option) {
     state.phase = 'ending'
   }
 
-  // 高危险场景有一定几率直接触发战斗
   const currentSceneData = scenes[state.currentScene]
   if (!option.combat && success && currentSceneData && currentSceneData.danger >= 4 && chance(0.12)) {
     result.combat = generateCombat(state)
@@ -415,7 +177,6 @@ export function resolveOption(state, option) {
     addJournalEntry(state, '🔬 你发现了基因治疗研究中心。这里可能藏着关于病毒起源的真相。', 'discovery')
   }
 
-  // 如果是"离开"选项，标记需要换场景
   if (option.isMoveOn || option.isFallback || option.id === 'fallback_move_on') {
     result.sceneChange = true
   }
@@ -424,7 +185,6 @@ export function resolveOption(state, option) {
 }
 
 function applySuccessEffects(result: any, option: any, state: any) {
-  // 只有明确标记为"搜索"的行动才会获得物资
   const lootChance = option.tags && option.tags.includes('搜索') ? 0.9 : 0
   if (chance(lootChance)) {
     const lootCount = randInt(1, 3)
@@ -436,8 +196,7 @@ function applySuccessEffects(result: any, option: any, state: any) {
   if (option.id === 'rest' || option.id === 'rest_here') {
     modifyStat(state, 'hp', 10)
     modifyStat(state, 'sanity', 15)
-    state.hoursAwake = 0  // 休息后清醒时间归零
-    // 休息额外跳过 6-8 小时
+    state.hoursAwake = 0
     const sleepHours = randInt(6, 8)
     state.dayCount += sleepHours / 24
     result.effects.hp = 10
@@ -451,7 +210,6 @@ function applySuccessEffects(result: any, option: any, state: any) {
     if (drink && addToInventory(state, drink)) result.loot.push(drink)
   }
   if (option.isMoveOn || option.isFallback || option.id === 'fallback_move_on' || option.id === 'move_on') {
-    // 转移阵地消耗饱腹和口渴
     const moveHunger = randInt(3, 6)
     const moveThirst = randInt(2, 4)
     modifyStat(state, 'hunger', -moveHunger)
@@ -470,7 +228,6 @@ function applyFailureEffects(result: any, option: any, state: any) {
     modifyStat(state, 'hp', -dmg)
     result.effects.hp = -dmg
   }
-  // combat:true 的选项失败也确保触发战斗，非 combat 选项按概率触发
   if (isCombatOption) {
     result.combat = generateCombat(state)
     result._zombieWarn = true
@@ -514,7 +271,6 @@ const sceneAtmosphere = {
 }
 
 function buildResultText(option: any, success: any, state: any) {
-  // 优先使用选项自定义文本
   if (option.successText || option.failText) {
     return success ? option.successText : (option.failText || option.successText)
   }
@@ -524,7 +280,6 @@ function buildResultText(option: any, success: any, state: any) {
   const atmArr = sceneAtmosphere[state.currentScene] || sceneAtmosphere.default
   const atm = randomPick(atmArr)
 
-  // 离开场景
   if (option.isMoveOn || option.isFallback || option.id === 'fallback_move_on') {
     return randomPick([
       `你最后环视了一圈${sceneName}。这里已经没有更多东西值得停留了。你紧了紧背包带，推开吱呀作响的门，步入外面的世界。新鲜的空气让你精神一振。`,
@@ -537,14 +292,12 @@ function buildResultText(option: any, success: any, state: any) {
   const id = option.id
   const tags = option.tags || []
 
-  // 潜行
   if (id === 'sneak' || tags.includes('潜行')) {
     return success
       ? `你屏住呼吸，背靠冰冷的墙壁，一步一步地挪动。${atm}。你能听到自己心脏跳动的声音——太响了，你觉得全世界都能听到。但丧尸没有。你慢慢移出了它们的感知范围，直到确认安全才敢大口呼吸。汗水已经浸透了你的衣领。`
       : `你小心翼翼地迈出一步——脚下踩到了一块碎玻璃。清脆的响声在寂静中像一声惊雷。${atm}。所有丧尸同时转向你的方向。糟了。你不得不拔腿就跑。`
   }
 
-  // 战斗
   if (id === 'fight' || tags.includes('战斗')) {
     const wn = state.inventory.find(i => i.type === 'weapon')?.name || '拳头'
     return success
@@ -552,82 +305,70 @@ function buildResultText(option: any, success: any, state: any) {
       : `你冲了上去，但丧尸比你预估的要多。${atm}。你被包围了，每一次挥击都越来越吃力。最终你杀出一条血路冲了出来，但代价让你几乎站立不稳。鲜血从你身上的伤口渗出。`
   }
 
-  // 搜索
   if (id === 'loot' || id === 'search_deep' || id === 'take' || id === 'check_back' || id === 'loot_food' || tags.includes('搜索')) {
     return success
       ? `你弯下腰，仔细翻找每一个角落。${atm}。大部分东西都被人拿走了，但你在一堆杂物下面发现了一些被遗漏的物资——也许慌乱中掉落，也许故意藏起来留给后来的人。在末日里，每一次发现都是一个小小的胜利。`
       : `你花了很长时间翻找，但这里早就被洗劫过了。${atm}。除了一些没用的空包装和碎玻璃，什么都没找到。你直起腰，感到一阵失望。`
   }
 
-  // 休息
   if (id === 'rest') {
     return success
       ? `你找了一个相对安全的角落，用能找到的东西堵住门窗。${atm}。你靠着墙坐下，闭上眼睛。睡眠很浅——每一个声响都会让你惊醒——但几个小时后，你感觉身体和精神都恢复了一些。末日里，能闭上眼睛安心睡一觉是最大的奢侈。`
       : `你刚闭上眼睛不到半小时，远处传来的撞击声就把你惊醒了。${atm}。有一群丧尸正在附近徘徊。你不得不提前结束休息，匆忙收拾东西准备应对可能的威胁。`
   }
 
-  // 救援/帮助
   if (id === 'help' || id === 'give_antibiotics' || id === 'offer_bandage' || id === 'investigate' || id === 'rescue' || tags.includes('救援')) {
     return success
       ? `你小心翼翼地靠近，随时准备应对最坏的情况。${atm}。幸运的是，这次你的判断是对的。在末日里伸出援手需要勇气——因为你永远不知道对方是人还是陷阱。你帮助了需要帮助的人，这种善意也许会在未来某个时刻得到回报。`
       : `你试图帮忙，但情况比想象中复杂。${atm}。有时候，即使出于善意，结果也不尽如人意。你默默希望自己已经尽力了。`
   }
 
-  // 交易
   if (id === 'trade' || id === 'trade_open' || id === 'trade_med') {
     return success
       ? `你警惕地靠近对方，一只手始终放在武器旁边。${atm}。交易过程很简短——双方都不想多停留。你得到了需要的东西，对方也一样。在末日里，信任是奢侈品，但交易是必需品。`
       : `你伸出手想进行交易，但对方突然改变了主意。${atm}。也许他们看到了什么，也许只是改变了想法。你空手而归。`
   }
 
-  // 采集
   if (id === 'harvest') {
     return success
       ? `你蹲下来仔细辨认哪些东西还能吃、哪些已经坏了。${atm}。大自然在末日里依然慷慨——只要你知道去哪里找。你采摘了一些可以食用的东西，小心地装进背包。`
       : `你满怀希望地开始采摘，但很快就发现大部分东西都已经腐烂或被人摘走了。${atm}。你只找到很少的东西。`
   }
 
-  // 撬锁/破门
   if (id === 'pick' || id === 'force') {
     return success
       ? `你小心地操作着工具。${atm}。咔哒一声——门开了。里面可能有好东西，也可能什么都没有。你深吸一口气，推门而入。`
       : `你试了又试，但门纹丝不动。${atm}。也许你需要不同的工具，也许这道门后面根本没有什么值得费这么大劲的东西。`
   }
 
-  // 观察/回避/绕路
   if (id === 'avoid' || id === 'observe' || id === 'car_check' || id === 'avoid_trail' || id === 'avoid_plant' || id === 'avoid_cult' || id === 'avoid_mil') {
     return success
       ? `你选择保持距离，先观察清楚。${atm}。谨慎在末日里不是懦弱——它是让你活到明天的关键。你默默地记住了这里的情况，然后继续前行。`
       : `你试图保持距离，但意外的响动暴露了你的存在。${atm}。你不得不匆忙改变计划。`
   }
 
-  // 撤退/逃跑
   if (id === 'retreat' || id === 'flee' || id === 'run' || id === 'leave') {
     return `你迅速做出决定——撤退。${atm}。有时候，活下去的关键不在于你打赢了多少战斗，而在于你避开了多少场。你退回安全的方向，重新计划下一步。`
   }
 
-  // 投掷/转移注意
   if (id === 'distract' || tags.includes('投掷')) {
     return success
       ? `你捡起一件没用的东西，用力扔向远处。撞击声在寂静中回荡。${atm}。丧尸们被声音吸引，蹒跚着朝那个方向走去。你趁机从另一边溜了过去。`
       : `你扔出了东西，但声音不够大——或者丧尸群太大。${atm}。只有一部分丧尸被引开，剩下的依然堵在路上。`
   }
 
-  // 呼唤/回应/通讯
   if (id === 'shout' || id === 'respond' || id === 'call' || id === 'radio_call') {
     return success
       ? `你的声音在空气中回荡。${atm}。回应来得比你预期的快——虽然不是每次回应都代表好消息，但至少你得到了某种联系。在这个孤独的末日里，任何回应都是珍贵的。`
       : `你喊了出去，但回应你的只有回声。${atm}。也许你的声音传得不够远，也许根本没有人——或者没有人愿意回应。`
   }
 
-  // 监听/记录
   if (id === 'listen' || id === 'record') {
     return success
       ? `你屏住呼吸，全神贯注。${atm}。在末日里，信息有时候比食物更重要。你捕捉到了关键的线索，把它牢牢记在心里。`
       : `你努力想听清楚，但噪音太大了——或者信号太弱。${atm}。信息像沙子一样从指缝间溜走。你只捕捉到了只言片语。`
   }
 
-  // 社交接近（幸存者营地、NPC 初次接触）
   if (id === 'approach' || id === 'infiltrate' || tags.includes('社交')) {
     const sitId = option.situationId
     if (sitId === 'wounded_stranger' && id === 'give_supplies') {
@@ -640,292 +381,14 @@ function buildResultText(option: any, success: any, state: any) {
         ? `你走近摊位，打量着桌上的物品。${atm}。戴鸭舌帽的人敲了敲桌面：「随便看，明码标价。不赊账，不找零。」你点点头，开始考虑用什么来交换。`
         : `你走近想看看桌上的东西，对方立刻警觉地按住了腰间的对讲机。「站住。先让我看看你有什么能换的。」你停下脚步，把手放在他能看到的地方。`
     }
-    // 通用社交
     return success
       ? `你深吸一口气，把武器放在显眼但够不到的位置，举起双手慢慢靠近。${atm}。对面的人打量了你很久——他们的眼神里有警惕，也有疲惫。最后，一个人点了点头：「进来吧。别耍花样。」你被允许进入了他们的营地。`
       : `你刚靠近几步，对方就举起了武器。「站住！再往前走一步就开枪了！」${atm}。你只能慢慢后退，举起双手示意没有恶意。这条路走不通了。`
   }
 
-  // 默认
   return success
     ? `你谨慎地行动。${atm}。幸运的是，这次你的判断是对的。在这个崩塌的世界里，每一次正确的决定都是一个小小的胜利。你环顾四周，确认没有新的威胁。`
     : `事情没有按预期发展。${atm}。你不得不临时调整计划。末日里没有万无一失的方案——重要的是随机应变，以及活下去。`
-}
-
-// ==================== 战斗系统 ====================
-
-// 战斗策略（4个基础策略）
-const combatStrategies = [
-  {
-    id: 'assault',
-    name: '⚔️ 正面强攻',
-    desc: '不管三七二十一，正面硬刚！',
-    defMod: 1.0,
-    sanityCost: 0,
-    counterBonus: {},
-  },
-  {
-    id: 'precise',
-    name: '🎯 精准打击',
-    desc: '瞄准要害之处，力求一击制敌。（对庞大/缓慢型 +2）',
-    defMod: 1.0,
-    sanityCost: 5,
-    sanityReq: 30,
-    counterBonus: { '庞大': 2, '缓慢': 2 },
-  },
-  {
-    id: 'defensive',
-    name: '🛡️ 防守反击',
-    desc: '先架住攻击，再找机会反击。（受伤减半）',
-    defMod: 0.5,
-    sanityCost: 0,
-    counterBonus: { '快速': 1, '灵敏': 1 },
-  },
-  {
-    id: 'find_weakness',
-    name: '🔍 寻找弱点',
-    desc: '仔细观察对手，寻找致命破绽。（骰 4+ 伤害翻倍）',
-    defMod: 1.2,
-    sanityCost: 8,
-    sanityReq: 40,
-    counterBonus: { '变异': 3, '狡猾': 2 },
-    highRisk: true,
-  },
-]
-
-function getEnemyDescription(enemy) {
-  const t = enemy.traits || []
-  if (t.includes('快速') && t.includes('灵敏')) return '这头被感染的生物异常敏捷，你几乎看不清它的移动轨迹。'
-  if (t.includes('快速')) return '这具丧尸行动异常敏捷，你很难瞄准它的要害。'
-  if (t.includes('庞大') && t.includes('缓慢')) return '这只丧尸体型巨大，皮肤坚硬如革，但行动迟缓。'
-  if (t.includes('庞大')) return '这具丧尸体型臃肿，皮糙肉厚，普通攻击恐怕效果不大。'
-  if (t.includes('变异')) return '这具丧尸的身体发生了可怕的变异，扭曲的肢体让它看起来不像任何活物。'
-  if (t.includes('脆弱') || t.includes('噪音')) return '这只丧尸看起来身体脆弱，但它的尖叫声会引来更多同伴。'
-  if (t.includes('人型') || t.includes('狡猾')) return '虽然看起来还是人形，但那眼中的疯狂告诉你它早已不是人类。'
-  if (t.includes('集群')) return '一群丧尸漫无目的地徘徊着，它们还没发现你。'
-  return `一只${enemy.name}正朝你逼近，你必须立刻做出反应。`
-}
-
-function getBestWeapon(state) {
-  const w = state.inventory.filter(i => i.type === 'weapon')
-  return w.length ? w.reduce((a, b) => ((a.effects.damage||0) > (b.effects.damage||0) ? a : b)) : null
-}
-
-function d6() { return Math.floor(Math.random() * 6) + 1 }
-function d20() { return Math.floor(Math.random() * 20) + 1 }
-
-/**
- * 根据武器伤害值计算 d20 命中区间
- * 不同武器有不同的区间和伤害加成
- */
-function getHitRanges(wd: number): Array<{min: number, max: number, dmg: number}> {
-  if (wd <= 2) return [{min:2, max:8, dmg:5}, {min:9, max:15, dmg:9}, {min:16, max:19, dmg:12}]
-  if (wd <= 3) return [{min:2, max:7, dmg:5}, {min:8, max:16, dmg:10}, {min:17, max:19, dmg:13}]
-  if (wd <= 4) return [{min:2, max:7, dmg:6}, {min:8, max:16, dmg:11}, {min:17, max:19, dmg:13}]
-  if (wd <= 5) return [{min:2, max:6, dmg:6}, {min:7, max:16, dmg:11}, {min:17, max:19, dmg:14}]
-  if (wd <= 6) return [{min:2, max:6, dmg:7}, {min:7, max:15, dmg:12}, {min:16, max:19, dmg:15}]
-  if (wd <= 7) return [{min:2, max:6, dmg:7}, {min:7, max:15, dmg:12}, {min:16, max:19, dmg:16}]
-  if (wd <= 8) return [{min:2, max:4, dmg:10}, {min:5, max:13, dmg:18}, {min:14, max:19, dmg:24}]
-  if (wd <= 10) return [{min:2, max:4, dmg:12}, {min:5, max:12, dmg:20}, {min:13, max:19, dmg:26}]
-  // 12+ — 极端武器（霰弹枪、手榴弹等）
-  return [{min:2, max:3, dmg:14}, {min:4, max:10, dmg:22}, {min:11, max:19, dmg:30}]
-}
-
-export function getCombatStrategies(state, enemy) {
-  const r: any[] = []
-  const weapons = state.inventory.filter(i => i.type === 'weapon')
-  for (const w of randomSample(weapons, Math.min(2, weapons.length))) {
-    // 需要弹药的武器：没有对应弹药则不显示
-    if (w.effects.ammo && !hasItemWithTag(state.inventory, '弹药:' + w.effects.ammo)) continue
-    const wd = w.effects.damage||0
-    const ranges = getHitRanges(wd)
-    const rangeStr = '基础 4| ' + ranges.map(r => `<span class="dim">${r.min}-${r.max}</span> +${r.dmg}`).join('| ')
-    r.push({ id: 'weapon_'+w.id, name: w.name, desc: rangeStr, isWeapon: true, weaponId: w.id, weaponDmg: wd })
-  }
-  if (r.length === 0) {
-    // 无武器时不显示拳头选项，玩家只能选策略
-  }
-  const avail = combatStrategies.filter(s => !s.sanityReq || state.sanity >= s.sanityReq)
-  for (const s of randomSample(avail, Math.min(2, avail.length))) {
-    r.push({ id: s.id, name: s.name, desc: s.desc, isWeapon: false, defMod: s.defMod, sanityCost: s.sanityCost, counterBonus: s.counterBonus, highRisk: s.highRisk })
-  }
-  return r
-}
-
-export function generateCombat(state) {
-  const enemies = [
-    { name: '普通丧尸', hp: 20, damage: 5, noise: 1, lootChance: 0.4, traits: ['集群'] },
-    { name: '跑尸', hp: 15, damage: 8, noise: 0, lootChance: 0.3, desc: '速度极快', traits: ['快速'] },
-    { name: '臃肿丧尸', hp: 35, damage: 10, noise: 2, lootChance: 0.6, desc: '皮糙肉厚', traits: ['庞大', '缓慢'] },
-    { name: '尖叫者', hp: 10, damage: 3, noise: 6, lootChance: 0.2, desc: '刺耳尖叫', traits: ['脆弱', '噪音'] },
-    { name: '丧尸犬', hp: 12, damage: 6, noise: 1, lootChance: 0.1, desc: '快速凶猛', traits: ['快速', '灵敏'] },
-    { name: '变异丧尸', hp: 50, damage: 15, noise: 3, lootChance: 0.8, desc: '扭曲肢体', traits: ['庞大', '变异'] },
-    { name: '邪教徒', hp: 25, damage: 7, noise: 2, lootChance: 0.5, desc: '疯狂活人', traits: ['人型', '狡猾'] },
-    { name: '孢子丧尸', hp: 18, damage: 4, noise: 1, lootChance: 0.4, desc: '身体布满真菌，死后释放毒气', traits: ['集群', '毒气'] },
-    { name: '爬行者', hp: 12, damage: 5, noise: 0, lootChance: 0.2, desc: '下半身已断，在地上无声爬行', traits: ['快速', '灵敏', '隐蔽'] },
-    { name: '自爆者', hp: 8, damage: 20, noise: 9, lootChance: 0.1, desc: '腹部肿胀发光，靠近即爆', traits: ['脆弱', '自爆'] },
-    { name: '潜行者', hp: 14, damage: 7, noise: 0, lootChance: 0.3, desc: '擅长从阴影中突袭', traits: ['隐蔽', '狡猾', '快速'] },
-    { name: '巨臂丧尸', hp: 45, damage: 14, noise: 4, lootChance: 0.5, desc: '右臂肿胀成巨大棍棒', traits: ['庞大', '缓慢', '重击'] },
-    { name: '丧尸乌鸦', hp: 5, damage: 3, noise: 3, lootChance: 0.1, desc: '成群的感染乌鸦，从空中俯冲', traits: ['快速', '飞行', '集群'] },
-    { name: '融合体', hp: 60, damage: 12, noise: 5, lootChance: 0.7, desc: '多具丧尸融为一体的恐怖肉团', traits: ['庞大', '变异', '再生'] },
-  ]
-  const enemy = randomPick(enemies)
-  const count = randInt(1, 3)
-  state.inCombat = true
-  state.combatState = {
-    enemy: { ...enemy, actualHp: enemy.hp * count, maxHp: enemy.hp * count, count },
-    playerHp: state.hp, rounds: [], result: null,
-    _defending: false, enemyDesc: getEnemyDescription(enemy),
-  }
-  return state.combatState
-}
-
-export function resolveCombatRound(state, actionId) {
-  const combat = state.combatState
-  if (!combat) return null
-  if (actionId === 'flee') {
-    const fleeCount = combat._fleeAttempts || 0
-    combat._fleeAttempts = fleeCount + 1
-    const fleeChance = Math.min(0.55 + fleeCount * 0.15, 0.9)
-    if (chance(fleeChance)) {
-      combat.result = 'fled'
-      state.inCombat = false
-      const fleeTexts = ['你抓住机会转身就跑，头也不回地冲进最近的掩体。', '你全力冲刺，身后传来愤怒的嘶吼——你成功甩掉了它们。', '你且战且退，利用地形甩开了追击。', '你趁对方一个破绽，闪身消失在废墟之间。']
-      addJournalEntry(state, '✽ ' + randomPick(fleeTexts), 'action')
-      return combat
-    }
-    const dmg = randInt(5, 12)
-    state.hp = clamp(state.hp - dmg, 0, state.maxHp)
-    combat.playerHp = state.hp
-    combat.rounds.push({ action: 'flee', playerDmg: 0, enemyDmg: dmg, playerText: '你试图逃跑……', enemyText: `逃跑失败！被追击受到 ${dmg} 点伤害。` })
-    if (state.hp <= 0) { combat.result = 'death'; state.inCombat = false }
-    return combat
-  }
-  let round
-  let isCritRound = false
-  const isWeapon = actionId.startsWith('weapon_')
-  let playerText = '', enemyText = '', playerDmg = 0, enemyDmg = 0
-  if (isWeapon) {
-    const wid = actionId.replace('weapon_', '')
-    let wd = 0, wn = '拳头'
-    if (wid !== 'fists') {
-      const w = state.inventory.find(i => i.id === wid && i.type === 'weapon')
-      if (w) { wd = w.effects.damage||0; wn = w.name }
-      else {
-        // 武器已被丢弃，跳过本回合（不触发敌人反击）
-        combat.rounds.push({ action: actionId, playerDmg: 0, enemyDmg: 0,
-          playerText: '你伸手去拿武器，却发现它已不在背包中……',
-          enemyText: '', isCrit: false })
-        return combat
-      }
-      // 消耗弹药
-      if (w && w.effects.ammo) {
-        const ammoTag = '弹药:' + w.effects.ammo
-        const ammoItem = state.inventory.find(i => i.tags && i.tags.includes(ammoTag))
-        if (ammoItem) removeFromInventory(state, ammoItem.id, 1)
-      }
-    }
-    const roll = d20()
-    if (roll === 1) {
-      playerDmg = 0
-      playerText = `🎲[${roll}] 你使用${wn}，但攻击落空了！`
-    } else if (roll === 20) {
-      playerDmg = 9999
-      playerText = `🎲[${roll}] 你使用${wn}打出必杀一击！💥`
-      isCritRound = true
-    } else {
-      const ranges = getHitRanges(wd)
-      const hit = ranges.find(r => roll >= r.min && roll <= r.max)
-      const bonusDmg = hit ? hit.dmg : 5
-      playerDmg = 4 + bonusDmg
-      playerText = `🎲[${roll}] 你使用${wn}造成了 ${playerDmg} 点伤害`
-    }
-  } else {
-    const s = combatStrategies.find(x => x.id === actionId)
-    let roll = d6(), bonus = 0
-    if (s && s.counterBonus) {
-      for (const [t, v] of Object.entries(s.counterBonus)) {
-        if ((combat.enemy.traits||[]).includes(t)) { bonus += v; break }
-      }
-    }
-    let mult = 1
-    if (s && s.highRisk && roll >= 4) mult = 2
-    if (s && s.sanityCost) modifyStat(state, 'sanity', -s.sanityCost)
-    playerDmg = Math.max(1, (roll + bonus) * mult)
-    playerText = bonus > 0
-      ? `你使出${(s as any).name}，骰出了 ${roll} 点！特征克制 +${bonus}，共 ${playerDmg} 点伤害！`
-      : `你使出${(s as any).name}，骰出了 ${roll} 点，造成 ${playerDmg} 点伤害。`
-    if (mult > 1) playerText += ' 弱点暴露！伤害翻倍！'
-    if (s && s.defMod < 1) combat._defending = true
-  }
-  combat.enemy.actualHp -= playerDmg
-  if (combat.enemy.actualHp <= 0) {
-    // 死亡处理...
-    combat.result = 'victory'; state.inCombat = false
-    state.kills += combat.enemy.count
-    const deathTexts: Record<string, string[]> = {
-      '普通丧尸': ['丧尸摇晃了几下，最终倒地不再动弹。', '你的一击命中了要害，丧尸像断了线一样瘫软下去。'],
-      '跑尸': ['跑尸的冲刺戛然而止，在地上翻滚了几圈后静止了。', '它的速度救不了它——你精准地击中了它的头部。'],
-      '臃肿丧尸': ['这庞大的躯体轰然倒塌，扬起一片尘土。', '臃肿的身躯终于支撑不住，沉重地砸在地上。'],
-      '尖啸者': ['尖啸者的声音戛然而止，只留下回荡的余音。', '它张开嘴还没来得及发出声音，就被你终结了。'],
-      '潜行者': ['潜行者的身影从阴影中显现，然后永远倒下了。', '它擅长隐蔽，但没能躲过你的最后一击。'],
-      '自爆者': ['自爆者肿胀的身体泄了气，缓缓瘫倒——没有爆炸。', '你在它引爆之前结束了它的挣扎。'],
-      '巨臂丧尸': ['巨臂丧尸那粗壮的手臂垂落下来，整个身躯轰然倒下。', '它巨大的手臂在地上砸出一个凹坑，然后彻底静止了。'],
-      '爬行者': ['爬行者抽搐了几下，终于不再动了。', '它贴在地面上，像一只被踩碎的虫子一样不再动弹。'],
-    }
-    const defaults = ['它倒下了，再也没有站起来。', '丧尸终于停止了行动。']
-    const name = combat.enemy.name
-    const pool = deathTexts[name] || defaults
-    const deathDesc = pool[Math.floor(Math.random() * pool.length)]
-    enemyText = `${deathDesc}`
-    round = { action: actionId, playerDmg, enemyDmg: 0, playerText, enemyText, isCrit: isCritRound }
-    combat.rounds.push(round)
-    addJournalEntry(state, `✽ 战斗胜利！击败了 ${combat.enemy.count} 只${combat.enemy.name}。`, 'combat')
-    return combat
-  }
-  // 噪音可能引来更多丧尸（仅当敌人没死时）
-  const wn = isWeapon ? (state.inventory.find(i => i.id === actionId.replace('weapon_','') && i.type === 'weapon')?.effects.noise||0) : 0
-  if (wn >= 3 && chance(0.3)) {
-    combat.enemy.actualHp += randInt(5, 15); combat.enemy.count += randInt(1, 2)
-    playerText += ' ⚠️ 噪音引来了更多丧尸！'
-  }
-  let defMod = combat._defending ? 0.5 : 1.0
-  combat._defending = false
-  enemyDmg = Math.round(calcDamage(combat.enemy.damage, 0.2) * defMod)
-  const armor = state.inventory.find(i => i.type === 'armor' && i.effects?.damageReduction)
-  if (armor && armor.effects.damageReduction) {
-    enemyDmg = Math.floor(enemyDmg * (1 - armor.effects.damageReduction))
-    if (armor.effects.durability && --armor.effects.durability <= 0) { removeFromInventory(state, armor.id); enemyText += ` ⚠️${armor.name}损坏！` }
-  }
-  round = { action: actionId, playerDmg, enemyDmg, playerText, enemyText: enemyText + ` ${combat.enemy.name}反击，${enemyDmg} 点伤害。` + (enemyDmg <= 0 ? '（被格挡）' : ''), isCrit: false }
-  state.hp = clamp(state.hp - enemyDmg, 0, state.maxHp)
-  combat.playerHp = state.hp
-  if (chance(0.2)) { const ia = randInt(5,10); state.infection = clamp(state.infection+ia,0,state.maxInfection); round.enemyText += ` ⚠️咬伤感染 +${ia}` }
-  if (state.hp <= 0) { combat.result = 'death'; state.inCombat = false; round.enemyText += ' 💀 你倒下了……' }
-  combat.rounds.push(round)
-  return combat
-}
-
-export function fleeCombat(state) { return resolveCombatRound(state, 'flee') }
-
-export function autoResolveCombat(state) {
-  const combat = state.combatState
-  if (!combat) return null
-  const weapon = getBestWeapon(state) || { effects: { damage: 1 } }
-  const bd = weapon.effects.damage||1, hp = combat.enemy.actualHp
-  // 简化自动战斗：平均 d20 ≈ 10.5，平均区间加成 ≈ 武器伤害×2
-  const avgDmg = 4 + bd * 2
-  const rounds = Math.ceil(hp / avgDmg), ok = chance(0.5+bd*0.05-combat.enemy.damage*0.02)
-  if (ok) {
-    combat.result = 'victory'; state.inCombat = false; state.kills += combat.enemy.count
-    const d = randInt(3,8)*rounds; state.hp = clamp(state.hp-d,0,state.maxHp)
-    addJournalEntry(state, `✽ 自动战斗！使用${weapon.name} ${rounds}回合击败${combat.enemy.count}只${combat.enemy.name}，损失${d}HP。`, 'combat')
-  } else {
-    const d = randInt(8,15)*rounds; state.hp = clamp(state.hp-d,0,state.maxHp)
-    if (state.hp <= 0) { combat.result='death';state.inCombat=false;addJournalEntry(state,`💀 自动战斗失败！倒下了。`,'danger') }
-    else { combat.result='fled';state.inCombat=false;addJournalEntry(state,`✽ 自动战斗失利，损失${d}HP。`,'combat') }
-  }
-  return combat
 }
 
 // ==================== 对话系统 ====================
@@ -1017,15 +480,10 @@ export function getOpportunities(state) {
   const scene = scenes[state.currentScene]
   if (!scene) return []
 
-  // 通用机遇（无 sceneTags）
   const generic = opportunities.filter(o => !o.sceneTags || o.sceneTags.length === 0)
-  // 场景匹配机遇
   const matched = opportunities.filter(o => o.sceneTags && o.sceneTags.some(t => scene.tags.includes(t)))
 
   let pool = [...generic, ...matched]
-  // 最多 3 个，从池中随机取
   const shuffled = pool.sort(() => Math.random() - 0.5)
   return shuffled.slice(0, Math.min(3, Math.floor(Math.random() * 4)))
 }
-
-
