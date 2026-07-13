@@ -811,6 +811,13 @@ export function resolveCombatRound(state, actionId) {
     if (wid !== 'fists') {
       const w = state.inventory.find(i => i.id === wid && i.type === 'weapon')
       if (w) { wd = w.effects.damage||0; wn = w.name }
+      else {
+        // 武器已被丢弃，跳过本回合（不触发敌人反击）
+        combat.rounds.push({ action: actionId, playerDmg: 0, enemyDmg: 0,
+          playerText: '你伸手去拿武器，却发现它已不在背包中……',
+          enemyText: '', isCrit: false })
+        return combat
+      }
       // 消耗弹药
       if (w && w.effects.ammo) {
         const ammoTag = '弹药:' + w.effects.ammo
