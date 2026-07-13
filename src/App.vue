@@ -426,22 +426,27 @@ function handleOppDice() {
   )
 
   const diceGlyphs = ['', '⚀', '⚁', '⚂', '⚃', '⚄', '⚅']
-  const glyph = diceGlyphs[roll] + ' '
+  const resultText = range?.text || '什么都没发生。'
+  const effects = range?.effects || {}
 
-  addJournalEntry(gameState, `${glyph}${range?.text || ''}`, 'narrative')
+  let out = `${diceGlyphs[roll]} ${resultText}`
+  if (effects.hp) out += ` 生命${effects.hp > 0 ? '+' : ''}${effects.hp}`
+  if (effects.hunger) out += ` 饱腹${effects.hunger > 0 ? '+' : ''}${effects.hunger}`
+  if (effects.thirst) out += ` 口渴${effects.thirst > 0 ? '+' : ''}${effects.thirst}`
+  if (effects.sanity) out += ` 理智${effects.sanity > 0 ? '+' : ''}${effects.sanity}`
+  if (effects.infection) out += ` 感染${effects.infection > 0 ? '+' : ''}${effects.infection}`
 
-  if (range) {
-    if (range.effects) {
-      Object.entries(range.effects).forEach(([key, val]) => {
-        modifyStat(gameState, key, val as number)
-      })
-    }
-    if (range.events) processEvents(gameState, range.events)
-    if (range.lootItem) {
-      const item = itemDB[range.lootItem]
-      if (item && addToInventory(gameState, item)) {
-        addJournalEntry(gameState, wrapRewardText('✢ 获得了：', item, ''), 'action')
-      }
+  addJournalEntry(gameState, `<span class="dim">${out}</span>`, 'action')
+
+  // Apply effects
+  for (const [k, v] of Object.entries(effects)) {
+    modifyStat(gameState, k, v as number)
+  }
+  if (range?.events) processEvents(gameState, range.events)
+  if (range?.lootItem) {
+    const item = itemDB[range.lootItem]
+    if (item && addToInventory(gameState, item)) {
+      addJournalEntry(gameState, wrapRewardText('✢ 获得了：', item, ''), 'action')
     }
   }
 
