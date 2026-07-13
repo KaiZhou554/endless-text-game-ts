@@ -47,28 +47,6 @@ export const situations_combat: Situations = {
     ],
     danger: 4,
   },
-  trap: {
-    id: 'trap',
-    name: '陷阱',
-    baseText: '你脚下突然一软——一个用树枝和落叶伪装的陷阱！下面是一排削尖的木桩。',
-    options: [
-      {
-        id: 'dodge',
-        text: '拼命跳开',
-        risk: '[敏捷判定] [可能受伤]',
-        tags: ['敏捷'],
-        successRate: 0.6,
-      },
-      {
-        id: 'grab',
-        text: '抓住旁边的树枝',
-        risk: '[力量判定]',
-        tags: ['力量'],
-        successRate: 0.5,
-      },
-    ],
-    danger: 3,
-  },
   ambush: {
     id: 'ambush',
     name: '遭遇伏击',

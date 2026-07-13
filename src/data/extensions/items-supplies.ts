@@ -229,7 +229,6 @@ export const supplies: ItemDB = {
     stackable: true,
     reusable: false,
     slots: 1,
-    rarity: 'rare',
   },
   canned_tuna: {
     id: 'canned_tuna',
