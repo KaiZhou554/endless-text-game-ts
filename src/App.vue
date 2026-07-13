@@ -371,11 +371,11 @@ watch(
 
 function showOpportunity(idx) {
   if (idx >= oppQueue.value.length) {
-    // 机遇队列完成
+    // 机遇队列完成 — 仅推进时间 1h，不计疲劳、不占行动计数
     opportunityMode.value = false
     currentOpp.value = null
     oppQueue.value = []
-    applySurvivalDecay(gameState)
+    gameState.dayCount += 1 / 24
     // 生成下一个事件
     const event = generateEvent(gameState, _pendingSceneChange)
     _pendingSceneChange = false
@@ -814,6 +814,7 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
       <!-- 底栏 -->
       <ActionBar
         :gameState="gameState"
+        :combatActive="showCombatUI"
         @toggle-inventory="toggleInventory"
         @toggle-journal="toggleJournal"
         @toggle-map="toggleMap"

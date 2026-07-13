@@ -5,6 +5,7 @@ const emit = defineEmits(['toggle-inventory', 'toggle-journal', 'toggle-map', 's
 
 const props = defineProps({
   gameState: { type: Object, required: true },
+  combatActive: { type: Boolean, default: false },
 })
 
 const effectiveCapacity = computed(() => getEffectiveCapacity(props.gameState))
@@ -37,9 +38,11 @@ const usedSlots = computed(() => getUsedSlots(props.gameState))
 
     <button
       @click="emit('toggle-map')"
+      :disabled="combatActive"
       class="flex-1 flex items-center justify-center gap-1 py-2.5 text-xs
-             border-r border-border text-fore bg-bg
-             transition-colors duration-150 min-h-11er:bg-hover"
+             border-r border-border bg-bg
+             transition-colors duration-150 min-h-11 hover:bg-hover"
+      :class="combatActive ? 'text-muted cursor-not-allowed' : 'text-fore'"
     >
       🗺️ 地图
     </button>
