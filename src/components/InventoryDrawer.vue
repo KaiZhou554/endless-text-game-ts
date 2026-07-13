@@ -11,7 +11,9 @@ const emit = defineEmits(['close', 'use-item', 'drop-item'])
 
 const selectedItem = ref(null)
 
-const inventoryItems = computed(() => props.gameState.inventory)
+const inventoryItems = computed(() =>
+  props.gameState.inventory.filter(i => i.type !== 'clue')
+)
 
 function getItemTypeColor(type) {
   const colors = {
@@ -23,6 +25,7 @@ function getItemTypeColor(type) {
     tool: 'var(--color-fore)',
     key: 'var(--color-accent)',
     misc: 'var(--color-muted)',
+    clue: 'var(--color-accent)',
   }
   return colors[type] || 'var(--color-muted)'
 }
@@ -37,6 +40,7 @@ function getItemTypeName(type) {
     tool: '工具',
     key: '关键',
     misc: '杂项',
+    clue: '线索',
   }
   return names[type] || type
 }

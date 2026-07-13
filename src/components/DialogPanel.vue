@@ -32,13 +32,15 @@ watch(
 function checkOptionAvailable(option: any) {
   if (option.requireItems && option.requireItems.length > 0) {
     const hasAny = option.requireItems.some(id =>
-      props.gameState.inventory.some(i => i.id === id)
+      props.gameState.inventory.some(i => i.id === id) ||
+      (props.gameState.clues || []).some(c => c.id === id)
     )
     if (!hasAny) return false
   }
   if (option.requireTags && option.requireTags.length > 0) {
     const hasAnyTag = option.requireTags.some(tag =>
-      props.gameState.inventory.some(i => i.tags && i.tags.includes(tag))
+      props.gameState.inventory.some(i => i.tags && i.tags.includes(tag)) ||
+      (props.gameState.clues || []).some(c => c.tags && c.tags.includes(tag))
     )
     if (!hasAnyTag) return false
   }

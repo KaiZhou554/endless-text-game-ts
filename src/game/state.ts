@@ -51,6 +51,9 @@ export function createInitialState(): GameState {
     // === 日志 ===
     journal: [],            // [{text, time, type}, ...] 最近 30 条
 
+    // === 笔记线索 ===
+    clues: [],              // [{id, name, desc, tags, time}, ...] 剧情线索
+
     // === 遗留标签（影响后续事件） ===
     legacyTags: [],
 
@@ -127,6 +130,9 @@ export function getUsedSlots(state) {
  * 添加物品到背包（基于占格数判断）
  */
 export function addToInventory(state, item) {
+  // 线索物品 → 存入笔记，不占背包
+  if (item.type === 'clue') return addClue(state, item)
+
   const slots = item.slots ?? 2
   const capacity = getEffectiveCapacity(state)
   const hardLimit = capacity + 4
@@ -145,6 +151,32 @@ export function addToInventory(state, item) {
   }
   state.inventory.push({ ...item, _count: item.initialStack || 1 })
   state.itemsCollected++
+  return true
+}
+
+/**
+ * 添加线索到笔记（不占背包空间）
+ */
+export function addClue(state, item) {
+  // 去重：已有同 id 线索则跳过
+  if (state.clues.some(c => c.id === item.id)) return true
+  state.clues.push({
+    id: item.id,
+    name: item.name,
+    desc: item.desc,
+    tags: item.tags || [],
+    time: state.dayCount,
+  })
+  state.itemsCollected++
+  // 线索附带的效果/事件在获得时自动生效
+  if (item.effects) {
+    if (item.effects.hp) state.hp = clamp(state.hp + item.effects.hp, 0, state.maxHp)
+    if (item.effects.hunger) state.hunger = clamp(state.hunger + item.effects.hunger, 0, state.maxHunger)
+    if (item.effects.thirst) state.thirst = clamp(state.thirst + item.effects.thirst, 0, state.maxThirst)
+    if (item.effects.sanity) state.sanity = clamp(state.sanity + item.effects.sanity, 0, state.maxSanity)
+    if (item.effects.infection) state.infection = clamp(state.infection + item.effects.infection, 0, state.maxInfection)
+  }
+  if (item.events) processEvents(state, item.events)
   return true
 }
 

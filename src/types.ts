@@ -27,7 +27,7 @@ export interface Opportunity {
   resultItem?: string
   delay: number  // 显示后延时(秒)
 }
-export type ItemType = 'weapon' | 'armor' | 'food' | 'drink' | 'medical' | 'tool' | 'key' | 'misc'
+export type ItemType = 'weapon' | 'armor' | 'food' | 'drink' | 'medical' | 'tool' | 'key' | 'misc' | 'clue'
 
 export interface Item {
   id: string
@@ -209,6 +209,14 @@ export interface JournalEntry {
   turnId: number
 }
 
+export interface Clue {
+  id: string
+  name: string
+  desc: string
+  tags: string[]
+  time: number
+}
+
 export interface DialogueSession {
   npcId: string
   nodeId: string
@@ -253,6 +261,9 @@ export interface GameState {
 
   // 日志
   journal: JournalEntry[]
+
+  // 笔记线索
+  clues: Clue[]
 
   // 标记
   legacyTags: string[]

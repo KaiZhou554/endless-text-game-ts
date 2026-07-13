@@ -110,7 +110,7 @@ export function getCombatStrategies(state, enemy) {
   const r: any[] = []
   const weapons = state.inventory.filter(i => i.type === 'weapon')
   for (const w of randomSample(weapons, Math.min(2, weapons.length))) {
-    if (w.effects.ammo && !hasItemWithTag(state.inventory, '弹药:' + w.effects.ammo)) continue
+    if (w.effects.ammo && !hasItemWithTag(state, '弹药:' + w.effects.ammo)) continue
     const ranges = w.hitRanges || getHitRanges(w.effects.damage || 0)
     const wd = w.effects.damage || 0
     const rangeStr = '基础 4| ' + ranges.map(r => `<span class="dim">${r.min}-${r.max}</span> +${r.dmg}`).join('| ')

@@ -74,7 +74,7 @@ export const endingChecks: Ending[] = [
     check(state) {
       if (state.dayCount < 14) return false
       const hasRadio = state.inventory.some(i => i.id === 'radio')
-      const hasFrequency = state.inventory.some(i => i.id === 'radio_frequency')
+      const hasFrequency = state.inventory.some(i => i.id === 'radio_frequency') || state.clues.some(c => c.id === 'radio_frequency')
       return hasRadio && hasFrequency
     },
     title: '🚁 获救',
@@ -96,9 +96,9 @@ export const endingChecks: Ending[] = [
     name: '血清研制',
     check(state) {
       if (state.currentScene !== 'laboratory') return false
-      const hasSerum = state.inventory.some(i => i.id === 'serum_sample')
-      const hasNotes = state.inventory.some(i => i.id === 'research_notes')
-      const hasKeycard = state.inventory.some(i => i.id === 'lab_keycard')
+      const hasSerum = state.inventory.some(i => i.id === 'serum_sample') || state.clues.some(c => c.id === 'serum_sample')
+      const hasNotes = state.inventory.some(i => i.id === 'research_notes') || state.clues.some(c => c.id === 'research_notes')
+      const hasKeycard = state.inventory.some(i => i.id === 'lab_keycard') || state.clues.some(c => c.id === 'lab_keycard')
       return hasSerum && hasNotes && hasKeycard
     },
     title: '🧬 希望',

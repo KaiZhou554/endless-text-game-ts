@@ -194,9 +194,9 @@ function buildOptions(scene, situation, modifiers, state) {
     let available = true
     let disabledReason: string | null = null
     if (opt.requireItems && opt.requireItems.length > 0) {
-      const hasAll = opt.requireItems.every(itemId => hasItem(state.inventory, itemId))
+      const hasAll = opt.requireItems.every(itemId => hasItem(state, itemId))
       if (!hasAll) {
-        const hasAny = opt.requireItems.some(itemId => hasItem(state.inventory, itemId))
+        const hasAny = opt.requireItems.some(itemId => hasItem(state, itemId))
         if (opt.requireItems.length === 1 || !hasAny) {
           available = false
           disabledReason = `[需要: ${opt.requireItems.map(id => itemDB[id]?.name || id).join(' 或 ')}]`
@@ -204,7 +204,7 @@ function buildOptions(scene, situation, modifiers, state) {
       }
     }
     if (opt.requireTags && opt.requireTags.length > 0 && available) {
-      const hasTag = opt.requireTags.some(tag => hasItemWithTag(state.inventory, tag))
+      const hasTag = opt.requireTags.some(tag => hasItemWithTag(state, tag))
       if (!hasTag) {
         available = false
         disabledReason = `[需要物品标签: ${opt.requireTags.join(' 或 ')}]`
@@ -212,7 +212,7 @@ function buildOptions(scene, situation, modifiers, state) {
     }
     if (opt.forbidTags && opt.forbidTags.length > 0 && available) {
       const hasForbidden = opt.forbidTags.some(tag =>
-        hasItemWithTag(state.inventory, tag) || state.legacyTags.includes(tag)
+        hasItemWithTag(state, tag) || state.legacyTags.includes(tag)
       )
       if (hasForbidden) {
         available = false

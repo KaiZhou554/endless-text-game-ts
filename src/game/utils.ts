@@ -102,15 +102,17 @@ export function clamp(value, min, max) {
 /**
  * 判断物品是否在背包中存在
  */
-export function hasItem(inventory, itemId) {
-  return inventory.some(item => item.id === itemId)
+export function hasItem(state, itemId) {
+  return state.inventory.some(item => item.id === itemId)
+      || state.clues.some(c => c.id === itemId)
 }
 
 /**
  * 判断背包中是否有带有某个标签的物品
  */
-export function hasItemWithTag(inventory, tag) {
-  return inventory.some(item => item.tags && item.tags.includes(tag))
+export function hasItemWithTag(state, tag) {
+  return state.inventory.some(item => item.tags && item.tags.includes(tag))
+      || state.clues.some(c => c.tags && c.tags.includes(tag))
 }
 
 /**

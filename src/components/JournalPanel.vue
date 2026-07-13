@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, nextTick, computed } from 'vue'
+import { computed } from 'vue'
 
 const props = defineProps({
   gameState: { type: Object, required: true },
@@ -7,25 +7,7 @@ const props = defineProps({
 
 const emit = defineEmits(['close'])
 
-const scrollRef = ref(null)
-
-const reversedJournal = computed(() => {
-  return [...props.gameState.journal].reverse()
-})
-
-function getTextStyle(entry) {
-  switch (entry.type) {
-    case 'warning': return { color: 'var(--color-accent)' }
-    case 'danger': return { color: 'var(--color-danger)' }
-    case 'combat': return { color: 'var(--color-danger)' }
-    case 'location': return { color: 'var(--color-success)' }
-    case 'dialogue': return { color: 'var(--color-info)' }
-    case 'discovery': return { color: 'var(--color-accent)' }
-    case 'alliance': return { color: 'var(--color-success)' }
-    case 'action': return { color: 'var(--color-muted)' }
-    default: return { color: 'var(--color-fore)' }
-  }
-}
+const clues = computed(() => props.gameState.clues || [])
 
 function formatTime(dayCount) {
   const days = Math.floor(dayCount) + 1
@@ -57,24 +39,23 @@ function formatTime(dayCount) {
       >✕ 关闭</button>
     </div>
 
-    <div ref="scrollRef" class="flex-1 overflow-y-auto space-y-2">
-      <div v-if="reversedJournal.length === 0" class="text-center">
-        <p class="text-xs text-muted">还没有任何记录</p>
+    <div class="flex-1 overflow-y-auto">
+      <div v-if="clues.length === 0" class="text-center py-8">
+        <p class="text-xs text-muted">还没有收集到任何线索</p>
+        <p class="text-[10px] text-muted mt-1">探索世界，线索会自动记录在这里</p>
       </div>
-      <div
-        v-for="entry in reversedJournal"
-        :key="entry.id"
-        class="text-xs leading-relaxed border-b border-hover"
-      >
-        <div class="flex justify-between">
-          <span class="text-[10px] text-muted">
-            {{ formatTime(entry.time) }}
-          </span>
-          <span class="text-[10px] text-timestamp">
-            #{{ entry.id }}
-          </span>
+      <div v-else class="space-y-1">
+        <div
+          v-for="clue in clues"
+          :key="clue.id"
+          class="border-b border-hover"
+        >
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-accent">{{ clue.name }}</span>
+            <span class="text-[10px] text-muted">{{ formatTime(clue.time) }}</span>
+          </div>
+          <p class="text-[11px] leading-relaxed text-muted mt-0.5 mb-1">{{ clue.desc }}</p>
         </div>
-        <p :style="getTextStyle(entry)">{{ entry.text }}</p>
       </div>
     </div>
   </div>

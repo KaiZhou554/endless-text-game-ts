@@ -135,8 +135,8 @@ export function resolveOption(state, option) {
 
   const baseRate = option.successRate || 0.5
   let rateMod = 0
-  if (hasItemWithTag(state.inventory, '隐蔽') && option.tags && option.tags.includes('潜行')) rateMod += 0.15
-  if (hasItemWithTag(state.inventory, '照明') && state.currentModifiers.some(m => m.needsLight)) rateMod += 0.2
+  if (hasItemWithTag(state, '隐蔽') && option.tags && option.tags.includes('潜行')) rateMod += 0.15
+  if (hasItemWithTag(state, '照明') && state.currentModifiers.some(m => m.needsLight)) rateMod += 0.2
 
   const success = rollSuccess(baseRate, { bonus: rateMod })
   result.success = success
@@ -413,7 +413,7 @@ export function selectDialogueOption(state, optionIndex) {
   const option = dlg.currentNode.options[optionIndex]
   if (!option) return null
   if (option.requireItems) {
-    const hasAll = option.requireItems.every(id => hasItem(state.inventory, id))
+    const hasAll = option.requireItems.every(id => hasItem(state, id))
     if (!hasAll) return { error: '缺少所需物品' }
   }
   if (option.trustChange && dlg.npcId) {
@@ -460,11 +460,11 @@ export function selectDialogueOption(state, optionIndex) {
 
 function checkDialogueOptionAvailable(option, state) {
   if (option.requireItems && option.requireItems.length > 0) {
-    const hasAny = option.requireItems.some(id => hasItem(state.inventory, id))
+    const hasAny = option.requireItems.some(id => hasItem(state, id))
     if (!hasAny) return false
   }
   if (option.requireTags && option.requireTags.length > 0) {
-    const hasAnyTag = option.requireTags.some(tag => hasItemWithTag(state.inventory, tag))
+    const hasAnyTag = option.requireTags.some(tag => hasItemWithTag(state, tag))
     if (!hasAnyTag) return false
   }
   return true
