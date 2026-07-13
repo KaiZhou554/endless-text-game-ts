@@ -150,7 +150,7 @@ export const opportunities_extras: Opportunity[] = [
     delay: 4,
     diceRanges: [
       { min: 1, max: 2, text: '你掀开防水布——下面的弹药箱已经被雨水泡烂了，里面的子弹锈得没法用。', nothing: true },
-      { min: 3, max: 5, text: '你在沙袋缝隙里找到了两盒没被泡过的9mm子弹。虽然不多，但每发在末日里都金贵。', events: ['smart_ammo'] },
+      { min: 3, max: 5, text: '你在沙袋缝隙里找到了两盒没被泡过的弹药。虽然不多，但每发在末日里都金贵。', events: ['smart_ammo'] },
       { min: 6, max: 6, text: '工事后面有一个被遗忘的绿色铁箱，锁已经被砸开了。里面是一把保养良好的双管猎枪和一小盒霰弹。', lootItem: 'shotgun' },
     ],
   },

@@ -119,7 +119,7 @@ export const opportunities: Opportunity[] = [
     delay: 4,
     diceRanges: [
       { min: 1, max: 2, text: '你踢到了一个空罐头，声音在室内回荡了许久。你赶紧躲到墙后等了五分钟，确认没东西被引来才离开。', effects: { sanity: -5 } },
-      { min: 3, max: 5, text: '你在柜台下面找到了几发落单的9mm子弹。虽然不多，但有总比没有好。', events: ['smart_ammo'] },
+      { min: 3, max: 5, text: '你在柜台下面找到了几发落单的弹药。虽然不多，但有总比没有好。', events: ['smart_ammo'] },
       { min: 6, max: 6, text: '一个被人遗忘的储物柜没锁紧。你拉开一看——里面有一把保养得不错的M9手枪和一个备用弹匣。', lootItem: 'pistol' },
     ],
   },
