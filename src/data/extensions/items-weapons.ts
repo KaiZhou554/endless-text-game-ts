@@ -140,7 +140,7 @@ export const weapons: ItemDB = {
     name: '电击枪',
     type: 'weapon',
     desc: '一把警用泰瑟电击枪，发射带电飞镖。近距离能让目标短暂麻痹。',
-    tags: ['远程', '噪音:低', '电击', '耐久:4', '稀有'],
+    tags: ['远程', '噪音:低', '电击', '耐久:4'],
     effects: { damage: 3, noise: 1, durability: 4 },
     stackable: false,
     reusable: true,
@@ -160,7 +160,7 @@ export const weapons: ItemDB = {
     name: '改装钉枪',
     type: 'weapon',
     desc: '一把改装过的工地钉枪，拆掉了安全开关，可以当射钉武器用。射速快但威力有限。',
-    tags: ['远程', '噪音:中', '需钉枪钉', '快速', '工具:修理'],
+    tags: ['远程', '噪音:中', '需钉枪钉', '快速', '工具:修理', '极稀有'],
     effects: { damage: 4, noise: 3, ammo: 'nails' },
     hitRanges: [
       { min: 2, max: 9, dmg: 8 },

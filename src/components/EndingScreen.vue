@@ -37,7 +37,9 @@ const statsList = computed(() => {
 
 const subtitle = computed(() => {
   if (!props.ending || !props.gameState) return ''
-  return props.ending.subtitle.replace('{days}', Math.floor(props.gameState.dayCount) + 1)
+  return props.ending.subtitle
+    .replace('{days}', Math.floor(props.gameState.dayCount) + 1)
+    .replace('{kills}', props.gameState.kills || 0)
 })
 </script>
 

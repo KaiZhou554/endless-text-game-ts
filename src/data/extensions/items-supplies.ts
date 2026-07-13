@@ -161,7 +161,7 @@ export const supplies: ItemDB = {
     name: '镇定剂',
     type: 'medical',
     desc: '一支安定注射液。能让你在恐慌中冷静下来，但用多了会产生依赖。',
-    tags: ['医疗', '理智:+40'],
+    tags: ['医疗', '理智:+40', '稀有'],
     effects: { sanity: 40 },
     stackable: true,
     reusable: false,

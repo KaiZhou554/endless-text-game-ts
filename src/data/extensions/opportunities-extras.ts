@@ -64,7 +64,7 @@ export const opportunities_extras: Opportunity[] = [
     diceRanges: [
       { min: 1, max: 3, text: '你打开盒子——空的。大概本来就是个备用容器，还没来得及装东西。', nothing: true },
       { min: 4, max: 5, text: '盒子里有几块用保鲜膜包好的压缩饼干，保存得不错。', lootItem: 'crackers' },
-      { min: 6, max: 6, text: '盒子底部压了一小袋咖啡豆和一包速溶咖啡粉。在末日里这点奢侈比什么都珍贵。', lootItem: 'coffee_beans' },
+      { min: 6, max: 6, text: '盒子底部有半盒薄荷糖和一小包果干。虽然不多，但至少能补充点糖分。', lootItem: 'mints' },
     ],
   },
 

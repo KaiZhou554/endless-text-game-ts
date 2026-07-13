@@ -32,7 +32,7 @@ export const extras: ItemDB = {
     name: '鱼叉枪',
     type: 'weapon',
     desc: '一把改装过的水下鱼叉枪，用压缩气体发射。陆地上也能用，精度不错但只能单发。鱼叉可以回收。',
-    tags: ['远程', '噪音:低', '需鱼叉', '可回收'],
+    tags: ['远程', '噪音:低', '需鱼叉', '可回收', '极稀有'],
     effects: { damage: 6, noise: 1, ammo: 'harpoon' },
     hitRanges: [
       { min: 2, max: 5, dmg: 12 },

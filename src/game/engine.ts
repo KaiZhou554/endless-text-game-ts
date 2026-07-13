@@ -76,7 +76,7 @@ export function applySurvivalDecay(state) {
   if (state.hunger <= 0) {
     state.hp = clamp(state.hp - randInt(3, 6), 0, state.maxHp)
     if (!state.journal.find(j => j.text.includes('饥饿') && j.id > state.actionCount - 5)) {
-      addJournalEntry(state, '<span class="dim">⚠️ 你感到极度的饥饿，身体开始消耗自己。</span>', 'warning')
+      addJournalEntry(state, '<span class="dim">⊗ 你感到极度的饥饿，身体开始消耗自己。</span>', 'warning')
     }
   } else if (state.hunger < 20 && chance(0.3)) {
     state.hp = clamp(state.hp - 1, 0, state.maxHp)
@@ -84,7 +84,7 @@ export function applySurvivalDecay(state) {
   if (state.thirst <= 0) {
     state.hp = clamp(state.hp - randInt(4, 8), 0, state.maxHp)
     if (!state.journal.find(j => j.text.includes('脱水') && j.id > state.actionCount - 5)) {
-      addJournalEntry(state, '<span class="dim">⚠️ 严重脱水！你的嘴唇开裂，视野模糊。</span>', 'warning')
+      addJournalEntry(state, '<span class="dim">⊗ 严重脱水！你的嘴唇开裂，视野模糊。</span>', 'warning')
     }
   } else if (state.thirst < 20 && chance(0.3)) {
     state.hp = clamp(state.hp - 2, 0, state.maxHp)

@@ -132,18 +132,18 @@ function handleDrop(item) {
             >{{ tag }}</span>
           </div>
           <!-- 选中后的操作按钮 -->
-          <div v-if="selectedItem === item" class="flex gap-2">
+          <div v-if="selectedItem === item" class="flex gap-2 w-full">
             <button
               v-if="item.type === 'food' || item.type === 'drink' || item.type === 'medical' || item.usable"
               @click.stop="handleUse(item)"
-              class="text-[11px] border rounded-sm min-h-[36px] transition-colors"
+              class="text-[11px] border rounded-sm min-h-[36px] transition-colors flex-1"
               style="border-color: #9ACD9D; color: #9ACD9D; background: #0D1117;"
               @mouseenter="e => (e.target as HTMLElement).style.background = '#1e2a2a'"
               @mouseleave="e => (e.target as HTMLElement).style.background = '#0D1117'"
             >使用</button>
             <button
               @click.stop="handleDrop(item)"
-              class="text-[11px] border rounded-sm min-h-[36px] transition-colors"
+              class="text-[11px] border rounded-sm min-h-[36px] transition-colors flex-1"
               style="border-color: #c4746e; color: #c4746e; background: #0D1117;"
               @mouseenter="e => (e.target as HTMLElement).style.background = '#1e2a2a'"
               @mouseleave="e => (e.target as HTMLElement).style.background = '#0D1117'"

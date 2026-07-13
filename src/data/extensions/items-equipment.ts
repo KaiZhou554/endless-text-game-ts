@@ -410,16 +410,5 @@ export const equipment: ItemDB = {
     reusable: false,
     slots: 1,
   },
-  coffee_beans: {
-    id: 'coffee_beans',
-    name: '咖啡豆',
-    type: 'misc',
-    desc: '一小袋烘焙好的阿拉比卡咖啡豆，散发着浓郁的香气。研磨冲泡后能让任何人精神一振。',
-    tags: ['饮品原料', '理智:+10(需研磨)', '稀有'],
-    effects: { sanity: 10 },
-    stackable: true,
-    reusable: false,
-    slots: 1,
-  },
 
 };
