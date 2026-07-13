@@ -16,7 +16,7 @@ import {
 } from './utils.js'
 import {
   addToInventory, removeFromInventory, useItem, modifyStat,
-  addJournalEntry, getEffectiveCapacity, getUsedSlots,
+  addJournalEntry, getEffectiveCapacity, getUsedSlots, processEvents,
 } from './state.js'
 
 // ==================== 生存衰减 ====================
@@ -459,6 +459,7 @@ function applySuccessEffects(result: any, option: any, state: any) {
     result.effects.moveHunger = moveHunger
     result.effects.moveThirst = moveThirst
   }
+  if (option.events) processEvents(state, option.events)
   return result
 }
 
@@ -487,6 +488,7 @@ function applyFailureEffects(result: any, option: any, state: any) {
     removeFromInventory(state, lost.id)
     result.effects.lostItem = lost
   }
+  if (option.events) processEvents(state, option.events)
   return result
 }
 

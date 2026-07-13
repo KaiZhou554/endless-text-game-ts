@@ -174,6 +174,26 @@ export function removeFromInventory(state, itemId, count = 1) {
 /**
  * 使用物品
  */
+/**
+ * 处理 events 数组中的事件（供物品使用、机遇、situation 选项共用）
+ */
+export function processEvents(state, events: string[], effects?: Record<string, any>) {
+  for (const evt of events) {
+    if (evt === 'clear_fatigue') state.hoursAwake = 0
+    if (evt === 'heal_40_percent_missing') {
+      const missing = state.maxHp - state.hp
+      const heal = Math.ceil(missing * 0.4)
+      state.hp = clamp(state.hp + heal, 0, state.maxHp)
+      if (effects) effects.hp = heal
+    }
+    if (evt === 'unlock_all_scenes') {
+      for (const id of Object.keys(scenes)) {
+        if (!state.scenesVisited.includes(id)) state.scenesVisited.push(id)
+      }
+    }
+  }
+}
+
 export function useItem(state, itemId) {
   const idx = state.inventory.findIndex(i => i.id === itemId)
   if (idx === -1) return null
@@ -188,22 +208,7 @@ export function useItem(state, itemId) {
   if (effects.infection) state.infection = clamp(state.infection + effects.infection, 0, state.maxInfection)
   if (effects.stopBleeding) state._bleeding = false
   // 处理特殊事件
-  if (item.events) {
-    for (const evt of item.events) {
-      if (evt === 'clear_fatigue') state.hoursAwake = 0
-      if (evt === 'heal_40_percent_missing') {
-        const missing = state.maxHp - state.hp
-        const heal = Math.ceil(missing * 0.4)
-        state.hp = clamp(state.hp + heal, 0, state.maxHp)
-        effects.hp = heal  // 记录实际治疗量供日志显示
-      }
-      if (evt === 'unlock_all_scenes') {
-        for (const id of Object.keys(scenes)) {
-          if (!state.scenesVisited.includes(id)) state.scenesVisited.push(id)
-        }
-      }
-    }
-  }
+  if (item.events) processEvents(state, item.events, effects)
 
   // 非可复用物品移除
   if (!item.reusable) {

@@ -14,6 +14,7 @@ export interface DiceRange {
   loseItem?: boolean  // 随机丢失物品
   combat?: boolean  // 触发战斗
   nothing?: boolean  // 无事发生
+  events?: string[]  // 触发事件（如 clear_fatigue）
 }
 
 export interface Opportunity {
@@ -88,6 +89,7 @@ export interface SituationOption {
   situationId?: string
   successText?: string   // 自定义成功叙事
   failText?: string      // 自定义失败叙事
+  events?: string[]      // 成功/失败均触发的事件
 }
 
 export interface Situation {

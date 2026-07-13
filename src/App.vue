@@ -2,7 +2,7 @@
 import { ref, reactive, computed, watch, nextTick } from 'vue'
 import type { GameState, Item, SituationOption, CombatState } from './types'
 import { createGameState, resetGameState, addToInventory, removeFromInventory,
-         useItem, modifyStat, addJournalEntry } from './game/state.js'
+         useItem, modifyStat, addJournalEntry, processEvents } from './game/state.js'
 import { generateEvent, resolveOption, applySurvivalDecay, exploreNewArea,
          generateCombat, resolveCombatRound, fleeCombat, rebuildCurrentOptions,
          getCombatStrategies, autoResolveCombat, getOpportunities,
@@ -419,6 +419,7 @@ function handleOppDice() {
     addToInventory(gameState, itemDB[range.lootItem])
     addJournalEntry(gameState, `✢ 获得了：${itemDB[range.lootItem].name}`, 'action')
   }
+  if (range?.events) processEvents(gameState, range.events)
 
   const nextIdx = oppQueue.value.indexOf(opp) + 1
   setTimeout(() => showOpportunity(nextIdx), 2000)

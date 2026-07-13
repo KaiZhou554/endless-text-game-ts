@@ -182,6 +182,7 @@ situations = {
         sanityEffect: -10,             // 固定理智变化
         successText?: '自定义成功叙事', // 优先于通用模板
         failText?: '自定义失败叙事',    // 优先于通用模板
+        events?: ['clear_fatigue'],    // 成功/失败触发的事件
       }
     ],
     danger: 3,   // 危险等级，影响权重
@@ -236,7 +237,7 @@ opportunities = [{
   sceneTags?: ['医疗', '武器'],  // 为空则通用
   delay: 4,                       // 显示后延时(秒)
   diceRanges?: [                  // 仅 dice 类型
-    { min: 1, max: 2, text: '结果描述', effects: { hp: -5 }, lootItem: 'itemId' },
+    { min: 1, max: 2, text: '结果描述', effects: { hp: -5 }, lootItem: 'itemId', events: ['clear_fatigue'] },
     { min: 3, max: 5, text: '...', nothing: true },
     { min: 6, max: 6, text: '...', lootItem: 'canned_beans' },
   ],
@@ -384,7 +385,10 @@ endingChecks = [{
 在对应扩展文件中添加条目。type 为 `weapon` 的物品自动按 damage 值分配 d20 命中区间。
 需弹药的武器设置 `effects.ammo`（如 `'9mm'`），对应弹药物品 tags 含 `'弹药:9mm'`。
 小型物品（食物/医疗/弹药）需设置 `slots: 1`。
-特殊行为在 `events` 数组中加入事件 ID，并在 `useItem` 中添加处理分支。
+特殊行为在 `events` 数组中加入事件 ID，并在 `processEvents` 中添加处理分支。
+
+机遇的 `diceRanges[*].events` 和 Situation 选项的 `events` 也支持事件触发，
+分别在 `handleOppDice()` / `applySuccessEffects()` / `applyFailureEffects()` 中调用 `processEvents`。
 
 ### 添加新场景
 在 `src/data/scenes.ts` 的 `scenes` 对象中添加。如需按区域分组，可创建 `src/data/extensions/scenes-*.ts` 文件。
