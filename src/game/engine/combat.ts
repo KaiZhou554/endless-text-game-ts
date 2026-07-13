@@ -257,7 +257,7 @@ export function resolveCombatRound(state, actionId) {
   const armor = state.inventory.find(i => i.type === 'armor' && i.effects?.damageReduction)
   if (armor && armor.effects.damageReduction) {
     enemyDmg = Math.floor(enemyDmg * (1 - armor.effects.damageReduction))
-    if (armor.effects.durability && --armor.effects.durability <= 0) { removeFromInventory(state, armor.id); enemyText += ` ⚠️${armor.name}损坏！` }
+    if (armor.effects.durability && --armor.effects.durability <= 0) { removeFromInventory(state, armor.id); enemyText += ` ⊗${armor.name}损坏！` }
   }
   round = { action: actionId, playerDmg, enemyDmg, playerText, enemyText: enemyText + ` ${combat.enemy.name}反击，${enemyDmg} 点伤害。` + (enemyDmg <= 0 ? '（被格挡）' : ''), isCrit: false }
   state.hp = clamp(state.hp - enemyDmg, 0, state.maxHp)

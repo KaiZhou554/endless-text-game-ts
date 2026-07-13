@@ -22,7 +22,7 @@ function startNewGame(mode) {
         丧尸末日生存
       </h1>
       <p class="text-sm tracking-wide" style="color: #5a6a7a;">
-        ZOMBIE SURVIVAL · TEXT ADVENTURE
+        ZOMBIE PLAYS DICE
       </p>
     </div>
 
@@ -50,30 +50,22 @@ function startNewGame(mode) {
 
     <!-- 模式选择按钮 -->
     <div class="w-full space-y-3">
-      <button
-        @click="startNewGame('roguelike')"
-        class="w-full text-left text-sm border transition-colors duration-150
-               min-h-[44px] rounded-sm"
-        style="background: #0D1117; border-color: #E6C37C; color: #E6C37C;"
-        @mouseenter="e => (e.target as HTMLElement).style.background = '#1e2a2a'"
-        @mouseleave="e => (e.target as HTMLElement).style.background = '#0D1117'"
-      >
+      <button @click="startNewGame('roguelike')" class="w-full min-h-[44px] rounded-sm border text-left text-sm
+           bg-[#0D1117] border-[#E6C37C] text-[#E6C37C]
+           hover:bg-[#1e2a2a]
+           transition-colors duration-150">
         <span class="font-bold">⚔️ 标准模式</span>
-        <span class="block text-xs" style="color: #B0C4DE;">
+        <span class="block text-xs text-[#B0C4DE]">
           永久死亡 · 无法读档 · 真正的生存体验
         </span>
       </button>
 
-      <button
-        @click="startNewGame('easy')"
-        class="w-full text-left text-sm border transition-colors duration-150
-               min-h-[44px] rounded-sm"
-        style="background: #0D1117; border-color: #2a3a3a; color: #9ACD9D;"
-        @mouseenter="e => (e.target as HTMLElement).style.background = '#1e2a2a'"
-        @mouseleave="e => (e.target as HTMLElement).style.background = '#0D1117'"
-      >
+      <button @click="startNewGame('easy')" class="w-full min-h-[44px] rounded-sm border text-left text-sm
+           bg-[#0D1117] border-[#2a3a3a] text-[#9ACD9D]
+           hover:bg-[#1e2a2a]
+           transition-colors duration-150">
         <span class="font-bold">🛡️ 简单模式</span>
-        <span class="block text-xs" style="color: #B0C4DE;">
+        <span class="block text-xs text-[#B0C4DE]">
           1个手动存档位 · 适合新手探索
         </span>
       </button>

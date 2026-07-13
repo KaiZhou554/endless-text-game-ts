@@ -223,7 +223,7 @@ function buildOptions(scene, situation, modifiers, state) {
       const cap = getEffectiveCapacity(state)
       if (getUsedSlots(state) >= cap) {
         available = false
-        disabledReason = '⚠️ 背包已满，无法携带更多物品' as any
+        disabledReason = '⊗ 背包已满，无法携带更多物品' as any
       }
     }
     options.push({ ...opt, available, disabledReason, situationId: situation.id })
