@@ -404,6 +404,7 @@ function showOpportunity(idx) {
     }
     setTimeout(() => showOpportunity(idx + 1), (opp.delay || 4) * 1000)
   } else if (opp.type === 'dice') {
+    addJournalEntry(gameState, opp.baseText, 'narrative')
     opportunityMode.value = true
     currentOpp.value = opp
     oppIndex.value = idx
@@ -424,10 +425,12 @@ function handleOppDice() {
     r => roll >= r.min && roll <= r.max
   )
 
-  addJournalEntry(gameState, `🎲 ${roll}`, 'action')
+  const diceGlyphs = ['', '⚀', '⚁', '⚂', '⚃', '⚄', '⚅']
+  const glyph = diceGlyphs[roll] + ' '
+
+  addJournalEntry(gameState, `${glyph}${range?.text || ''}`, 'narrative')
 
   if (range) {
-    if (range.text) addJournalEntry(gameState, range.text, 'narrative')
     if (range.effects) {
       Object.entries(range.effects).forEach(([key, val]) => {
         modifyStat(gameState, key, val as number)
