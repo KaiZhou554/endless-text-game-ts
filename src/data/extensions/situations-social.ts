@@ -75,6 +75,7 @@ export const situations_social: Situations = {
         text: '靠近声源仔细听，尽力记住内容',
         risk: '[可能听清部分信息] [理智-3:信号在你脑中萦绕]',
         tags: ['信息'],
+        sanityEffect: -3,
         successRate: 0.7,
       },
       {

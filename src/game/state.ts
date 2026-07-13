@@ -230,6 +230,21 @@ export function processEvents(state, events: string[], effects?: Record<string, 
       const ammoItem = itemDB['ammo_' + ammoType]
       if (ammoItem) addToInventory(state, ammoItem)
     }
+    if (evt === 'rest_light') {
+      const heal = 5
+      state.hp = clamp(state.hp + heal, 0, state.maxHp)
+      state.sanity = clamp(state.sanity + 10, 0, state.maxSanity)
+      if (effects) { effects.hp = heal; effects.sanity = 10 }
+    }
+    if (evt === 'consume_random_medical') {
+      // 消耗一个非可复用的医疗物品（给NPC用）
+      const medIdx = state.inventory.findIndex(i =>
+        i.tags && i.tags.includes('医疗') && i.reusable !== true
+      )
+      if (medIdx !== -1) {
+        removeFromInventory(state, state.inventory[medIdx].id)
+      }
+    }
   }
 }
 

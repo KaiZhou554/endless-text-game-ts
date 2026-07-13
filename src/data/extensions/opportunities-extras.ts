@@ -27,7 +27,7 @@ export const opportunities_extras: Opportunity[] = [
     delay: 4,
     diceRanges: [
       { min: 1, max: 3, text: '你靠近一步，猫转身就跑了，消失在围墙那头。你连项圈上的字都没看清。', nothing: true },
-      { min: 4, max: 5, text: '猫没有躲开。你小心地解下吊坠，里面有一小卷钞票。在末日里没什么用。', effects: { sanity: 2 } },
+      { min: 4, max: 5, text: '猫没有躲开。你小心地解下吊坠，里面有一小卷钞票。在末日里没什么用。', nothing: true },
       { min: 6, max: 6, text: '吊坠里是一把小型钥匙和一张纸条："B12号储物柜，密码0412。里面有一周的补给。——如果你是个好人，别伤害它。"', lootItem: 'lockpick' },
     ],
   },

@@ -31,7 +31,7 @@ export const opportunities_medical_sleep: Opportunity[] = [
     delay: 4,
     diceRanges: [
       { min: 1, max: 2, text: '你把棕色瓶子拿出来一看——标签上写的是生理盐水。有用但不值钱。', nothing: true },
-      { min: 3, max: 5, text: '其中两瓶是碘伏和外用消毒液。你挑了一瓶能用的装进包里。至少能清理伤口。', nothing: true },
+      { min: 3, max: 5, text: '其中两瓶是碘伏和外用消毒液。你挑了一瓶能用的装进包里。至少能清理伤口。', lootItem: 'bandage' },
       { min: 6, max: 6, text: '最后一瓶的封蜡上压了一个红色的十字印章——军用标准配给品。里面是没开封的广谱抗生素。', lootItem: 'antibiotics' },
     ],
   },
@@ -43,7 +43,7 @@ export const opportunities_medical_sleep: Opportunity[] = [
     sceneTags: ['医疗'],
     delay: 4,
     diceRanges: [
-      { min: 1, max: 3, text: '器械盘上的东西基本上都摔坏了。你只找到一小瓶没用过的漱口水——对伤口消毒勉强能用。', nothing: true },
+      { min: 1, max: 3, text: '器械盘上的东西基本上都摔坏了。没有找到什么有用的东西。', nothing: true },
       { min: 4, max: 5, text: '柜子里有几板布洛芬止痛药，可能是给拔牙病人开的。剂量不大但够用一阵。', lootItem: 'painkillers' },
       { min: 6, max: 6, text: '在最里层的抽屉里，你发现了一支还封着无菌包装的牙科麻醉注射剂。在野外医疗中这东西的价值远超牙科范畴。', lootItem: 'sedative' },
     ],
@@ -96,13 +96,13 @@ export const opportunities_medical_sleep: Opportunity[] = [
     delay: 4,
     diceRanges: [
       { min: 1, max: 2, text: '地上的草药大多已经发霉长虫了。你踩上去时惊起一群小飞虫，呛得直咳嗽。', nothing: true },
-      { min: 3, max: 5, text: '你找到了一些还没变质的干燥草药——金银花和板蓝根。虽然药效比不上西药，但在没有抗生素的时候至少能减轻炎症。', lootItem: 'herbal_medicine' },
+      { min: 3, max: 5, text: '你找到了一些还没变质的干燥草药，虽然不是特效药，但在没有抗生素的时候至少能减轻炎症。', lootItem: 'herbal_medicine' },
       { min: 6, max: 6, text: '一个密封的陶罐里竟然存着几块完整的膏药和一瓶没有标签的褐色酊剂。附带的纸条上写着用法——是某个老中医撤离前留下的成品。', lootItem: 'first_aid_kit' },
     ],
   },
 
   {
-    id: 'lab_freezer',
+    id: 'medical_lab_freezer',
     baseText: '实验室角落里一台小型超低温冰箱还在运转，压缩机发出低沉的轰鸣声。冰箱门上贴了一张黄色标签："生物样本——非授权人员勿动"。标签下面有人用手写加了一句："有用的在里面"。',
     type: 'dice',
     sceneTags: ['医疗', '科学'],

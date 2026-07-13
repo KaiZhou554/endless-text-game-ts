@@ -63,7 +63,7 @@ export const opportunities_generic_medical: Opportunity[] = [
     delay: 4,
     diceRanges: [
       { min: 1, max: 3, text: '塑料袋里是几件旧T恤和一双破了洞的运动鞋。你翻了翻，还有半包过期的止咳糖。不是你想要的东西。', nothing: true },
-      { min: 4, max: 5, text: '塑料袋里有几板没有标签的药片和一卷纱布。凭味道你判断是某种消炎药——在末日里，有就比没有强。', lootItem: 'vitamin_pills' },
+      { min: 4, max: 5, text: '塑料袋里有几板没有标签的药片和一卷纱布。凭味道你判断是某种消炎药——在末日里，有就比没有强。', lootItem: 'painkillers' },
       { min: 6, max: 6, text: '塑料袋里有整盒的抗生素和一张纸条。纸条上只写了用法用量——每日两次，每次一粒，连服一周。一看就是懂行的人留的。', lootItem: 'antibiotics' },
     ],
   },

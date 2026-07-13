@@ -22,6 +22,7 @@ export const situations_scavenge: Situations = {
         text: '仔细检查是否有陷阱再拿',
         risk: '[安全] [理智-3:疑神疑鬼]',
         tags: ['谨慎'],
+        sanityEffect: -3,
         successRate: 1.0,
       },
       {
