@@ -150,14 +150,13 @@ export const weapons: ItemDB = {
   },
   katana: {
     id: 'katana',
-    name: '武士刀',
+    name: '长刀',
     type: 'weapon',
-    desc: '一把保养精良的武士刀，刀刃在光线下泛着冷冽的寒光。轻巧而致命的艺术品。',
+    desc: '一把保养精良的长刀，刀刃在光线下泛着冷冽的寒光。轻巧而致命的艺术品。',
     tags: ['近战', '噪音:极低', '耐久:18'],
     effects: { damage: 7, noise: 0, durability: 18 },
     stackable: false,
     reusable: true,
-    rarity: 'legendary',
   },
   nail_gun: {
     id: 'nail_gun',

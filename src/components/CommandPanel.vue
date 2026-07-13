@@ -13,6 +13,7 @@
 import { ref, nextTick, onMounted, onUnmounted } from 'vue'
 import { itemDB } from '../data/items'
 import { addToInventory, modifyStat, processEvents, addJournalEntry } from '../game/state'
+import { scenes } from '../data/index'
 import type { GameState } from '../types'
 
 function wrapItemName(item: any): string {
@@ -113,8 +114,20 @@ function handleCmd() {
     s.sanity = s.maxSanity
     s.infection = 0
     result.value = '✔ 五项数值已全满'
+  } else if (cmd === 'tp') {
+    const sceneId = args[0]
+    if (!sceneId) {
+      result.value = '用法: /tp <sceneId>  可用: ' + Object.keys(scenes).join(', ')
+    } else if (!scenes[sceneId]) {
+      result.value = '✘ 未知场景: ' + sceneId + '  可用: ' + Object.keys(scenes).join(', ')
+    } else {
+      const scene = scenes[sceneId]
+      if (!props.gameState.scenesVisited.includes(sceneId)) props.gameState.scenesVisited.push(sceneId)
+      props.gameState._pendingScene = sceneId
+      result.value = '✔ 传送至 ' + scene.name + (props.gameState.currentScene ? '（下次行动生效）' : '')
+    }
   } else {
-    result.value = '未知命令: /' + cmd + '  (支持: give, effect, event, fullheal)'
+    result.value = '未知命令: /' + cmd + '  (支持: give, effect, event, fullheal, tp)'
   }
 }
 

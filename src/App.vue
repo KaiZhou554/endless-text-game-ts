@@ -514,8 +514,10 @@ function handleUseItem(itemId: string) {
 function handleDropItem(itemId: string) {
   const item = gameState.inventory.find(i => i.id === itemId)
   if (item) {
-    removeFromInventory(gameState, itemId)
-    addJournalEntry(gameState, `✽ 丢弃了 ${item.name}。`, 'action')
+    const count = item.stackable ? (item._count || 1) : 1
+    removeFromInventory(gameState, itemId, count)
+    const suffix = count > 1 ? ` x${count}` : ''
+    addJournalEntry(gameState, `✽ 丢弃了 ${item.name}${suffix}。`, 'action')
   }
   // 刷新选项（背包空出后搜索按钮恢复）
   currentOptions.value = rebuildCurrentOptions(gameState)

@@ -35,6 +35,7 @@ const mapLocations = [
   { id: 'rooftop', name: '大楼天台', icon: '🏙️', desc: '写字楼顶', danger: 1, tags: ['安全'] },
   { id: 'parking_garage', name: '地下停车场', icon: '🅿️', desc: '地下车库', danger: 3, tags: ['交通', '黑暗'] },
   { id: 'overpass', name: '天桥', icon: '🌉', desc: '过街天桥', danger: 2, tags: ['室外', '交通'] },
+  { id: 'safe_zone', name: '社区避难所', icon: '🏘️', desc: '幸存者定居点', danger: 0, tags: ['安全', '社区'] },
 ]
 
 function dangerColor(danger) {
