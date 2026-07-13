@@ -73,6 +73,32 @@ export interface Scenes {
 }
 
 // ==================== 情况/遭遇 ====================
+export interface OptionEffects {
+  hp?: number
+  hunger?: number
+  thirst?: number
+  sanity?: number
+  infection?: number
+  hoursAwake?: number      // 设为该值（通常 0 表示重置疲劳）
+  dayIncrement?: number    // 额外跳过的小时数（如睡觉 6-8h）
+}
+
+export interface OptionOutcome {
+  text?: string              // 自定义叙事文本（优先级高于旧 successText/failText）
+  effects?: OptionEffects    // 直接 stat 变化
+  loot?: string[]            // 固定获得的物品 id 列表
+  lootRandom?: {             // 随机战利品（替代硬编码 '搜索' tag）
+    count?: number           // 件数，默认 1-3
+    chance?: number          // 概率，默认 0.9
+  }
+  events?: string[]          // 仅此结果触发的事件
+  combat?: boolean           // 触发战斗
+  combatChance?: number      // 战斗触发概率（默认 1.0）
+  loseItem?: string          // 丢失指定物品 id
+  loseRandomItem?: boolean   // 随机丢失一件物品
+  journalEntry?: string      // 额外日志条目
+}
+
 export interface SituationOption {
   id: string
   text: string
@@ -83,15 +109,17 @@ export interface SituationOption {
   forbidTags?: string[]
   successRate?: number
   combat?: boolean
-  sanityEffect?: number
+  sanityEffect?: number       // @deprecated 无条件理智变化，请用 onSuccess/onFailure.effects.sanity
   isMoveOn?: boolean
   isFallback?: boolean
   available?: boolean
   disabledReason?: string | null
   situationId?: string
-  successText?: string   // 自定义成功叙事
-  failText?: string      // 自定义失败叙事
-  events?: string[]      // 成功/失败均触发的事件
+  successText?: string        // @deprecated 请用 onSuccess.text
+  failText?: string           // @deprecated 请用 onFailure.text
+  events?: string[]           // @deprecated 成败均触发，请用 onSuccess/onFailure.events
+  onSuccess?: OptionOutcome   // 成功时的效果
+  onFailure?: OptionOutcome   // 失败时的效果
 }
 
 export interface Situation {

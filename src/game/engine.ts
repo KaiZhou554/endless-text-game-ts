@@ -143,7 +143,8 @@ export function resolveOption(state, option) {
 
   result.narrativeText = buildResultText(option, success, state)
 
-  if (option.sanityEffect) {
+  // 旧 sanityEffect：仅在没有 onSuccess/onFailure 时生效（向后兼容）
+  if (option.sanityEffect && !option.onSuccess && !option.onFailure) {
     modifyStat(state, 'sanity', option.sanityEffect)
     result.effects.sanity = option.sanityEffect
   }
@@ -168,7 +169,8 @@ export function resolveOption(state, option) {
     result.combat = generateCombat(state)
   }
 
-  if (option.combat && success) {
+  // 旧 option.combat：仅在没有 onSuccess 时生效（新字段通过 onSuccess.combat 控制）
+  if (option.combat && success && !option.onSuccess) {
     result.combat = generateCombat(state)
   }
 
@@ -184,7 +186,74 @@ export function resolveOption(state, option) {
   return result
 }
 
+// ==================== 声明式效果应用（新路径） ====================
+
+function applyOutcomeEffects(result: any, outcome: any, state: any, isSuccess: boolean) {
+  // 1. 直接 stat 变化
+  if (outcome.effects) {
+    const eff = outcome.effects
+    if (eff.hp !== undefined) { modifyStat(state, 'hp', eff.hp); result.effects.hp = eff.hp }
+    if (eff.hunger !== undefined) { modifyStat(state, 'hunger', eff.hunger); result.effects.hunger = eff.hunger }
+    if (eff.thirst !== undefined) { modifyStat(state, 'thirst', eff.thirst); result.effects.thirst = eff.thirst }
+    if (eff.sanity !== undefined) { modifyStat(state, 'sanity', eff.sanity); result.effects.sanity = eff.sanity }
+    if (eff.infection !== undefined) { modifyStat(state, 'infection', eff.infection); result.effects.infection = eff.infection }
+    if (eff.hoursAwake !== undefined) { state.hoursAwake = eff.hoursAwake }
+    if (eff.dayIncrement !== undefined) { state.dayCount += eff.dayIncrement / 24 }
+  }
+
+  // 2. 固定物品奖励
+  if (outcome.loot) {
+    for (const itemId of outcome.loot) {
+      const item = itemDB[itemId]
+      if (item && addToInventory(state, item)) result.loot.push(item)
+    }
+  }
+
+  // 3. 随机战利品
+  if (outcome.lootRandom && chance(outcome.lootRandom.chance ?? 0.9)) {
+    const count = outcome.lootRandom.count ?? randInt(1, 3)
+    const currentScene = state.currentScene ? scenes[state.currentScene] : undefined
+    const loot = getLootPool(count, state.inventory, { scene: currentScene })
+    for (const item of loot) {
+      if (addToInventory(state, item)) result.loot.push(item)
+    }
+  }
+
+  // 4. 事件（仅此结果触发）
+  if (outcome.events) processEvents(state, outcome.events)
+
+  // 5. 战斗
+  if (outcome.combat || (outcome.combatChance && chance(outcome.combatChance))) {
+    result.combat = generateCombat(state)
+    if (!isSuccess) result._zombieWarn = true
+  }
+
+  // 6. 物品丢失
+  if (outcome.loseItem) {
+    removeFromInventory(state, outcome.loseItem)
+    result.effects.lostItem = outcome.loseItem
+  }
+  if (outcome.loseRandomItem && state.inventory.length > 0) {
+    const lost = randomPick(state.inventory)
+    removeFromInventory(state, lost.id)
+    result.effects.lostItem = lost
+  }
+
+  // 7. 额外日志
+  if (outcome.journalEntry) {
+    addJournalEntry(state, outcome.journalEntry, isSuccess ? 'result' : 'danger')
+  }
+
+  return result
+}
+
 function applySuccessEffects(result: any, option: any, state: any) {
+  // 新声明式路径
+  if (option.onSuccess) {
+    return applyOutcomeEffects(result, option.onSuccess, state, true)
+  }
+
+  // === 以下为旧硬编码逻辑（向后兼容） ===
   const lootChance = option.tags && option.tags.includes('搜索') ? 0.9 : 0
   if (chance(lootChance)) {
     const lootCount = randInt(1, 3)
@@ -223,6 +292,12 @@ function applySuccessEffects(result: any, option: any, state: any) {
 }
 
 function applyFailureEffects(result: any, option: any, state: any) {
+  // 新声明式路径
+  if (option.onFailure) {
+    return applyOutcomeEffects(result, option.onFailure, state, false)
+  }
+
+  // === 以下为旧硬编码逻辑（向后兼容） ===
   const isCombatOption = option.combat === true
   if (!isCombatOption) {
     const dmg = randInt(5, 15)
@@ -272,8 +347,11 @@ const sceneAtmosphere = {
 }
 
 function buildResultText(option: any, success: any, state: any) {
-  if (option.successText || option.failText) {
-    return success ? option.successText : (option.failText || option.successText)
+  // 新字段优先
+  const successText = option.onSuccess?.text || option.successText
+  const failText = option.onFailure?.text || option.failText
+  if (successText || failText) {
+    return success ? (successText || failText) : (failText || successText)
   }
 
   const scene = scenes[state.currentScene]
