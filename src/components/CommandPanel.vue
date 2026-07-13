@@ -9,7 +9,8 @@ function wrapItemName(item: any): string {
   let cls = ''
   if (item.tags?.includes('极稀有')) cls = 'item-rare'
   else if (item.tags?.includes('稀有')) cls = 'item-epic'
-  return cls ? `<span class="${cls}">${item.name}</span>` : item.name
+  const text = `✢ 获得了：${item.name}`
+  return cls ? `<span class="${cls}">${text}</span>` : text
 }
 
 const props = defineProps<{
@@ -46,7 +47,7 @@ function handleCmd() {
       const item = itemDB[id]
       if (item && addToInventory(props.gameState, item)) {
         given.push(item.name)
-        if (broadcast) addJournalEntry(props.gameState, `✢ 获得了：${wrapItemName(item)}`, 'action')
+        if (broadcast) addJournalEntry(props.gameState, wrapItemName(item), 'action')
       } else {
         skipped.push(id)
       }
