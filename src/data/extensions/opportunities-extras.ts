@@ -88,7 +88,7 @@ export const opportunities_extras: Opportunity[] = [
     diceRanges: [
       { min: 1, max: 2, text: '你翻开报纸——除了过时的新闻什么都没有。还沾了一手油墨。', nothing: true },
       { min: 3, max: 5, text: '报纸里夹着一张手绘的城区地图，标注了几个物资点的位置。虽然有些潦草但信息有用。', nothing: true },
-      { min: 6, max: 6, text: '报纸下面压着一个被遗忘的信封，里面除了几张钞票，还有一张叠得整整齐齐的军方战术地图——标注了城市内的所有重要设施和安全路线。这是无价之宝。（已解锁绝大部分场景）', lootItem: 'military_map' },
+      { min: 6, max: 6, text: '报纸下面压着一个被遗忘的信封，里面除了几张钞票，还有一张叠得整整齐齐的军方战术地图——标注了城市内的所有重要设施和安全路线。这是无价之宝。', lootItem: 'military_map' },
     ],
   },
 

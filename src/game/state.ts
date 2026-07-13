@@ -219,9 +219,16 @@ export function processEvents(state, events: string[], effects?: Record<string, 
       if (effects) effects.hp = heal
     }
     if (evt === 'unlock_all_scenes') {
+      let unlocked = 0
       for (const id of Object.keys(scenes)) {
         if (id === 'safe_zone') continue  // 安全区需通过剧情发现
-        if (!state.scenesVisited.includes(id)) state.scenesVisited.push(id)
+        if (!state.scenesVisited.includes(id)) {
+          state.scenesVisited.push(id)
+          unlocked++
+        }
+      }
+      if (unlocked > 0) {
+        addJournalEntry(state, `✽ 解锁了 ${unlocked} 个新地点。`, 'action')
       }
     }
     if (evt === 'rest_sleep_hours') {

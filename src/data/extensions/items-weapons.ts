@@ -148,8 +148,8 @@ export const weapons: ItemDB = {
     stackable: false,
     reusable: true,
   },
-  katana: {
-    id: 'katana',
+  long_sword: {
+    id: 'long_sword',
     name: '长刀',
     type: 'weapon',
     desc: '一把保养精良的长刀，刀刃在光线下泛着冷冽的寒光。轻巧而致命的艺术品。',

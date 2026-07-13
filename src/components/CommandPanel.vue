@@ -14,6 +14,7 @@ import { ref, nextTick, onMounted, onUnmounted } from 'vue'
 import { itemDB } from '../data/items'
 import { addToInventory, modifyStat, processEvents, addJournalEntry } from '../game/state'
 import { scenes } from '../data/index'
+import { endingChecks } from '../data/endings'
 import type { GameState } from '../types'
 
 function wrapItemName(item: any): string {
@@ -114,6 +115,41 @@ function handleCmd() {
     s.sanity = s.maxSanity
     s.infection = 0
     result.value = '✔ 五项数值已全满'
+  } else if (cmd === 'time') {
+    if (args.length < 2 || (args[0] !== '-add' && args[0] !== '-a')) {
+      result.value = '用法: /time -a <数值>[d|h]  例: /time -a 28d  (加28天)  /time -a 6h  (加6小时)'
+    } else {
+      const raw = args[1]
+      const m = raw.match(/^(\d+\.?\d*)([dh]?)$/i)
+      if (!m) {
+        result.value = '✘ 格式错误，例: /time -a 28d 或 /time -a 6h'
+      } else {
+        const val = parseFloat(m[1])
+        const unit = (m[2] || 'h').toLowerCase()
+        if (val <= 0) { result.value = '✘ 数值必须为正数' }
+        else {
+          const hours = unit === 'd' ? val * 24 : val
+          props.gameState.dayCount += hours / 24
+          const d = Math.floor(props.gameState.dayCount)
+          const h = Math.floor((props.gameState.dayCount * 24) % 24)
+          result.value = `✔ ${unit === 'd' ? val + '天' : val + 'h'} → 第${d + 1}天 ${String(h).padStart(2, '0')}:00`
+        }
+      }
+    }
+  } else if (cmd === 'ending') {
+    const endingId = args[0]
+    if (!endingId) {
+      result.value = '用法: /ending <id>  可用: ' + endingChecks.map(e => e.id).join(', ')
+    } else {
+      const ending = endingChecks.find(e => e.id === endingId)
+      if (!ending) {
+        result.value = '✘ 未知结局: ' + endingId + '  可用: ' + endingChecks.map(e => e.id).join(', ')
+      } else {
+        props.gameState.currentEnding = ending
+        props.gameState.phase = 'ending'
+        result.value = '✔ 触发结局: ' + ending.title
+      }
+    }
   } else if (cmd === 'tp') {
     const sceneId = args[0]
     if (!sceneId) {
