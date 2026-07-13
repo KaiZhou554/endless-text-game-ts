@@ -159,7 +159,7 @@ export const opportunities_guns: Opportunity[] = [
     type: 'dice',
     delay: 4,
     diceRanges: [
-      { min: 1, max: 3, text: '储物柜里只有两把消防斧和一卷消防水带。你在期待什么？消防员又不是警察。', nothing: true },
+      { min: 1, max: 3, text: '储物柜里只有两把消防斧和一卷消防水带。', nothing: true },
       { min: 4, max: 5, text: '储物柜的夹层里有一个上了锁的小型保险箱，撬开后里面是一盒弹药和一张射击俱乐部的会员卡。看来有消防员业余爱好是打猎。', events: ['smart_ammo'] },
       { min: 6, max: 6, text: '保险箱里不仅有霰弹，还有一把折叠枪托的短管猎枪——这种配置在城市环境里比长枪管实用得多。这是某个消防员自己改装的私人武器。', lootItem: 'shotgun' },
     ],

@@ -326,9 +326,7 @@ function handleCombatRewardDice() {
         const itemNames = added.map((i: any) => i.name).join('、')
         const prefix = roll === 6 ? '你仔细搜索，找到了：' : '你在尸体旁发现了一些物资：'
         combatRewardText.value = `${glyph}${prefix}${itemNames}。`
-        for (const item of added) {
-          addJournalEntry(gameState, wrapRewardText(`${glyph} 搜刮尸体：获得 `, item, '。'), 'action')
-        }
+        addJournalEntry(gameState, `${glyph} ${buildLootText(added)}`, 'action')
       } else {
         combatRewardText.value = `${glyph}你翻找了一番，但背包已经满了。`
         addJournalEntry(gameState, `${glyph} 搜刮尸体：背包满了！`, 'action')
@@ -375,7 +373,7 @@ function showOpportunity(idx) {
     opportunityMode.value = false
     currentOpp.value = null
     oppQueue.value = []
-    gameState.dayCount += 1 / 24
+    gameState.dayCount += 2 / 24
     // 生成下一个事件
     const event = generateEvent(gameState, _pendingSceneChange)
     _pendingSceneChange = false

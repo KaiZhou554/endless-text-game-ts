@@ -65,7 +65,7 @@ export const scenes: Scenes = {
   gas_station: {
     id: 'gas_station',
     name: '加油站',
-    desc: '壳牌加油站的顶棚下停着几辆被遗弃的汽车。便利店的玻璃门碎了一半，货架上的东西被洗劫过，但总有些被遗漏的角落。',
+    desc: '加油站的顶棚下停着几辆被遗弃的汽车。便利店的玻璃门碎了一半，货架上的东西被洗劫过，但总有些被遗漏的角落。',
     tags: ['室外', '燃料', '物资'],
     danger: 2,
     lootTypes: ['food', 'drink', 'tool'],

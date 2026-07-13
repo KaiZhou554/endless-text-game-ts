@@ -44,7 +44,8 @@ const usedSlots = computed(() => getUsedSlots(props.gameState))
              transition-colors duration-150 min-h-11 hover:bg-hover"
       :class="combatActive ? 'text-muted cursor-not-allowed' : 'text-fore'"
     >
-      🗺️ 地图
+      <template v-if="combatActive">🔒 锁定</template>
+      <template v-else>🗺️ 地图</template>
     </button>
 
     <!-- 简单模式存档按钮 -->
