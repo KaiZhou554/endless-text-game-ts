@@ -32,7 +32,7 @@ const usedSlots = computed(() => getUsedSlots(props.gameState))
              border-r border-border text-fore bg-bg
              transition-colors duration-150 min-h-11 hover:bg-hover"
     >
-      📖 日志
+      📖 笔记
     </button>
 
     <button

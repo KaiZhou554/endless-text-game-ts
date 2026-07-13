@@ -48,7 +48,7 @@ function formatTime(dayCount) {
            pt-[env(safe-area-inset-top,0px)] pb-[env(safe-area-inset-bottom,0px)]"
   >
     <div class="flex items-center justify-between border-b border-border">
-      <h2 class="text-sm font-bold text-accent">📖 日志</h2>
+      <h2 class="text-sm font-bold text-accent">📖 笔记</h2>
       <button
         @click="emit('close')"
         class="text-sm min-h-11 border rounded-sm
