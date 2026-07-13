@@ -453,9 +453,7 @@ function handleOppDice() {
     }
   }
 
-  applySurvivalDecay(gameState)
-  const delay = currentOpp.value.delay || 3
-  setTimeout(() => showOpportunity(oppIndex.value + 1), delay * 1000)
+  setTimeout(() => showOpportunity(oppIndex.value + 1), 2000)
 }
 
 // ==================== 对话 ====================
