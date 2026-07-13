@@ -1,8 +1,16 @@
 <script setup lang="ts">
 import { ref, nextTick, onMounted, onUnmounted } from 'vue'
 import { itemDB } from '../data/items'
-import { addToInventory, modifyStat } from '../game/state'
+import { addToInventory, modifyStat, processEvents, addJournalEntry } from '../game/state'
 import type { GameState } from '../types'
+
+function wrapItemName(item: any): string {
+  if (!item) return ''
+  let cls = ''
+  if (item.tags?.includes('极稀有')) cls = 'item-rare'
+  else if (item.tags?.includes('稀有')) cls = 'item-epic'
+  return cls ? `<span class="${cls}">${item.name}</span>` : item.name
+}
 
 const props = defineProps<{
   gameState: GameState
@@ -26,12 +34,19 @@ function handleCmd() {
   const args = parts.slice(1)
 
   if (cmd === 'give') {
+    let broadcast = false
+    const ids: string[] = []
+    for (const arg of args) {
+      if (arg === '-b' || arg === '--broadcast') { broadcast = true; continue }
+      ids.push(arg)
+    }
     const given: string[] = []
     const skipped: string[] = []
-    for (const id of args) {
+    for (const id of ids) {
       const item = itemDB[id]
       if (item && addToInventory(props.gameState, item)) {
         given.push(item.name)
+        if (broadcast) addJournalEntry(props.gameState, `✢ 获得了：${wrapItemName(item)}`, 'action')
       } else {
         skipped.push(id)
       }
@@ -40,6 +55,13 @@ function handleCmd() {
     if (given.length) msgs.push('✔ 获得：' + given.join('、'))
     if (skipped.length) msgs.push('✘ 无效或背包满：' + skipped.join('、'))
     result.value = msgs.join(' | ')
+  } else if (cmd === 'event') {
+    if (args.length === 0) {
+      result.value = '用法: /event <eventId>  可用: clear_fatigue, heal_40_percent_missing, unlock_all_scenes, rest_sleep_hours'
+    } else {
+      processEvents(props.gameState, args)
+      result.value = '✔ 触发事件: ' + args.join(', ')
+    }
   } else if (cmd === 'effect') {
     const applied: string[] = []
     for (const arg of args) {
@@ -53,7 +75,7 @@ function handleCmd() {
     }
     result.value = applied.join(' ')
   } else {
-    result.value = '未知命令: /' + cmd + '  (支持: give, effect)'
+    result.value = '未知命令: /' + cmd + '  (支持: give, effect, event)'
   }
 }
 
