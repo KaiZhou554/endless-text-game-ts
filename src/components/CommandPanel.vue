@@ -1,3 +1,13 @@
+<!--
+
+# 命令面板
+`Ctrl+P` 或连续点击右上角游戏时间 **5 次** 打开。支持的命令：
+- `/give [-b|-m] <itemId...>` — 获得物品。`-b` 逐条广播到叙事面板，`-m` 合并为一条（测试稀有度扫描）
+- `/effect <stat><value>...` — 修改属性。支持缩写 sm/bf/kk/lz/gr
+- `/event <eventId...>` — 触发事件
+
+-->
+
 <script setup lang="ts">
 import { ref, nextTick, onMounted, onUnmounted } from 'vue'
 import { itemDB } from '../data/items'

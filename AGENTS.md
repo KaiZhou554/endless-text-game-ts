@@ -38,16 +38,9 @@ src/
 │   │   ├── stranger_mask.ts   #   戴防毒面具的人（掠夺者）
 │   │   └── child_anna.ts      #   安娜（九岁女孩）
 │   └── extensions/            # ─── 扩展目录（按主题拆分）───
-│       ├── items-weapons.ts   #   武器 & 弹药
-│       ├── items-supplies.ts  #   消耗品（食物/饮品/医疗）
-│       ├── items-equipment.ts #   装备（防具/工具/杂项）
-│       ├── items-key.ts       #   关键道具
-│       ├── items-extras.ts    #   额外物品（鱼叉枪、大锤等）
-│       ├── opportunities-extras.ts  #   额外机遇
-│       ├── situations-combat.ts   #   战斗/危险类遭遇
-│       ├── situations-social.ts   #   社交/剧情类遭遇
-│       ├── situations-scavenge.ts #   搜索/物资类遭遇
-│       └── situations-explore.ts  #   探索/环境类遭遇
+│       ├── items-*.ts         #   物品
+│       ├── opportunities-*.ts #   机遇（旁白或扔骰子）
+│       └── situations-*.ts    #   情况（选择题）
 ├── game/                      # ─── 引擎层（纯函数，无 Vue 依赖）───
 │   ├── state.ts               #   响应式状态管理 (Vue reactive)，含 slot 占位系统
 │   ├── engine.ts              #   核心：选项解析、生存衰减、叙事文本、对话
@@ -277,11 +270,7 @@ endingChecks = [{
 - **骰子动画**：攻击时 🎲[?] 快速变化约 840ms，大成功/大失败统一用 `?? 点伤害` 占位不剧透
 - **武器选项**：每回合从背包随机取 ≤2 件武器（需弹药的武器无弹药时不显示）
 - **弹药**：开火时自动 `removeFromInventory` 消耗对应弹药（by ammo tag）
-- **策略选项**：4 个基础策略中随机 2 个：
-  - ⚔️ 正面强攻 — 无特殊加成
-  - 🎯 精准打击 — 对庞大/缓慢型 +2，消耗 5 理智，需理智≥30
-  - 🛡️ 防守反击 — 受伤减半，对快速/灵敏型 +1
-  - 🔍 寻找弱点 — 骰 4+ 伤害翻倍，消耗 8 理智，需理智≥40
+- **策略选项**：4 个基础策略中随机 2 个。策略定义位于 engine/combat.ts，新增策略保持现有数据结构。
 - **逃跑**：概率递增（55% → +15%/次，上限 90%）
 - **丧尸反击**：每回合玩家行动后丧尸反击，可能造成感染
 - **噪音**：仅在敌人存活时触发（击杀后不引怪）
@@ -382,7 +371,7 @@ endingChecks = [{
 
 ### 交互风格
 
-- **按钮**：`min-h-[44px]`，`rounded-sm`，1px border，hover 使用 `hover:bg-hover`（禁用 JS 模拟）
+- **按钮**：`min-h-11`，`rounded-sm`，1px border，hover 使用 `hover:bg-hover`（禁用 JS 模拟）
 - **禁止**：阴影、渐变、模糊效果（除稀有度动画外）、纯白文字、高饱和荧光色
 - **所有悬停效果**必须使用 Tailwind `hover:*` 实现，禁止 `@mouseenter`/`@mouseleave` JS 写法
 
@@ -451,29 +440,10 @@ endingChecks = [{
 然后在物品的 `events`、机遇的 `diceRanges[*].events` 或 Situation 选项的 `events` 中引用。
 现有事件：`clear_fatigue`、`heal_40_percent_missing`、`unlock_all_scenes`、`rest_sleep_hours`。
 
-### 命令面板
-`Ctrl+P` 或连续点击右上角游戏时间 **5 次** 打开。支持的命令：
-- `/give [-b|-m] <itemId...>` — 获得物品。`-b` 逐条广播到叙事面板，`-m` 合并为一条（测试稀有度扫描）
-- `/effect <stat><value>...` — 修改属性。支持缩写 sm/bf/kk/lz/gr
-- `/event <eventId...>` — 触发事件
-
 ## Notes
 
-- 所有源文件使用 `.ts` 扩展名（`data/` 和 `game/` 目录），Vue SFC 的 `<script setup>` 带有 `lang="ts"`
-- 核心类型定义在 `src/types.ts`（Item, Scene, Situation, NPC, GameState, Combat, Opportunity 等）
-- 引擎函数可引入类型：`import type { GameState, Item } from '../types'`
-- 导入路径可保留 `.js` 后缀（Vite 自动解析 `.js` → `.ts`），也可省略扩展名
-- 日志条目使用自增 `_journalEntryId` 保证唯一 key，`turnId` 字段标记所属回合
-- `rebuildCurrentOptions()` 用于在背包变更后刷新选项状态
-- 使用 `getCombatStrategies(state, enemy)` 获取当前回合战斗选项
-- 休息事件额外跳过 6-8h（`state.dayCount += sleepHours/24`）
-- 睡袋/保温毯使用 `processEvents` 清疲劳；睡袋额外触发 `rest_sleep_hours` 跳过 8-10h
-- 多个大容量背包可叠加（`getEffectiveCapacity` 使用 `filter` + `reduce`）
-- 无武器时战斗选项只显示策略（不显示"拳头"）
-- NarrativeArea 使用队列系统（`processingQueue` / `revealedIds`）按序显示条目，
-  叙事类用 TypewriterJS，非叙事类直接渲染；MutationObserver 监听打字区域实现自动滚动
-- `action` / `combat` 类型条目始终使用暗淡色（`isRecent` 不将其提亮）
-- 战斗日志通过 `combatLogRef` + `scrollCombatNow()` 每回合强制自动滚动
-- `getUsedSlots(state)` 计算背包已用格数（`slots × _count`），
-  配合 `getEffectiveCapacity(state)` 判断背包空间
-- `getLootPool(count, inventory)` 弹药优先匹配已有枪械，无枪则随机
+- 所有源文件均使用 TypeScript。
+- 核心类型定义位于 `src/types.ts`，新增数据或引擎逻辑优先复用已有类型。
+- UI 遵循 Vue 3 + Composition API + Tailwind CSS v4，不要直接操作 DOM 或使用 JavaScript 实现样式效果。
+- 颜色统一来自 `src/assets/main.css` 的 `@theme`，禁止新增硬编码十六进制颜色。
+- 修改功能时优先复用现有工具函数和数据结构，避免重复实现相同逻辑。
