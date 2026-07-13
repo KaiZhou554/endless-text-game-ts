@@ -169,8 +169,8 @@ export function resolveOption(state, option) {
     result.combat = generateCombat(state)
   }
 
-  // 旧 option.combat：仅在没有 onSuccess 时生效（新字段通过 onSuccess.combat 控制）
-  if (option.combat && success && !option.onSuccess) {
+  // option.combat：onSuccess 未声明 combat 时由旧逻辑触发战斗
+  if (option.combat && success && !option.onSuccess?.combat) {
     result.combat = generateCombat(state)
   }
 
