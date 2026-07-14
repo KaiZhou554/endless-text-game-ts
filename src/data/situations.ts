@@ -14,6 +14,7 @@ import { situations_scavenge } from './extensions/situations-scavenge'
 import { situations_explore } from './extensions/situations-explore'
 import { situations_extras } from './extensions/situations-extras'
 import { situations_tasks } from './extensions/situations-for-tasks'
+import { situations_endings } from './extensions/situations-for-endings'
 
 export const situations: Situations = {
   ...situations_combat,
@@ -22,4 +23,5 @@ export const situations: Situations = {
   ...situations_explore,
   ...situations_extras,
   ...situations_tasks,
+  ...situations_endings,
 } as Situations
