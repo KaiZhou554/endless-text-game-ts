@@ -2,7 +2,7 @@
 import { ref, reactive, computed, watch, nextTick } from 'vue'
 import type { GameState, Item, SituationOption, CombatState } from './types'
 import { createGameState, resetGameState, addToInventory, removeFromInventory,
-         useItem, modifyStat, addJournalEntry, processEvents } from './game/state.js'
+         useItem, modifyStat, addJournalEntry, processEvents, flushDeferredEvents } from './game/state.js'
 import { generateEvent, resolveOption, applySurvivalDecay, exploreNewArea,
          generateCombat, resolveCombatRound, fleeCombat, rebuildCurrentOptions,
          getCombatStrategies, autoResolveCombat, getOpportunities,
@@ -136,6 +136,8 @@ function handleSelectOption(option: any) {
     resultLoot.value = result.loot
     addJournalEntry(gameState, buildLootText(result.loot), 'action')
   }
+  // 线索物品的事件延后到战利品日志之后处理
+  flushDeferredEvents(gameState)
 
   // 检查结局
   if (result.ending) {
@@ -320,12 +322,9 @@ function handleCombatRewardDice() {
     })
     if (loot.length > 0) {
       const added: any[] = []
-      const deferredEvents: string[][] = []
       for (const item of loot) {
-        const hasEvents = item.events?.length > 0
-        if (addToInventory(gameState, item, { deferEvents: hasEvents })) {
+        if (addToInventory(gameState, item)) {
           added.push(item)
-          if (hasEvents) deferredEvents.push([...item.events])
         }
       }
       if (added.length > 0) {
@@ -333,10 +332,7 @@ function handleCombatRewardDice() {
         const prefix = roll === 6 ? '你仔细搜索，找到了：' : '你在尸体旁发现了一些物资：'
         combatRewardText.value = `${glyph}${prefix}${itemNames}。`
         addJournalEntry(gameState, buildLootText(added, glyph), 'action')
-        // 战利品日志写完后，再处理线索物品的附带事件（保证顺序正确）
-        for (const events of deferredEvents) {
-          processEvents(gameState, events)
-        }
+        flushDeferredEvents(gameState)
       } else {
         combatRewardText.value = `${glyph}你翻找了一番，但背包已经满了。`
         addJournalEntry(gameState, `${glyph} 搜刮尸体：背包满了！`, 'action')
@@ -458,6 +454,7 @@ function handleOppDice() {
     const item = itemDB[range.lootItem]
     if (item && addToInventory(gameState, item)) {
       addJournalEntry(gameState, wrapRewardText('✢ 获得了：', item, ''), 'action')
+      flushDeferredEvents(gameState)
     }
   }
 
@@ -478,6 +475,7 @@ function handleDialogueResult(result: any) {
     for (const item of result.rewardItems) {
       addJournalEntry(gameState, wrapRewardText('✢ 获得：', item, ''), 'action')
     }
+    flushDeferredEvents(gameState)
   }
 
   // 对话结束，生成下一事件

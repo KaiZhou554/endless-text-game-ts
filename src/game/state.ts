@@ -134,9 +134,9 @@ export function getUsedSlots(state) {
 /**
  * 添加物品到背包（基于占格数判断）
  */
-export function addToInventory(state, item, opts?: { deferEvents?: boolean }) {
+export function addToInventory(state, item) {
   // 线索物品 → 存入笔记，不占背包
-  if (item.type === 'clue') return addClue(state, item, opts)
+  if (item.type === 'clue') return addClue(state, item)
 
   const slots = item.slots ?? 2
   const capacity = getEffectiveCapacity(state)
@@ -162,7 +162,7 @@ export function addToInventory(state, item, opts?: { deferEvents?: boolean }) {
 /**
  * 添加线索到笔记（不占背包空间）
  */
-export function addClue(state, item, opts?: { deferEvents?: boolean }) {
+export function addClue(state, item) {
   // 去重：已有同 id 线索则跳过
   if (state.clues.some(c => c.id === item.id)) return true
   state.clues.push({
@@ -181,8 +181,22 @@ export function addClue(state, item, opts?: { deferEvents?: boolean }) {
     if (item.effects.sanity) state.sanity = clamp(state.sanity + item.effects.sanity, 0, state.maxSanity)
     if (item.effects.infection) state.infection = clamp(state.infection + item.effects.infection, 0, state.maxInfection)
   }
-  if (item.events && !opts?.deferEvents) processEvents(state, item.events)
+  // 事件延后处理：存入队列，由调用方在战利品日志写完后统一 flush
+  if (item.events) {
+    if (!state._deferredClueEvents) state._deferredClueEvents = []
+    state._deferredClueEvents.push(...item.events)
+  }
   return true
+}
+
+/**
+ * 处理 addClue 延后的线索事件（在战利品日志写入之后调用）
+ */
+export function flushDeferredEvents(state) {
+  if (!state._deferredClueEvents?.length) return
+  const events = [...state._deferredClueEvents]
+  state._deferredClueEvents = []
+  processEvents(state, events)
 }
 
 /**
