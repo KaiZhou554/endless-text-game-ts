@@ -6,6 +6,7 @@
 import { reactive, computed } from 'vue'
 import { clamp, randInt } from './utils.js'
 import { scenes, itemDB } from '../data/index.js'
+import { getRandomItem } from './item-utils.js'
 import type { GameState, Item } from '../types'
 
 /**
@@ -235,6 +236,16 @@ export function processEvents(state, events: string[], effects?: Record<string, 
         addJournalEntry(state, `✽ 解锁了 ${unlocked} 个新地点。`, 'action')
       }
     }
+    if (evt === 'unlock_random_scene') {
+      const candidates = Object.keys(scenes).filter(id =>
+        id !== 'safe_zone' && !state.scenesVisited.includes(id)
+      )
+      if (candidates.length > 0) {
+        const id = candidates[Math.floor(Math.random() * candidates.length)]
+        state.scenesVisited.push(id)
+        addJournalEntry(state, `✽ 解锁了新地点：${scenes[id].name}。`, 'action')
+      }
+    }
     if (evt === 'rest_sleep_hours') {
       const sleepHours = randInt(8, 10)
       state.dayCount += sleepHours / 24
@@ -289,7 +300,7 @@ export function processEvents(state, events: string[], effects?: Record<string, 
         }
         purified += count
       }
-      addJournalEntry(state, `✽ 净水器过滤了 ${purified} 份浑浊的水 → 获得了 ${purified} 份干净的水。`, 'action')
+      addJournalEntry(state, `✽ 过滤了 ${purified} 份浑浊的水，获得了 ${purified} 份干净的水。`, 'action')
     }
     if (evt === 'smart_serum') {
       const serumIds = ['lab_keycard', 'serum_sample', 'research_notes']
@@ -311,6 +322,24 @@ export function processEvents(state, events: string[], effects?: Record<string, 
     }
     if (evt === 'serum_synthesis_complete') {
       state._serumReady = true
+    }
+    if (evt === 'random_food') {
+      const item = getRandomItem('food')
+      if (item && addToInventory(state, item)) {
+        addJournalEntry(state, `✢ 获得了：${item.name}。`, 'action')
+      }
+    }
+    if (evt === 'random_drink') {
+      const item = getRandomItem('drink')
+      if (item && addToInventory(state, item)) {
+        addJournalEntry(state, `✢ 获得了：${item.name}。`, 'action')
+      }
+    }
+    if (evt === 'random_medical') {
+      const item = getRandomItem('medical')
+      if (item && addToInventory(state, item)) {
+        addJournalEntry(state, `✢ 获得了：${item.name}。`, 'action')
+      }
     }
   }
 }
