@@ -35,6 +35,27 @@ export function generateEvent(state, forceNewScene = false) {
     }
   }
 
+  // 血清研制：三件齐全 + 在实验室 → 强制注入合成情景
+  const SERUM_IDS = ['lab_keycard', 'serum_sample', 'research_notes']
+  const playerHasAllSerum = scene.tags.includes('科学') && !state._serumReady &&
+    SERUM_IDS.every(id =>
+      state.inventory.some(i => i.id === id) || state.clues.some(c => c.id === id)
+    )
+  if (playerHasAllSerum) {
+    const finalSit = situations['lab_final_synthesis']
+    if (finalSit) {
+      state.lastSituationId = state.currentSituation
+      state.currentSituation = 'lab_final_synthesis'
+      state.sceneActionCount++
+      state.currentModifiers = collectModifiers(state, scene)
+      const eventText = buildEventText(scene, finalSit, state.currentModifiers, state)
+      state.currentEventText = eventText
+      state.currentOptions = buildOptions(scene, finalSit, state.currentModifiers, state)
+      addJournalEntry(state, eventText, 'narrative')
+      return { scene, situation: finalSit, modifiers: state.currentModifiers, options: state.currentOptions, text: eventText }
+    }
+  }
+
   const situation = selectSituation(scene, state)
   state.lastSituationId = state.currentSituation
   state.currentSituation = situation.id

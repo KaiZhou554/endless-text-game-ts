@@ -335,5 +335,6 @@ export interface GameState {
   _targetScene?: string | null
   _bleeding?: boolean
   _isOverweight?: boolean
+  _serumReady?: boolean
   currentEnding?: Ending | null
 }

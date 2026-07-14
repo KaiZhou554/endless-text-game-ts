@@ -92,6 +92,7 @@ export function createInitialState(): GameState {
     // === 战斗内部 ===
     _combatNextRoundBonus: 1.0,
     _isOverweight: false,
+    _serumReady: false,
   }
 }
 
@@ -287,6 +288,27 @@ export function processEvents(state, events: string[], effects?: Record<string, 
         purified += count
       }
       addJournalEntry(state, `✽ 净水器过滤了 ${purified} 份浑浊的水 → 获得了 ${purified} 份干净的水。`, 'action')
+    }
+    if (evt === 'smart_serum') {
+      const serumIds = ['lab_keycard', 'serum_sample', 'research_notes']
+      const missing = serumIds.filter(id =>
+        !state.inventory.some(i => i.id === id) && !state.clues.some(c => c.id === id)
+      )
+      let itemId: string | null = null
+      if (missing.length === 0) {
+        itemId = ['bandage', 'antibiotics', 'painkiller'][Math.floor(Math.random() * 3)]
+      } else {
+        itemId = missing[Math.floor(Math.random() * missing.length)]
+      }
+      if (itemId) {
+        const item = itemDB[itemId]
+        if (item && addToInventory(state, item)) {
+          addJournalEntry(state, `✢ 获得了：${item.name}。`, 'action')
+        }
+      }
+    }
+    if (evt === 'serum_synthesis_complete') {
+      state._serumReady = true
     }
   }
 }

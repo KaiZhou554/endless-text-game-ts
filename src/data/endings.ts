@@ -94,10 +94,7 @@ export const endingChecks: Ending[] = [
     name: '血清研制',
     check(state) {
       if (state.currentScene !== 'laboratory') return false
-      const hasSerum = state.inventory.some(i => i.id === 'serum_sample') || state.clues.some(c => c.id === 'serum_sample')
-      const hasNotes = state.inventory.some(i => i.id === 'research_notes') || state.clues.some(c => c.id === 'research_notes')
-      const hasKeycard = state.inventory.some(i => i.id === 'lab_keycard') || state.clues.some(c => c.id === 'lab_keycard')
-      return hasSerum && hasNotes && hasKeycard
+      return state._serumReady === true
     },
     title: '🧬 希望',
     subtitle: '第 {days} 天 — 你可能是人类的救星',
