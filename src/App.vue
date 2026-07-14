@@ -62,12 +62,15 @@ function itemRarityClass(item: any): string {
   return ''
 }
 // 根据物品列表返回带特效的日志文本（整行动画）
-function buildLootText(items: any[]): string {
+function buildLootText(items: any[], glyph: string = ''): string {
   const names = items.map(i => i.name).join('、')
   let cls = ''
   if (items.some(i => i.rarity === 'legendary')) cls = 'item-legendary'
   else if (items.some(i => i.rarity === 'rare')) cls = 'item-rare'
-  return cls ? `<span class="${cls}">✢ 获得了：${names}</span>` : `✢ 获得了：${names}`
+  const text = glyph
+    ? `${glyph}搜刮尸体：获得 ${names}。`
+    : `✢ 获得了：${names}`
+  return cls ? `<span class="${cls}">${text}</span>` : text
 }
 // 包裹单个物品的日志文本（整行动画）
 function wrapRewardText(prefix: string, item: any, suffix: string): string {
@@ -317,16 +320,23 @@ function handleCombatRewardDice() {
     })
     if (loot.length > 0) {
       const added: any[] = []
+      const deferredEvents: string[][] = []
       for (const item of loot) {
-        if (addToInventory(gameState, item)) {
+        const hasEvents = item.events?.length > 0
+        if (addToInventory(gameState, item, { deferEvents: hasEvents })) {
           added.push(item)
+          if (hasEvents) deferredEvents.push([...item.events])
         }
       }
       if (added.length > 0) {
         const itemNames = added.map((i: any) => i.name).join('、')
         const prefix = roll === 6 ? '你仔细搜索，找到了：' : '你在尸体旁发现了一些物资：'
         combatRewardText.value = `${glyph}${prefix}${itemNames}。`
-        addJournalEntry(gameState, `${glyph} ${buildLootText(added)}`, 'action')
+        addJournalEntry(gameState, buildLootText(added, glyph), 'action')
+        // 战利品日志写完后，再处理线索物品的附带事件（保证顺序正确）
+        for (const events of deferredEvents) {
+          processEvents(gameState, events)
+        }
       } else {
         combatRewardText.value = `${glyph}你翻找了一番，但背包已经满了。`
         addJournalEntry(gameState, `${glyph} 搜刮尸体：背包满了！`, 'action')

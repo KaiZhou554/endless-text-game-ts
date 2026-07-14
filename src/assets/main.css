@@ -194,14 +194,10 @@ html, body {
 }
 .item-legendary {
   display: block;
-  padding: 2px 4px;
-  border-radius: 2px;
   animation: item-legendary 1.2s ease-out forwards;
 }
 .item-rare {
   display: block;
-  padding: 2px 4px;
-  border-radius: 2px;
   animation: item-rare 1.2s ease-out forwards;
 }
 
