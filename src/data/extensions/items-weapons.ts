@@ -64,7 +64,7 @@ export const weapons: ItemDB = {
     name: '撬棍',
     type: 'weapon',
     desc: '一根沉甸甸的钢制撬棍。除了撬门，砸丧尸脑袋也很好用。',
-    tags: ['近战', '噪音:中', '耐久:20', '工具:撬锁'],
+    tags: ['近战', '噪音:中', '耐久:20', '工具:撬锁', '修理'],
     effects: { damage: 4, noise: 2, durability: 20 },
     stackable: false,
     reusable: true,

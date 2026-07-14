@@ -198,11 +198,7 @@ export const endingChecks: Ending[] = [
     id: 'boat_escape',
     name: '扬帆远航',
     check(state) {
-      if (state.dayCount < 10) return false
-      if (state.currentScene !== 'riverside') return false
-      const hasFuel = state.inventory.some(i => i.id === 'gas_can')
-      const hasTool = state.inventory.some(i => i.id === 'multitool' || i.id === 'crowbar_weapon')
-      return hasFuel && hasTool
+      return state.boatRepaired === true
     },
     title: '⛵ 驶向未知',
     subtitle: '第 {days} 天 — 你用一艘小船离开了这座死城',

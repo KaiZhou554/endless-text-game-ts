@@ -318,6 +318,7 @@ export interface GameState {
   sacrificeTriggered: boolean
   safeZoneJoined: boolean
   radioContactMade: boolean
+  boatRepaired: boolean
   labDiscovered: boolean
 
   // 休息
