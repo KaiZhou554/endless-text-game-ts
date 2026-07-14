@@ -265,7 +265,9 @@ export function processEvents(state, events: string[], effects?: Record<string, 
         i.tags && i.tags.includes('医疗') && i.reusable !== true
       )
       if (medIdx !== -1) {
+        const medName = state.inventory[medIdx].name
         removeFromInventory(state, state.inventory[medIdx].id)
+        addJournalEntry(state, `✽ 消耗了 ${medName}。`, 'action')
       }
     }
     if (evt === 'purify_water') {

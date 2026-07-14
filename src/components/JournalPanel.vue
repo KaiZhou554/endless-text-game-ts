@@ -9,11 +9,6 @@ const emit = defineEmits(['close'])
 
 const clues = computed(() => props.gameState.clues || [])
 
-function formatTime(dayCount) {
-  const days = Math.floor(dayCount) + 1
-  const hour = Math.floor((dayCount - Math.floor(dayCount)) * 24)
-  return `D${days} ${String(hour).padStart(2, '0')}:00`
-}
 </script>
 
 <template>
@@ -50,9 +45,8 @@ function formatTime(dayCount) {
           :key="clue.id"
           class="border-b border-hover"
         >
-          <div class="flex items-center justify-between">
+          <div class="flex items-center">
             <span class="text-xs font-bold text-accent">{{ clue.name }}</span>
-            <span class="text-[10px] text-muted">{{ formatTime(clue.time) }}</span>
           </div>
           <p class="text-[11px] leading-relaxed text-muted mt-0.5 mb-1">{{ clue.desc }}</p>
         </div>

@@ -89,6 +89,7 @@ export const situations_tasks: Situations = {
         onFailure: {
           text: '你蹲在河边灌水时余光扫到了对岸——一只丧尸正从芦苇丛里站起来，身上的泥水像一层灰色的壳。它的眼睛在浑浊的河面上反着微光，直直地盯着你。你没有等它下水，抓起水壶往后退进了灌木丛。河边的开阔地让你太显眼了。',
           effects: { sanity: -2 },
+          combat: true
         },
       },
     ],
