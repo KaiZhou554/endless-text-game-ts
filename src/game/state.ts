@@ -207,6 +207,7 @@ export function processEvents(state, events: string[], effects?: Record<string, 
   for (const evt of events) {
     if (evt === 'clear_fatigue') state.hoursAwake = 0
     if (evt === 'trigger_sacrifice') state.sacrificeTriggered = true
+    if (evt === 'make_radio_contact') state.radioContactMade = true
     if (evt === 'join_safe_zone') {
       state.safeZoneJoined = true
       if (!state.scenesVisited.includes('safe_zone')) state.scenesVisited.push('safe_zone')

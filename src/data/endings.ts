@@ -73,9 +73,7 @@ export const endingChecks: Ending[] = [
     name: '直升机救援',
     check(state) {
       if (state.dayCount < 14) return false
-      const hasRadio = state.inventory.some(i => i.id === 'radio')
-      const hasFrequency = state.inventory.some(i => i.id === 'radio_frequency') || state.clues.some(c => c.id === 'radio_frequency')
-      return hasRadio && hasFrequency
+      return state.radioContactMade === true
     },
     title: '🚁 获救',
     subtitle: '第 {days} 天 — 救援终于来了',
