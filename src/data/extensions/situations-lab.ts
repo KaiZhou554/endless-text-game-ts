@@ -11,7 +11,7 @@ export const situations_lab: Situations = {
   lab_containment_breach: {
     id: 'lab_containment_breach',
     name: '隔离区失守',
-    baseText: '穿过实验区的自动门时，你听到了不该有的声音。低沉的嘶吼从走廊尽头传过来，夹杂着金属被反复撞击的闷响。几扇本该密封的隔离门被人从外面撬开了。防护栏歪倒在地，穿着防护服的丧尸在走廊里游荡。它们似乎是最早一批感染者，被关在这里研究了几个月。现在研究它们的人成了它们的一部分。',
+    baseText: '穿过实验区的自动门时，你听到了低沉的嘶吼从走廊尽头传过来，夹杂着金属被反复撞击的闷响。几扇本该密封的隔离门被人从外面撬开了。防护栏歪倒在地，穿着防护服的丧尸在走廊里游荡。',
     options: [
       {
         id: 'fight_through',
@@ -70,7 +70,7 @@ export const situations_lab: Situations = {
   lab_power_failure: {
     id: 'lab_power_failure',
     name: '电力故障',
-    baseText: '头顶的灯管突然闪了一下，整层楼的照明同时暗了半秒。远处传来备用发电机断断续续的轰鸣。过道尽头的红色应急灯开始闪烁，每闪一下都发出轻微的电流声。在这种环境里，任何声音都可能掩盖正在靠近的脚步。',
+    baseText: '头顶的灯管突然闪了一下，整层楼的照明同时变得昏暗。远处传来备用发电机断断续续的轰鸣。过道尽头的红色应急灯开始闪烁，每闪一下都发出轻微的电流声。在这种环境里，任何声音都可能掩盖正在靠近的脚步。',
     options: [
       {
         id: 'fix_generator',
