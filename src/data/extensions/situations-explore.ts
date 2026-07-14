@@ -85,7 +85,7 @@ export const situations_explore: Situations = {
   dense_fog: {
     id: 'dense_fog',
     name: '浓雾弥漫',
-    baseText: '一股异常浓密的雾气从东边涌来，带着淡淡的化学气味。能见度骤降到手臂伸出去都看不清手指。GPS 早没信号了，指南针在雾中奇怪地乱转。',
+    baseText: '一股异常浓密的雾气从东边涌来，带着淡淡的化学气味。能见度骤降到手臂伸出去都看不清手指。远处模模糊糊有人形的影子。',
     options: [
       {
         id: 'follow_sound',

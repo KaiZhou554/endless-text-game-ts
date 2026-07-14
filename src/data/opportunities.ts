@@ -10,6 +10,7 @@ import { opportunities_endings } from './extensions/opportunities-endings'
 import { opportunities_guns } from './extensions/opportunities-guns'
 import { opportunities_tasks } from './extensions/opportunities-for-tasks'
 import { opportunities_atmosphere } from './extensions/opportunities-atmosphere'
+import { opportunities_atmosphere_v2 } from './extensions/opportunities-atmosphere-v2'
 
 export const opportunities: Opportunity[] = [
 
@@ -189,4 +190,7 @@ export const opportunities: Opportunity[] = [
 
   // ==================== 来自 extensions/opportunities-atmosphere.ts（纯旁白·环境叙事） ====================
   ...opportunities_atmosphere,
+
+  // ==================== 来自 extensions/opportunities-atmosphere-v2.ts（过渡段·承上启下） ====================
+  ...opportunities_atmosphere_v2,
 ]

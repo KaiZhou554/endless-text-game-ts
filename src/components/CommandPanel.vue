@@ -174,6 +174,10 @@ function open() {
   nextTick(() => inputRef.value?.focus())
 }
 
+  function focusInput() {
+    inputRef.value?.focus()
+  }
+
 function close() {
   visible.value = false
 }
@@ -229,7 +233,10 @@ defineExpose({ toggle, open, close })
           >
             ✕
           </button>
-          <span class="text-sm font-bold text-white select-none">⌘ 命令面板</span>
+          <span
+            class="text-sm font-bold text-white select-none"
+            @click="focusInput"
+          >⌘ 命令面板</span>
         </div>
 
         <!-- Input row -->

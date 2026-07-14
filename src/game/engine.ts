@@ -84,7 +84,7 @@ export function applySurvivalDecay(state) {
   if (state.thirst <= 0) {
     state.hp = clamp(state.hp - randInt(4, 8), 0, state.maxHp)
     if (!state.journal.find(j => j.text.includes('脱水') && j.id > state.actionCount - 5)) {
-      addJournalEntry(state, '<span class="dim">⊗ 严重脱水！你的嘴唇开裂，视野模糊。</span>', 'warning')
+      addJournalEntry(state, '<span class="dim">⊗ 严重脱水，你的嘴唇开裂，视野模糊。</span>', 'warning')
     }
   } else if (state.thirst < 20 && chance(0.3)) {
     state.hp = clamp(state.hp - 2, 0, state.maxHp)
@@ -95,7 +95,7 @@ export function applySurvivalDecay(state) {
   const cap = getEffectiveCapacity(state)
   if (used > cap) {
     if (state._isOverweight) {
-      let msg = '⊗ 你的背包终于撑不住了！有些东西损坏了。'
+      let msg = '⊗ 你的背包终于撑不住了，有些东西损坏了。'
       const backpacks = state.inventory.filter(i => i.id === 'backpack')
       for (const bp of backpacks) {
         removeFromInventory(state, bp.id)
@@ -111,7 +111,7 @@ export function applySurvivalDecay(state) {
       addJournalEntry(state, '<span class="dim">' + msg + '</span>', 'danger')
       state._isOverweight = false
     } else {
-      addJournalEntry(state, '<span class="dim">⊗ 背包快装不下了！用掉或丢弃一些东西腾出空间。</span>', 'warning')
+      addJournalEntry(state, '<span class="dim">⊗ 背包快装不下了，用掉或丢弃一些东西腾出空间。</span>', 'warning')
       state._isOverweight = true
     }
   } else {
