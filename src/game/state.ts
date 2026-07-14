@@ -206,6 +206,16 @@ export function removeFromInventory(state, itemId, count = 1) {
 /**
  * 处理 events 数组中的事件（供物品使用、机遇、situation 选项共用）
  */
+
+function consumeRandomByType(state, type: string) {
+  const pool = state.inventory.filter(i => i.type === type && i.reusable !== true)
+  if (pool.length === 0) return
+  const item = pool[Math.floor(Math.random() * pool.length)]
+  const name = item.name
+  removeFromInventory(state, item.id)
+  addJournalEntry(state, `✽ 消耗了 ${name}。`, 'action')
+}
+
 export function processEvents(state, events: string[], effects?: Record<string, any>) {
   for (const evt of events) {
     if (evt === 'clear_fatigue') state.hoursAwake = 0
@@ -271,15 +281,16 @@ export function processEvents(state, events: string[], effects?: Record<string, 
       if (effects) { effects.hp = heal; effects.sanity = 10 }
     }
     if (evt === 'consume_random_medical') {
-      // 消耗一个非可复用的医疗物品（给NPC用）
-      const medIdx = state.inventory.findIndex(i =>
-        i.tags && i.tags.includes('医疗') && i.reusable !== true
-      )
-      if (medIdx !== -1) {
-        const medName = state.inventory[medIdx].name
-        removeFromInventory(state, state.inventory[medIdx].id)
-        addJournalEntry(state, `✽ 消耗了 ${medName}。`, 'action')
-      }
+      consumeRandomByType(state, 'medical')
+    }
+    if (evt === 'consume_random_food') {
+      consumeRandomByType(state, 'food')
+    }
+    if (evt === 'consume_random_drink') {
+      consumeRandomByType(state, 'drink')
+    }
+    if (evt === 'consume_random_tool') {
+      consumeRandomByType(state, 'tool')
     }
     if (evt === 'purify_water') {
       // 将背包中所有 dirty_water 替换为 clean_water

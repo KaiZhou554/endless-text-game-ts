@@ -73,7 +73,7 @@ export const scenes: Scenes = {
   school: {
     id: 'school',
     name: '小学教学楼',
-    desc: '黑板上的粉笔字还停留在三月十二日。走廊里散落着书包和作业本，墙上贴着五颜六色的手抄报。',
+    desc: '空荡的教室课桌歪斜，黑板上的粉笔字模糊不清。操场上杂草丛生，只有风吹动大开的窗户吱呀作响。',
     tags: ['室内', '多层', '教育', '令人不安'],
     danger: 3,
     lootTypes: ['food', 'misc', 'medical'],

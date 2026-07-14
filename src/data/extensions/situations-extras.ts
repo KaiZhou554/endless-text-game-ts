@@ -70,12 +70,14 @@ export const situations_extras: Situations = {
         text: "直接迎战",
         risk: "[战斗] [可能被咬伤感染]",
         tags: ["战斗", "高风险"],
-        combat: true,
+        successRate: 0.9,
         onSuccess: {
           text: "你放低重心正面迎向它。感染后的犬类失去了健康动物应有的协调性——它冲过来时后腿在碎砖上打滑了半秒。你抓住这个破绽挥出武器，击中了它的侧肋。它发出一声不像狗也不像丧尸的尖啸。",
+          combat: true,
         },
         onFailure: {
           text: "它比你预估的快。在你举起武器之前它已经扑到了你身前，前爪在你胸口划出两道火辣辣的伤痕。你踉跄着后退，用武器横挡在身前。它落地后立刻转身准备第二次扑击，浑浊的眼睛锁定着你的喉咙位置。",
+          combat: true,
           effects: { hp: -8 },
         },
       },
@@ -88,10 +90,12 @@ export const situations_extras: Situations = {
         successRate: 0.9,
         onSuccess: {
           text: "你从背包里掏出食物，朝右侧远处用力甩出去。肉块在空中划过一道弧线砸在瓦砾堆上。犬类的本能压过了丧尸病毒的疯狂——它转身追向肉块落地的方向，用前爪按住食物疯狂撕咬。你没有等它吃完就离开了这个区域。",
+          events: ['consume_random_food'],
         },
         onFailure: {
           text: "你扔出食物，但它连看都没看一眼。感染已经破坏了它大脑中正常的觅食回路——它对静止的食物没有反应，只有活物的动作在触发它的攻击本能。你的投掷动作反而吸引了它的全部注意力。它压低前身朝你冲了过来。",
-          effects: { hp: -5 },
+          events: ['consume_random_food'],
+          combat: true,
         },
       },
       {
