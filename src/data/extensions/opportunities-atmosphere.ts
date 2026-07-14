@@ -187,7 +187,7 @@ export const opportunities_atmosphere: Opportunity[] = [
   },
   {
     id: 'atm_warehouse_02',
-    baseText: '一扇天窗破了，一道光柱从屋顶斜斜地打下来，在水泥地面上画了一个明亮的矩形。光柱里有数不清的灰尘在缓慢飘浮。你站在光的外面看着这扇意外打开的天窗，自然光在末日里是最廉价也最奢侈的资源。',
+    baseText: '一扇天窗破了，一道光柱从屋顶斜斜地打下来，在水泥地面上画了一个明亮的矩形。光柱里有数不清的灰尘在缓慢飘浮。',
     type: 'narrative',
     sceneTags: ['工业', '物资'],
     delay: 4,

@@ -27,8 +27,8 @@ export const opportunities_extras: Opportunity[] = [
     delay: 4,
     diceRanges: [
       { min: 1, max: 3, text: '你靠近一步，猫转身就跑了，消失在围墙那头。你连项圈上的字都没看清。', nothing: true },
-      { min: 4, max: 5, text: '猫没有躲开。你小心地解下吊坠，里面有一小卷钞票。在末日里没什么用。', nothing: true },
-      { min: 6, max: 6, text: '吊坠里是一把小型钥匙和一张纸条："B12号储物柜，密码0412。里面有一周的补给。——如果你是个好人，别伤害它。"', lootItem: 'lockpick' },
+      { min: 4, max: 5, text: '猫没有躲开。你小心地解下吊坠，里面有一小卷钞票。在末日里没什么用。', effects:{ sanity: 3 } },
+      { min: 6, max: 6, text: '猫安静地看着你，小小的瞳孔里映着破败的世界。你感到一种奇异的平静。', effects:{ sanity: 8 } },
     ],
   },
 
@@ -51,7 +51,7 @@ export const opportunities_extras: Opportunity[] = [
     delay: 4,
     diceRanges: [
       { min: 1, max: 2, text: '你翻遍了摩托车周围的碎片，除了被压扁的空塑料瓶外什么都没找到。', nothing: true },
-      { min: 3, max: 4, text: '头盔里垫着的缓冲棉还算干净。你把棉垫拆下来，以后可以当简易绷带或抹布用。', nothing: true },
+      { min: 3, max: 4, text: '头盔里垫着的缓冲棉还算干净。你把棉垫拆下来，以后可以当简易绷带或抹布用。', lootItem: 'bandage' },
       { min: 5, max: 6, text: '摩托车侧箱里有一个完好无损的工具包，里面有扳手、螺丝刀和一卷强力胶带。', lootItem: 'duct_tape' },
     ],
   },

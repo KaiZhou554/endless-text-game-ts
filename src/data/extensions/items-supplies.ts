@@ -74,8 +74,8 @@ export const supplies: ItemDB = {
     reusable: false,
     slots: 1,
   },
-  soup_can: {
-    id: 'soup_can',
+  tomato_soup_can: {
+    id: 'tomato_soup_can',
     name: '番茄汤罐头',
     type: 'food',
     desc: '一罐浓缩番茄汤，如果能加热就更好喝了。',

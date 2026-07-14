@@ -88,4 +88,15 @@ export const taskItems: ItemDB = {
     reusable: false,
     slots: 1,
   },
+  electronic_component: {
+    id: "electronic_component",
+    name: "电子元件",
+    type: "misc",
+    desc: "也许以后有用的电子元件。",
+    tags: ["电器"],
+    effects: {},
+    stackable: true,
+    reusable: false,
+    slots: 1,
+  },
 };

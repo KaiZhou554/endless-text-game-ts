@@ -11,7 +11,7 @@ export const situations_tasks: Situations = {
   puddle_collect: {
     id: 'puddle_collect',
     name: '路边积水',
-    baseText: '路边有一个被车压出来的大坑，里面积了半坑雨水。水面上飘着几片树叶和一个烟盒，但水面以下看起来还算清澈。在末日里，任何水源都值得考虑。',
+    baseText: '路边有一个被车压出来的大坑，里面积了半坑雨水。水面上飘着几片树叶和一个烟盒，但水面以下看起来还算清澈。',
     options: [
       {
         id: 'collect_puddle',
@@ -59,7 +59,7 @@ export const situations_tasks: Situations = {
         requireItems: ['water_bottle'],
         successRate: 1.0,
         onSuccess: {
-          text: '你用舀子拨开水面上的落叶，从桶底以上三分之一的位置灌满了水壶。你拍紧壶盖，收获了一壶虽然需要净化但远好过路边积水的水。',
+          text: '你用舀子拨开水面上的落叶，将水壶灌满。你拍紧壶盖，收获了一壶虽然需要净化但远好过路边积水的水。',
           loot: ['dirty_water'],
         },
         onFailure: {

@@ -77,7 +77,7 @@ export const opportunities: Opportunity[] = [
   },
   {
     id: 'graffiti_wall',
-    baseText: '一面砖墙上被人用喷漆涂满了各种信息。大部分是看不懂的标记和符号，但有一行字格外清晰："这儿没水了。往东走，河边能取水。"落款日期是两个月前。',
+    baseText: '一面砖墙上被人用喷漆涂满了各种信息。大部分是看不懂的标记和符号，但有一行字格外清晰："东走，河边能取水。"也许是一条关键线索，也许是一个陷阱。',
     type: 'dice',
     delay: 4,
     diceRanges: [
