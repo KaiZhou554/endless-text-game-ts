@@ -134,6 +134,14 @@ function handleContinue(saveKey?: string) {
   const saveData = loadFromLocalStorage(key)
   if (!saveData) return
 
+  // 只保留最近 3 条历史日志，其余丢弃；全部改为 action 避免打字机逐条重播
+  if (saveData.journal && Array.isArray(saveData.journal)) {
+    saveData.journal = saveData.journal.slice(-3)
+    for (const entry of saveData.journal) {
+      entry.type = 'action'
+    }
+  }
+
   // 恢复状态到 gameState
   Object.keys(saveData).forEach(k => {
     if (k === 'version' || k === 'timestamp') return
@@ -643,6 +651,14 @@ function handleLoad() {
     saveData = gameState.saveSlot
   }
   if (!saveData) return
+
+  // 只保留最近 3 条历史日志，其余丢弃；全部改为 action 避免打字机逐条重播
+  if (saveData.journal && Array.isArray(saveData.journal)) {
+    saveData.journal = saveData.journal.slice(-3)
+    for (const entry of saveData.journal) {
+      entry.type = 'action'
+    }
+  }
 
   // 恢复状态
   Object.keys(saveData).forEach(key => {
