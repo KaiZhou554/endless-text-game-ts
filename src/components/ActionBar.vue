@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { getUsedSlots, getEffectiveCapacity } from '../game/state.js'
+import { hasSave, SAVE_KEYS } from '../game/save-service.js'
 const emit = defineEmits(['toggle-inventory', 'toggle-journal', 'toggle-map', 'save-game', 'load-game'])
 
 const props = defineProps({
@@ -10,6 +11,9 @@ const props = defineProps({
 
 const effectiveCapacity = computed(() => getEffectiveCapacity(props.gameState))
 const usedSlots = computed(() => getUsedSlots(props.gameState))
+const hasManualSave = computed(() =>
+  props.gameState.saveSlot || hasSave(SAVE_KEYS.manual)
+)
 </script>
 
 <template>
@@ -59,7 +63,7 @@ const usedSlots = computed(() => getUsedSlots(props.gameState))
         💾 存档
       </button>
       <button
-        v-if="gameState.saveSlot"
+        v-if="hasManualSave"
         @click="emit('load-game')"
         class="flex-1 flex items-center justify-center gap-1 py-2.5 text-xs
                text-accent bg-bg

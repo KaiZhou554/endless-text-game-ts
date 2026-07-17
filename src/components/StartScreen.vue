@@ -1,15 +1,50 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { hasSave, getSaveMeta, SAVE_KEYS } from '../game/save-service.js'
+import { scenes } from '../data/index.js'
 
-const emit = defineEmits(['start-game'])
+const emit = defineEmits(['start-game', 'continue-game'])
 const props = defineProps({
   gameState: { type: Object, required: true },
 })
 
 const showIntro = ref(false)
+const roguelikeSaveMeta = ref<any>(null)  // 标准模式自动存档
+const easySaveMeta = ref<any>(null)       // 简单模式手动存档
 
-function startNewGame(mode) {
+function getBestAutoSaveMeta() {
+  // 找自动存档中最新的一个
+  const a0 = getSaveMeta(SAVE_KEYS.autosave0)
+  const a1 = getSaveMeta(SAVE_KEYS.autosave1)
+  if (!a0 && !a1) return null
+  if (!a0) return a1
+  if (!a1) return a0
+  return a0.timestamp > a1.timestamp ? a0 : a1
+}
+
+onMounted(() => {
+  // 标准模式自动存档
+  const autoMeta = getBestAutoSaveMeta()
+  if (autoMeta && autoMeta.mode === 'roguelike') {
+    roguelikeSaveMeta.value = autoMeta
+  }
+  // 简单模式手动存档
+  if (hasSave(SAVE_KEYS.manual)) {
+    const manualMeta = getSaveMeta(SAVE_KEYS.manual)
+    if (manualMeta) easySaveMeta.value = manualMeta
+  }
+})
+
+function startNewGame(mode: string) {
   emit('start-game', mode)
+}
+
+function continueGame(key: string) {
+  emit('continue-game', key)
+}
+
+function sceneDisplayName(sceneId: string): string {
+  return (scenes as any)[sceneId]?.name || sceneId
 }
 </script>
 
@@ -50,6 +85,17 @@ function startNewGame(mode) {
 
     <!-- 模式选择按钮 -->
     <div class="w-full space-y-3">
+      <!-- 标准模式继续 -->
+      <button v-if="roguelikeSaveMeta" @click="continueGame(roguelikeSaveMeta.key)"
+        class="w-full min-h-11 rounded-sm border text-left text-sm
+               bg-bg border-accent text-accent hover:bg-hover
+               transition-colors duration-150">
+        <span class="font-bold">📂 继续标准模式</span>
+        <span class="block text-xs text-fore">
+          第 {{ Math.floor(roguelikeSaveMeta.dayCount) + 1 }} 天 · {{ sceneDisplayName(roguelikeSaveMeta.sceneName) }}
+        </span>
+      </button>
+
       <button @click="startNewGame('roguelike')"
         class="w-full min-h-11 rounded-sm border text-left text-sm
                bg-bg border-accent text-accent hover:bg-hover
@@ -57,6 +103,17 @@ function startNewGame(mode) {
         <span class="font-bold">⚔️ 标准模式</span>
         <span class="block text-xs text-fore">
           永久死亡 · 无法读档 · 真正的生存体验
+        </span>
+      </button>
+
+      <!-- 简单模式继续 -->
+      <button v-if="easySaveMeta" @click="continueGame(easySaveMeta.key)"
+        class="w-full min-h-11 rounded-sm border text-left text-sm
+               bg-bg border-success text-success hover:bg-hover
+               transition-colors duration-150">
+        <span class="font-bold">📂 继续简单模式</span>
+        <span class="block text-xs text-fore">
+          第 {{ Math.floor(easySaveMeta.dayCount) + 1 }} 天 · {{ sceneDisplayName(easySaveMeta.sceneName) }}
         </span>
       </button>
 

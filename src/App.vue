@@ -10,6 +10,7 @@ import { generateEvent, resolveOption, applySurvivalDecay, exploreNewArea,
 import { scenes, itemDB } from './data/index.js'
 import { getLootPool } from './game/item-utils.js'
 import { checkEndings } from './game/ending-utils.js'
+import { saveToLocalStorage, loadFromLocalStorage, SAVE_KEYS, deleteAllAutosaves, getLatestSaveKey } from './game/save-service.js'
 import type { Opportunity } from './types'
 
 import StartScreen from './components/StartScreen.vue'
@@ -27,6 +28,22 @@ import type { ComponentPublicInstance } from 'vue'
 
 // ==================== 游戏状态 ====================
 const gameState: GameState = createGameState()
+
+// ==================== 自动存档 ====================
+let _autoSaveTimer: ReturnType<typeof setTimeout> | null = null
+let _lastAutoSaveSlot = 0
+
+/** 防抖自动保存：500ms 内有新调用则重置计时器，交替写入双槽位 */
+function triggerAutoSave() {
+  if (_autoSaveTimer) clearTimeout(_autoSaveTimer)
+  _autoSaveTimer = setTimeout(() => {
+    // 不在战斗/对话/结局/开始界面时保存
+    if (gameState.phase !== 'playing' || gameState.inCombat) return
+    _lastAutoSaveSlot = _lastAutoSaveSlot === 0 ? 1 : 0
+    const key = _lastAutoSaveSlot === 0 ? SAVE_KEYS.autosave0 : SAVE_KEYS.autosave1
+    saveToLocalStorage(key, gameState)
+  }, 500)
+}
 
 // ==================== 当前叙事 ====================
 const currentEventText = ref('')
@@ -110,6 +127,33 @@ function handleStartGame(mode: string) {
   generateFirstEvent()
 }
 
+function handleContinue(saveKey?: string) {
+  const key = saveKey || getLatestSaveKey()
+  if (!key) return
+
+  const saveData = loadFromLocalStorage(key)
+  if (!saveData) return
+
+  // 恢复状态到 gameState
+  Object.keys(saveData).forEach(k => {
+    if (k === 'version' || k === 'timestamp') return
+    if (k in gameState) {
+      (gameState as any)[k] = saveData[k]
+    }
+  })
+  gameState.phase = 'playing'
+
+  addJournalEntry(gameState, '📂 游戏已加载。', 'action')
+
+  // 恢复 UI
+  const event = generateEvent(gameState)
+  currentEventText.value = event.text
+  currentOptions.value = event.options
+  resultLoot.value = []
+  showCombatUI.value = false
+  combatState.value = null
+}
+
 function generateFirstEvent() {
   const event = generateEvent(gameState)
   currentEventText.value = event.text
@@ -141,6 +185,10 @@ function handleSelectOption(option: any) {
 
   // 检查结局
   if (result.ending) {
+    // Roguelike 模式死亡时清除所有自动存档
+    if (gameState.mode === 'roguelike' && result.ending.isDeath) {
+      deleteAllAutosaves()
+    }
     gameState.phase = 'ending'
     gameState.currentEnding = result.ending
     isResolving.value = false
@@ -199,6 +247,7 @@ function handleSelectOption(option: any) {
     resultLoot.value = []
     combatState.value = null
     isResolving.value = false
+    triggerAutoSave()
   }, 800)
 }
 
@@ -285,6 +334,7 @@ function handleCombatAction(strategyId: string) {
         currentEventText.value = event.text
         currentOptions.value = event.options
         resultLoot.value = []
+        triggerAutoSave()
       }
     } else if (combat.result === 'death') {
       setTimeout(() => {
@@ -356,6 +406,7 @@ function finishCombatReward() {
     currentEventText.value = event.text
     currentOptions.value = event.options
     resultLoot.value = []
+    triggerAutoSave()
   }
 }
 
@@ -387,6 +438,7 @@ function showOpportunity(idx) {
     currentOptions.value = event.options
     resultLoot.value = []
     isResolving.value = false
+    triggerAutoSave()
     return
   }
 
@@ -485,6 +537,7 @@ function handleDialogueResult(result: any) {
       currentEventText.value = event.text
       currentOptions.value = event.options
       resultLoot.value = []
+      triggerAutoSave()
     }
   }
 }
@@ -494,6 +547,10 @@ function handleDialogueResult(result: any) {
 function checkAndTriggerEnding() {
   const ending = checkEndings(gameState)
   if (ending) {
+    // Roguelike 模式死亡时清除所有自动存档（保持 permadeath）
+    if (gameState.mode === 'roguelike' && ending.isDeath) {
+      deleteAllAutosaves()
+    }
     gameState.phase = 'ending'
     gameState.currentEnding = ending
   }
@@ -517,6 +574,7 @@ function handleUseItem(itemId: string) {
   }
   // 刷新选项（背包满状态可能已变）
   currentOptions.value = rebuildCurrentOptions(gameState)
+  triggerAutoSave()
 }
 
 function handleDropItem(itemId: string) {
@@ -529,6 +587,7 @@ function handleDropItem(itemId: string) {
   }
   // 刷新选项（背包空出后搜索按钮恢复）
   currentOptions.value = rebuildCurrentOptions(gameState)
+  triggerAutoSave()
 }
 
 // ==================== 地图旅行 ====================
@@ -558,6 +617,7 @@ function handleTravel(sceneId: string) {
   currentEventText.value = event.text
   currentOptions.value = event.options
   resultLoot.value = []
+  triggerAutoSave()
 }
 
 // ==================== 存档 ====================
@@ -568,15 +628,25 @@ function handleSave() {
   delete saveData.currentEnding
   delete saveData.currentDialogue
   gameState.saveSlot = saveData
+  // easy 模式同时持久化到 localStorage
+  if (gameState.mode === 'easy') {
+    saveToLocalStorage(SAVE_KEYS.manual, gameState)
+  }
   addJournalEntry(gameState, '💾 游戏已存档。', 'action')
 }
 
 function handleLoad() {
-  if (!gameState.saveSlot) return
-  const saveData = gameState.saveSlot
+  // 优先从 localStorage 加载手动存档
+  let saveData: any = loadFromLocalStorage(SAVE_KEYS.manual)
+  // Fallback: 内存存档（页面未刷新时）
+  if (!saveData && gameState.saveSlot) {
+    saveData = gameState.saveSlot
+  }
+  if (!saveData) return
+
   // 恢复状态
   Object.keys(saveData).forEach(key => {
-    if (key !== 'saveSlot' && key in gameState) {
+    if (key !== 'saveSlot' && key !== 'version' && key !== 'timestamp' && key in gameState) {
       (gameState as any)[key] = saveData[key]
     }
   })
@@ -633,6 +703,7 @@ function toggleMap() { gameState.showMap = !gameState.showMap }
       v-if="gameState.phase === 'start'"
       :gameState="gameState"
       @start-game="handleStartGame"
+      @continue-game="handleContinue"
     />
 
     <!-- ========== 结局画面 ========== -->
