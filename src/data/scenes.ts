@@ -17,7 +17,7 @@ export const scenes: Scenes = {
   supermarket: {
     id: 'supermarket',
     name: '超市仓库',
-    desc: '沃尔玛的后仓，货架东倒西歪。满地踩烂的包装食品和打碎的玻璃瓶，空气里弥漫着腐烂水果的甜腻气味。',
+    desc: '“金苹果”超市的后仓，货架东倒西歪。满地踩烂的包装食品和打碎的玻璃瓶，空气里弥漫着腐烂水果的甜腻气味。',
     tags: ['室内', '食物', '开阔', '物资'],
     danger: 2,
     lootTypes: ['food', 'drink', 'misc'],

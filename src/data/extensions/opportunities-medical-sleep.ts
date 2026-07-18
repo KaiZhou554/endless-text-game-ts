@@ -89,21 +89,8 @@ export const opportunities_medical_sleep: Opportunity[] = [
   },
 
   {
-    id: 'herbal_dispensary',
-    baseText: '中药房的百子柜被推倒了一大片，草药散落一地，空气里弥漫着当归和甘草混合的气味。柜台的玻璃台面下压着一张手写的处方，墨迹已经洇开。',
-    type: 'dice',
-    sceneTags: ['医疗'],
-    delay: 4,
-    diceRanges: [
-      { min: 1, max: 2, text: '地上的草药大多已经发霉长虫了。你踩上去时惊起一群小飞虫，呛得直咳嗽。', nothing: true },
-      { min: 3, max: 5, text: '你找到了一些还没变质的干燥草药，虽然不是特效药，但在没有抗生素的时候至少能减轻炎症。', lootItem: 'herbal_medicine' },
-      { min: 6, max: 6, text: '一个密封的陶罐里竟然存着几块完整的膏药和一瓶没有标签的褐色酊剂。附带的纸条上写着用法——是某个老中医撤离前留下的成品。', lootItem: 'first_aid_kit' },
-    ],
-  },
-
-  {
     id: 'medical_lab_freezer',
-    baseText: '实验室角落里一台小型超低温冰箱还在运转，压缩机发出低沉的轰鸣声。冰箱门上贴了一张黄色标签："生物样本——非授权人员勿动"。标签下面有人用手写加了一句："有用的在里面"。',
+    baseText: '实验室角落里一台小型超低温冰箱还在运转，压缩机发出低沉的轰鸣声。冰箱门上贴了一张黄色标签："生物样本，非授权人员勿动"。',
     type: 'dice',
     sceneTags: ['医疗', '科学'],
     delay: 4,
@@ -116,7 +103,7 @@ export const opportunities_medical_sleep: Opportunity[] = [
 
   {
     id: 'ambulance_garage',
-    baseText: '医院地下的救护车库停着三辆救护车，后门都敞开着。其中一辆的担架上还放着没来得及卸下的医疗背包，带子上沾了干涸的血迹。',
+    baseText: '医院地下的救护车库停着几辆救护车，后门都敞开着。其中一辆的担架上还放着没来得及卸下的医疗背包，带子上沾了干涸的血迹。',
     type: 'dice',
     sceneTags: ['医疗', '交通'],
     delay: 4,
