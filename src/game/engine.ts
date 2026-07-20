@@ -353,7 +353,7 @@ const sceneAtmosphere = {
   apartment: ['墙上的挂历蒙着厚厚的灰', '某个房间里传来风吹窗帘的声音', '地板上散落着匆忙打包时掉落的衣物'],
   forest_path: ['松针在脚下发出轻微的碎裂声', '树枝在风中轻轻摇晃', '空气出奇地清新——末日似乎还没蔓延到这里'],
   police_station: ['翻倒的办公桌后面还有未喝完的咖啡', '墙壁上布满了弹孔', '无线电设备还在发出白噪音'],
-  default: ['四周一片寂静', '尘埃在微弱的光线中飘浮', '时间仿佛在这里停滞了'],
+  default: ['四周一片寂静', '尘埃在微弱的光线中飘浮', ],
 }
 
 function buildResultText(option: any, success: any, state: any) {

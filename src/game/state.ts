@@ -241,9 +241,9 @@ export function processEvents(state, events: string[], effects?: Record<string, 
       if (!state.scenesVisited.includes('safe_zone')) state.scenesVisited.push('safe_zone')
       state._pendingScene = 'safe_zone'
     }
-    if (evt === 'heal_40_percent_missing') {
+    if (evt === 'heal_60_percent_missing') {
       const missing = state.maxHp - state.hp
-      const heal = Math.ceil(missing * 0.4)
+      const heal = Math.ceil(missing * 0.6)
       state.hp = clamp(state.hp + heal, 0, state.maxHp)
       if (effects) effects.hp = heal
     }

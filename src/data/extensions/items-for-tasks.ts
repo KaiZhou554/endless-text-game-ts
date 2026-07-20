@@ -30,6 +30,7 @@ export const taskItems: ItemDB = {
     stackable: true,
     reusable: false,
     slots: 1,
+    noLoot: true,
   },
   clean_water: {
     id: "clean_water",

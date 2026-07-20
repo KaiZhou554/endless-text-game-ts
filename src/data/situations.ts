@@ -16,6 +16,7 @@ import { situations_extras } from './extensions/situations-extras'
 import { situations_tasks } from './extensions/situations-for-tasks'
 import { situations_endings } from './extensions/situations-for-endings'
 import { situations_lab } from './extensions/situations-lab'
+import { situations_equipment } from './extensions/situations-equipment'
 
 export const situations: Situations = {
   ...situations_combat,
@@ -26,4 +27,5 @@ export const situations: Situations = {
   ...situations_tasks,
   ...situations_endings,
   ...situations_lab,
+  ...situations_equipment,
 } as Situations

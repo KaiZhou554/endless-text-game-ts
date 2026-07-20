@@ -57,18 +57,6 @@ export const opportunities_extras: Opportunity[] = [
   },
 
   {
-    id: 'bird_feeder',
-    baseText: '一个庭院里挂着几只鸟食笼，里面的谷物已经发霉，但有一只笼子下方被人绑了一个塑料防水盒。盒子用橡皮筋固定在铁架上。',
-    type: 'dice',
-    delay: 4,
-    diceRanges: [
-      { min: 1, max: 3, text: '你打开盒子——空的。大概本来就是个备用容器，还没来得及装东西。', nothing: true },
-      { min: 4, max: 5, text: '盒子里有几块用保鲜膜包好的压缩饼干，保存得不错。', lootItem: 'crackers' },
-      { min: 6, max: 6, text: '盒子底部有半盒薄荷糖和一小包果干。虽然不多，但至少能补充点糖分。', lootItem: 'mints' },
-    ],
-  },
-
-  {
     id: 'cracked_pipe',
     baseText: '一根地下水管破裂了，清水从路面裂缝中涌出来，在人行道上形成了一小片清澈的水洼。水看起来很干净，可能是从上游的蓄水池来的。',
     type: 'dice',
@@ -87,7 +75,7 @@ export const opportunities_extras: Opportunity[] = [
     delay: 4,
     diceRanges: [
       { min: 1, max: 2, text: '你翻开报纸——除了过时的新闻什么都没有。还沾了一手油墨。', nothing: true },
-      { min: 3, max: 5, text: '报纸里夹着一张手绘的城区地图，标注了几个物资点的位置。虽然有些潦草但信息有用。', nothing: true },
+      { min: 3, max: 5, text: '报纸里夹着一张手绘的城区地图，标注了几个物资点的位置。虽然有些潦草但信息有用。', events: ['unlock_random_scene'] },
       { min: 6, max: 6, text: '报纸下面压着一个被遗忘的信封，里面除了几张钞票，还有一张叠得整整齐齐的军方战术地图——标注了城市内的所有重要设施和安全路线。这是无价之宝。', lootItem: 'military_map' },
     ],
   },

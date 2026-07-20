@@ -72,7 +72,7 @@ export const scenes: Scenes = {
   },
   school: {
     id: 'school',
-    name: '小学教学楼',
+    name: '某学校附近',
     desc: '空荡的教室课桌歪斜，黑板上的粉笔字模糊不清。操场上杂草丛生，只有风吹动大开的窗户吱呀作响。',
     tags: ['室内', '多层', '教育', '令人不安'],
     danger: 3,

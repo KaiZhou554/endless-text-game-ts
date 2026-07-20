@@ -93,7 +93,7 @@ export const extras: ItemDB = {
     desc: '一支预装肾上腺素的自动注射笔，标签上写着"急救用 — 心脏骤停"。能在短时间内给你超常的爆发力。',
     tags: ['医疗', '理智:-5', '临时强化'],
     effects: { sanity: -5 },
-    events: ['heal_40_percent_missing'],
+    events: ['heal_60_percent_missing'],
     stackable: true,
     reusable: false,
     slots: 1,

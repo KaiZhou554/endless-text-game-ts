@@ -540,13 +540,6 @@ export const opportunities_atmosphere_v2: Opportunity[] = [
   // ==================== 植物园温室 ====================
 
   {
-    id: 'atm2_greenhouse_01',
-    baseText: '你推开温室的门，一股潮湿的热气扑面而来，和外面干冷的空气形成了强烈的反差。视野里一片深绿，你花了几秒钟才让眼睛适应这种密度的绿色。',
-    type: 'narrative',
-    sceneTags: ['采集', '诡异'],
-    delay: 4,
-  },
-  {
     id: 'atm2_greenhouse_02',
     baseText: '小径上的石板被植物的根茎顶得歪歪扭扭，有些地方已经断裂了。你走得很小心，脚下的石板偶尔会松动一下。周围的植物安静得不太对劲。这里连虫鸣都没有。',
     type: 'narrative',
@@ -555,14 +548,7 @@ export const opportunities_atmosphere_v2: Opportunity[] = [
   },
   {
     id: 'atm2_greenhouse_03',
-    baseText: '一面玻璃墙的外侧爬满了藤蔓，光从叶片的缝隙间渗进来，在地面上投下了一片细碎的光斑。光斑在风里轻轻晃动。你站了一会儿，看着它们在你手上和衣服上缓慢移动。',
-    type: 'narrative',
-    sceneTags: ['采集', '诡异'],
-    delay: 4,
-  },
-  {
-    id: 'atm2_greenhouse_04',
-    baseText: '从温室出来的时候外面的空气让你打了一个寒颤。天已经全黑了。你回头看了一眼，玻璃穹顶在夜色里反射着微弱的月光，像一颗落在泥土里的巨大气泡。你没有再回去。',
+    baseText: '一面墙的外侧爬满了藤蔓，光从叶片的缝隙间渗进来，在地面上投下了一片细碎的光斑。光斑在风里轻轻晃动。你站了一会儿，看着它们在你手上和衣服上缓慢移动。',
     type: 'narrative',
     sceneTags: ['采集', '诡异'],
     delay: 4,

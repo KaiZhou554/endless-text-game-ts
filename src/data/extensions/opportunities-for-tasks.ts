@@ -51,7 +51,7 @@ export const opportunities_tasks: Opportunity[] = [
     delay: 4,
     diceRanges: [
       { min: 1, max: 2, text: '你在工作台上翻到了一盒已经被用光的电池——每一节都被人用万用表测过，没电的放在一起，大概准备统一丢弃。你来晚了。', nothing: true },
-      { min: 3, max: 5, text: '工作台抽屉里有几根焊锡丝和一卷热缩管。你收走了这些基础耗材。修东西的时候它们比一整箱坏掉的电器都管用。', nothing: true },
+      { min: 3, max: 5, text: '工作台抽屉里有几根焊锡丝和一卷热缩管。你收走了这些基础耗材。修东西的时候它们比一整箱坏掉的电器都管用。', lootItem: 'electronic_component'},
       { min: 6, max: 6, text: '在工具架最上层的铁盒里，你找到了一个小型太阳能充电控制器和两节可充电锂电池——这套小系统配上一块太阳能板就能持续供电。主人显然是电子爱好者，但他把最好的零件藏在了最不容易被翻到的位置。你找到了它们。', lootItem: 'batteries' },
     ],
   },

@@ -85,14 +85,14 @@ export const equipment: ItemDB = {
     effects: {},
     stackable: true,
     reusable: false,
-    slots: 1,
+    slots: 0,
   },
   radio: {
     id: 'radio',
     name: '对讲机',
     type: 'tool',
     desc: '一台摩托罗拉对讲机，频率锁定在一个军用频道。偶尔能听到断断续续的语音，但从未听清过完整的内容。',
-    tags: ['工具', '通讯', '关键:直升机结局', '需要:电池'],
+    tags: ['工具', '通讯', '关键物品', '需要:电池'],
     effects: {},
     stackable: false,
     reusable: true,
@@ -208,7 +208,7 @@ export const equipment: ItemDB = {
     tags: ['扩展:容量+5', '占位:1'],
     slots: 1,
     effects: { capacityBonus: 5 },
-    stackable: false,
+    stackable: true,
     reusable: true,
   },
   matches: {
@@ -379,17 +379,6 @@ export const equipment: ItemDB = {
 
   // ==================== 更多杂项 ====================
 
-  harmonica: {
-    id: 'harmonica',
-    name: '口琴',
-    type: 'misc',
-    desc: '一把旧口琴，C 调的。吹一首曲子能让你暂时忘记外面的世界。',
-    tags: ['情感', '理智:+8(反复)'],
-    effects: { sanity: 8 },
-    stackable: false,
-    reusable: true,
-    slots: 1,
-  },
   thermal_blanket: {
     id: 'thermal_blanket',
     name: '应急保温毯',

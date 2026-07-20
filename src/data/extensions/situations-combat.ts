@@ -263,7 +263,7 @@ export const situations_combat: Situations = {
       {
         id: 'flee_fire',
         text: '远离火场，火焰只会引来更多丧尸',
-        risk: '[安全] [错失机会]',
+        risk: '[安全]',
         tags: ['撤退'],
         successRate: 1.0,
         onSuccess: {

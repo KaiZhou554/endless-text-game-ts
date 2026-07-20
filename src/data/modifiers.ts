@@ -96,7 +96,7 @@ export const modifiers: { time: Record<string, import('../types').Modifier>; wea
       id: 'infected',
       name: '感染中',
       desc: '伤口在变黑，身体在发烧。',
-      textSuffix: '你感到一阵阵发冷，伤口周围出现了黑色的纹路。时间不多了。',
+      textSuffix: '身体发冷，感染更严重了。',
       sanityDrain: 2,
     },
     insane: {

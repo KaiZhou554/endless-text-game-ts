@@ -48,8 +48,8 @@ export const weapons: ItemDB = {
     name: "双管猎枪",
     type: "weapon",
     desc: '一把老式双管猎枪，枪托上刻着"R.I.P."。每次只能装两发，但威力惊人。',
-    tags: ["枪械", "噪音:极高", "需12号霰弹", "伤害:范围"],
-    effects: { damage: 12, noise: 8, ammo: "12gauge" },
+    tags: ["枪械", "噪音:高", "需12号霰弹", "伤害:范围"],
+    effects: { damage: 12, noise: 4, ammo: "12gauge" },
     hitRanges: [
       { min: 2, max: 4, dmg: 10 },
       { min: 5, max: 13, dmg: 22 },

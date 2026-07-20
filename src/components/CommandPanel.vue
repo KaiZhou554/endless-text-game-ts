@@ -88,7 +88,7 @@ function handleCmd() {
     result.value = msgs.join(' | ')
   } else if (cmd === 'event') {
     if (args.length === 0) {
-      result.value = '用法: /event <eventId>  可用: clear_fatigue, heal_40_percent_missing, unlock_all_scenes, rest_sleep_hours'
+      result.value = '用法: /event <eventId>  可用: clear_fatigue, heal_60_percent_missing, unlock_all_scenes, rest_sleep_hours'
     } else {
       processEvents(props.gameState, args)
       result.value = '✔ 触发事件: ' + args.join(', ')
